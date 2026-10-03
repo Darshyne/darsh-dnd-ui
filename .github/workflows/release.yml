@@ -1,0 +1,62 @@
+# Publie une release GitHub à chaque tag `vX.Y.Z`, avec les deux fichiers qu'attendent l'installeur de Foundry et The Forge :
+#   .../releases/latest/download/module.json   (l'URL de manifeste à donner à Foundry)
+#   .../releases/download/vX.Y.Z/module.zip    (le contenu de module/, à la racine de l'archive)
+# Le tag DOIT être la version de module/module.json : le job échoue sinon. Les compendiums (module/packs/, non versionnés) sont
+# construits ici quand le dépôt a un script `npm run packs`.
+name: Release
+
+on:
+  push:
+    tags: ["v*.*.*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Le tag correspond à la version de module.json
+        run: |
+          VER="$(node -p "require('./module/module.json').version")"
+          echo "tag=${GITHUB_REF_NAME} module.json=${VER}"
+          test "${GITHUB_REF_NAME}" = "v${VER}"
+
+      - name: Compendiums
+        run: |
+          if node -e "process.exit(require('./package.json').scripts?.packs ? 0 : 1)"; then
+            npm ci
+            npm run packs
+          fi
+
+      - name: Manifeste de la release (téléchargement figé sur ce tag)
+        run: |
+          node -e '
+            const fs = require("fs");
+            const file = "module/module.json";
+            const m = JSON.parse(fs.readFileSync(file, "utf8"));
+            m.download = `https://github.com/${process.env.GITHUB_REPOSITORY}/releases/download/${process.env.GITHUB_REF_NAME}/module.zip`;
+            fs.writeFileSync(file, JSON.stringify(m, null, 2) + "\n");
+          '
+          cp module/module.json module.json
+
+      - name: module.zip
+        run: |
+          cd module
+          zip -qr ../module.zip . -x 'packs/*/LOCK' 'packs/*/LOG' 'packs/*/LOG.old'
+          cd ..
+          unzip -l module.zip | tail -1
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ github.ref_name }}
+          files: |
+            module.json
+            module.zip

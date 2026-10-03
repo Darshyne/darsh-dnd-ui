@@ -14,7 +14,13 @@ recalculer elle-même. Aucun code ni aucune image des modules remplacés ou du j
 
 ## Installation
 
-Pas encore de version publiée : le module s'installe depuis les sources. Le module Foundry est le
+Dans Foundry (ou sur The Forge), *Installer un module* → coller l'URL de manifeste :
+
+```
+https://github.com/Darshyne/darsh-dnd-ui/releases/latest/download/module.json
+```
+
+Depuis les sources : le module Foundry est le
 sous-dossier `module/`, à copier ou lier dans `Data/modules/darsh-dnd-ui`. Tests : `npm install && npm test`.
 
 Interface en français. En développement actif.
