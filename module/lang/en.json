@@ -1,0 +1,268 @@
+{
+  "DDU": {
+    "Preview": {
+      "Title": "Darsh UI — portrait preview",
+      "Empty": "Control one or more tokens to see their portraits."
+    },
+    "Budget": {
+      "Action": "Action",
+      "Bonus": "Bonus action",
+      "Reaction": "Reaction",
+      "Attacks": "{n} attack(s) left"
+    },
+    "Frieze": {
+      "Round": "Round {round}",
+      "Level": "Lvl {level}",
+      "CR": "CR {cr}",
+      "InitiativeValue": "Initiative {value}",
+      "InitiativeText": "Initiative {value}",
+      "RollInitiative": "Roll initiative",
+      "RollAll": "Roll initiative for all",
+      "RollNPC": "Roll initiative for NPCs",
+      "Reset": "Clear all initiatives",
+      "Start": "Begin combat",
+      "PreviousRound": "Previous round",
+      "PreviousTurn": "Previous turn",
+      "NextTurn": "Next turn",
+      "NextRound": "Next round",
+      "End": "End combat",
+      "OpenTracker": "Open the combat tracker",
+      "EndTurn": "End turn",
+      "Menu": {
+        "Ping": "Ping",
+        "Reroll": "Reroll initiative",
+        "ClearInitiative": "Clear initiative",
+        "SetActive": "Make active",
+        "ToggleHidden": "Hide / show",
+        "ToggleDefeated": "Defeated",
+        "Remove": "Remove from combat"
+      }
+    },
+    "Bar": {
+      "Checks": "Checks, saves and skills",
+      "AC": "AC",
+      "Speed": "Speed",
+      "Concentration": "Concentration: {name}",
+      "EndConcentration": "End concentration",
+      "GMHeal": "GM: heal fully (HP to maximum)",
+      "GMKill": "GM: kill (0 HP)",
+      "ConcentrationTag": "Concentration",
+      "Ritual": "Ritual",
+      "Cantrip": "Cantrip",
+      "SpellLevel": "Level {level}",
+      "Uses": "{value}/{max} uses",
+      "UpcastHint": "Click: choose the level · Shift+click: system dialog",
+      "MainHand": "Main hand",
+      "OffHand": "Off hand",
+      "WeaponSet": "Weapon set {n}",
+      "RemoveEffect": "right-click to remove",
+      "Separator": "Drag to widen a container",
+      "Lock": "Lock the bar (freezes the icons: no moving, adding or removing)",
+      "Unlock": "Unlock the bar",
+      "Menu": {
+        "Details": "Details",
+        "Sheet": "Open sheet",
+        "Remove": "Remove from the bar"
+      },
+      "AddRow": "Add a row",
+      "RemoveRow": "Remove a row",
+      "EndTurn": "End turn",
+      "TurnOf": "{name}'s turn",
+      "Movement": "Movement: {left} / {allowed}",
+      "Rest": "Rest",
+      "ShortRest": "Short rest",
+      "LongRest": "Long rest",
+      "NotOwnedItem": "Darsh UI: add this item to the character sheet first.",
+      "TooltipHint": "Alt: details · T or middle click: pin",
+      "Enchanted": "Enchanted: {names}",
+      "Form": "Form: {name}",
+      "Target": "Target",
+      "Duration": "Duration",
+      "Filter": {
+        "action": "Actions",
+        "bonus": "Bonus actions",
+        "reaction": "Reactions",
+        "cantrip": "Cantrips",
+        "level": "Level {level}: {value}/{max} slots",
+        "pact": "Pact (level {level}): {value}/{max} slots"
+      },
+      "Tab": {
+        "default": "Default view",
+        "common": "Common",
+        "class": "Class",
+        "items": "Items",
+        "passives": "Passives",
+        "custom": "Custom"
+      }
+    },
+    "Reason": {
+      "NoUses": "No uses left",
+      "NoQuantity": "None left",
+      "Unprepared": "Spell not prepared",
+      "NoSlot": "No spell slot available"
+    },
+    "Keys": {
+      "CustomSlot": "Bar: Custom cell {n}",
+      "CustomSlotHint": "Uses the matching cell of the Custom tab. An empty cell leaves the key to the macro bar.",
+      "PinTooltip": "Bar: pin tooltip",
+      "PinTooltipHint": "Pins the detailed tooltip of the hovered cell (outside the bar, the key keeps its role: target).",
+      "SwapWeapons": "Bar: swap weapon set",
+      "SwapWeaponsHint": "Switches to the other weapon set (while measuring, the key adds a waypoint).",
+      "BasicHint": "Uses this combat engine basic action for the bar's character.",
+      "Basic": {
+        "dash": "Action: Dash",
+        "disengage": "Action: Disengage",
+        "dodge": "Action: Dodge",
+        "hide": "Action: Hide",
+        "search": "Action: Search",
+        "help": "Action: Help",
+        "ready": "Action: Ready",
+        "escape": "Action: Escape"
+      }
+    },
+    "D20": {
+      "Checks": "Abilities",
+      "Saves": "Saving throws",
+      "Skills": "Skills",
+      "Other": "Other",
+      "Initiative": "Initiative",
+      "Concentration": "Concentration",
+      "SpellDC": "Spell DC",
+      "Passive": "Passive: {value}"
+    },
+    "Party": {
+      "HandRaised": "Hand raised",
+      "Inspiration": "Heroic inspiration",
+      "Menu": {
+        "Sheet": "Open sheet",
+        "Target": "Target",
+        "RaiseHand": "Raise hand",
+        "LowerHand": "Lower hand",
+        "Ping": "Ping"
+      }
+    },
+    "Settings": {
+      "PortraitImage": {
+        "Name": "Portrait image",
+        "Hint": "Character art (actor image) or token image. Without its own art, the token image is used.",
+        "Actor": "Actor image",
+        "Token": "Token image"
+      },
+      "scaleFrieze": {
+        "Name": "Strip size (%)",
+        "Hint": "Enlarges or shrinks the initiative strip (top) on this device. With window adaptation on, this percentage applies on top of it."
+      },
+      "scaleParty": {
+        "Name": "Party size (%)",
+        "Hint": "Enlarges or shrinks the party portraits (side) on this device. With window adaptation on, this percentage applies on top of it."
+      },
+      "scaleBar": {
+        "Name": "Bar size (%)",
+        "Hint": "Enlarges or shrinks the action bar (bottom) on this device. With window adaptation on, this percentage applies on top of it."
+      },
+      "ScaleAuto": {
+        "Name": "Fit size to the window",
+        "Hint": "The interface grows and shrinks with the Foundry window: normal size in a 1920 × 1080 window, smaller below, larger above (60% to 200%)."
+      },
+      "FadeOpacity": {
+        "Name": "Opacity when not hovered (%)",
+        "Hint": "The Bar, the Party and the Frieze each fade to this opacity while the mouse is not over them, and come back on hover. The Bar stays opaque during your character's turn. 100%: never faded. Speed and delay follow Foundry's own interface fade (Configure UI)."
+      },
+      "EnemyHealth": {
+        "Name": "Creature HP shown to players",
+        "Hint": "What a player sees of the HP of a creature whose sheet they cannot see. The GM and owners always see exact HP.",
+        "exact": "Exact (precise veil)",
+        "tiers": "By tier (unhurt, hurt, bloodied, critical)",
+        "none": "None (only down / dead)"
+      },
+      "frieze": {
+        "Name": "Initiative strip",
+        "Hint": "Shows the turn order at the top of the screen during combat."
+      },
+      "friezeRound": {
+        "Name": "Strip: round number",
+        "Hint": "Shows \"Round n\" to the left of the strip."
+      },
+      "friezeInitiativeText": {
+        "Name": "Initiative above heads",
+        "Hint": "When combat begins, each token briefly shows its initiative value."
+      },
+      "friezePrepToPlayers": {
+        "Name": "Strip: show setup to players",
+        "Hint": "Players see the strip as soon as the combat is created (to roll their initiative), not only once it has begun."
+      },
+      "friezeEnemyInitiative": {
+        "Name": "Strip: creature initiative visible",
+        "Hint": "Players see the initiative value of creatures they do not own."
+      },
+      "friezeAutoSelect": {
+        "Name": "Strip: select the active combatant",
+        "Hint": "Each turn, the token whose turn it is gets selected and the view centred on it. The GM selects any combatant; a player, only their own."
+      },
+      "friezeHideDefeated": {
+        "Name": "Strip: remove the defeated",
+        "Hint": "Defeated creatures disappear from the players' strip."
+      },
+      "party": {
+        "Name": "Party portraits",
+        "Hint": "Shows the party's characters in a column at the side of the screen."
+      },
+      "partyPosition": {
+        "Name": "Party: side",
+        "Hint": "Where to put the portrait column.",
+        "left": "Left",
+        "right": "Right",
+        "hidden": "Hidden"
+      },
+      "partyPlacement": {
+        "Name": "Party: placement on the left",
+        "Hint": "Automatic: against the screen edge, unless it would cover the scene controls (then beside them).",
+        "auto": "Automatic",
+        "edge": "Always against the screen edge",
+        "beside": "Always beside the scene controls"
+      },
+      "partyHideInCombat": {
+        "Name": "Party: hide in combat",
+        "Hint": "Hides the portrait column during combat (the strip is enough)."
+      },
+      "partyMembers": {
+        "Name": "Party: who belongs",
+        "Hint": "Only characters assigned to players, or any character a player owns.",
+        "owned": "Any character owned by a player",
+        "assigned": "Assigned characters only"
+      },
+      "partyConnectedOnly": {
+        "Name": "Party: connected players only",
+        "Hint": "Only shows characters whose player is connected."
+      },
+      "partyCompanions": {
+        "Name": "Party: companions and summons",
+        "Hint": "Shows, small, under each character, their summons and the other creatures on the scene their player owns."
+      },
+      "partyHealthExact": {
+        "Name": "Party: exact HP between players",
+        "Hint": "Every player sees the exact HP of all party members, not only their own."
+      },
+      "bar": {
+        "Name": "Action bar",
+        "Hint": "Shows the BG3-style action bar at the bottom of the screen for the controlled character."
+      },
+      "barHideHotbar": {
+        "Name": "Bar: collapse the macro bar",
+        "Hint": "Hides Foundry's macro bar when the action bar is shown."
+      },
+      "barGMHotbar": {
+        "Name": "Bar: GM keeps the macro bar",
+        "Hint": "On the GM's screen, Foundry's macro bar stays visible and the action bar sits above it. Players follow their own setting."
+      },
+      "barFullTooltips": {
+        "Name": "Bar: detailed tooltips",
+        "Hint": "Always shows the full description when hovering a cell (otherwise: hold Alt)."
+      },
+      "barLockPlayers": {
+        "Name": "Bar: lock for players",
+        "Hint": "Players can no longer move, add or remove cells."
+      }
+    }
+  }
+}

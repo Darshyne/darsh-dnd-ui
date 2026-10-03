@@ -1,0 +1,268 @@
+{
+  "DDU": {
+    "Preview": {
+      "Title": "Darsh UI — aperçu des portraits",
+      "Empty": "Contrôlez un ou plusieurs tokens pour voir leurs portraits."
+    },
+    "Budget": {
+      "Action": "Action",
+      "Bonus": "Action bonus",
+      "Reaction": "Réaction",
+      "Attacks": "{n} attaque(s) restante(s)"
+    },
+    "Frieze": {
+      "Round": "Round {round}",
+      "Level": "Niv. {level}",
+      "CR": "FP {cr}",
+      "InitiativeValue": "Initiative {value}",
+      "InitiativeText": "Initiative {value}",
+      "RollInitiative": "Lancer l'initiative",
+      "RollAll": "Lancer l'initiative de tous",
+      "RollNPC": "Lancer l'initiative des PNJ",
+      "Reset": "Effacer toutes les initiatives",
+      "Start": "Commencer le combat",
+      "PreviousRound": "Round précédent",
+      "PreviousTurn": "Tour précédent",
+      "NextTurn": "Tour suivant",
+      "NextRound": "Round suivant",
+      "End": "Terminer le combat",
+      "OpenTracker": "Ouvrir le suivi de combat",
+      "EndTurn": "Fin du tour",
+      "Menu": {
+        "Ping": "Signaler",
+        "Reroll": "Relancer l'initiative",
+        "ClearInitiative": "Effacer l'initiative",
+        "SetActive": "Rendre actif",
+        "ToggleHidden": "Masquer / montrer",
+        "ToggleDefeated": "Vaincu",
+        "Remove": "Retirer du combat"
+      }
+    },
+    "Bar": {
+      "Checks": "Tests, sauvegardes et compétences",
+      "AC": "CA",
+      "Speed": "Vitesse",
+      "Concentration": "Concentration : {name}",
+      "EndConcentration": "Mettre fin à la concentration",
+      "GMHeal": "MJ : soigner complètement (PV au maximum)",
+      "GMKill": "MJ : tuer (0 PV)",
+      "ConcentrationTag": "Concentration",
+      "Ritual": "Rituel",
+      "Cantrip": "Sort mineur",
+      "SpellLevel": "Niveau {level}",
+      "Uses": "{value}/{max} utilisations",
+      "UpcastHint": "Clic : choisir le niveau · Maj+clic : dialogue du système",
+      "MainHand": "Main principale",
+      "OffHand": "Main secondaire",
+      "WeaponSet": "Jeu d'armes {n}",
+      "RemoveEffect": "clic droit pour le retirer",
+      "Separator": "Tirer pour élargir un conteneur",
+      "Lock": "Verrouiller la barre (fige les icônes : ni déplacer, ni ajouter, ni retirer)",
+      "Unlock": "Déverrouiller la barre",
+      "Menu": {
+        "Details": "Détails",
+        "Sheet": "Ouvrir la fiche",
+        "Remove": "Retirer de la barre"
+      },
+      "AddRow": "Ajouter une rangée",
+      "RemoveRow": "Retirer une rangée",
+      "EndTurn": "Fin du tour",
+      "TurnOf": "Tour de {name}",
+      "Movement": "Déplacement : {left} / {allowed}",
+      "Rest": "Repos",
+      "ShortRest": "Repos court",
+      "LongRest": "Repos long",
+      "NotOwnedItem": "Darsh UI : ajoutez d'abord cet objet à la fiche du personnage.",
+      "TooltipHint": "Alt : détails · T ou clic du milieu : épingler",
+      "Enchanted": "Enchanté : {names}",
+      "Form": "Forme : {name}",
+      "Target": "Cible",
+      "Duration": "Durée",
+      "Filter": {
+        "action": "Actions",
+        "bonus": "Actions bonus",
+        "reaction": "Réactions",
+        "cantrip": "Sorts mineurs",
+        "level": "Niveau {level} : {value}/{max} emplacements",
+        "pact": "Pacte (niveau {level}) : {value}/{max} emplacements"
+      },
+      "Tab": {
+        "default": "Vue par défaut",
+        "common": "Commune",
+        "class": "Classe",
+        "items": "Objets",
+        "passives": "Passifs",
+        "custom": "Personnalisé"
+      }
+    },
+    "Reason": {
+      "NoUses": "Plus d'utilisation",
+      "NoQuantity": "Plus aucun exemplaire",
+      "Unprepared": "Sort non préparé",
+      "NoSlot": "Aucun emplacement disponible"
+    },
+    "Keys": {
+      "CustomSlot": "Barre : case Personnalisé {n}",
+      "CustomSlotHint": "Utilise la case correspondante de l'onglet Personnalisé. Une case vide laisse la touche à la barre de macros.",
+      "PinTooltip": "Barre : épingler l'infobulle",
+      "PinTooltipHint": "Épingle l'infobulle détaillée de la case survolée (hors de la Barre, la touche garde son rôle : cibler).",
+      "SwapWeapons": "Barre : changer de jeu d'armes",
+      "SwapWeaponsHint": "Passe à l'autre jeu d'armes (pendant une mesure, la touche pose un point de passage).",
+      "BasicHint": "Utilise cette action de base du moteur de combat pour le personnage de la Barre.",
+      "Basic": {
+        "dash": "Action : Foncer",
+        "disengage": "Action : Se désengager",
+        "dodge": "Action : Esquiver",
+        "hide": "Action : Se cacher",
+        "search": "Action : Chercher",
+        "help": "Action : Aider",
+        "ready": "Action : Se tenir prêt",
+        "escape": "Action : S'échapper"
+      }
+    },
+    "D20": {
+      "Checks": "Caractéristiques",
+      "Saves": "Sauvegardes",
+      "Skills": "Compétences",
+      "Other": "Autres",
+      "Initiative": "Initiative",
+      "Concentration": "Concentration",
+      "SpellDC": "DD des sorts",
+      "Passive": "Passive : {value}"
+    },
+    "Party": {
+      "HandRaised": "Main levée",
+      "Inspiration": "Inspiration héroïque",
+      "Menu": {
+        "Sheet": "Ouvrir la fiche",
+        "Target": "Cibler",
+        "RaiseHand": "Lever la main",
+        "LowerHand": "Baisser la main",
+        "Ping": "Signaler"
+      }
+    },
+    "Settings": {
+      "PortraitImage": {
+        "Name": "Image des portraits",
+        "Hint": "Art du personnage (image de l'acteur) ou image du token. Sans art propre, l'image du token est utilisée.",
+        "Actor": "Image de l'acteur",
+        "Token": "Image du token"
+      },
+      "scaleFrieze": {
+        "Name": "Taille de la Frise (%)",
+        "Hint": "Agrandit ou réduit la frise d'initiative (en haut) sur cet appareil. Avec l'adaptation à la fenêtre, ce pourcentage s'applique par-dessus."
+      },
+      "scaleParty": {
+        "Name": "Taille du Groupe (%)",
+        "Hint": "Agrandit ou réduit les portraits du groupe (sur le côté) sur cet appareil. Avec l'adaptation à la fenêtre, ce pourcentage s'applique par-dessus."
+      },
+      "scaleBar": {
+        "Name": "Taille de la Barre (%)",
+        "Hint": "Agrandit ou réduit la barre d'actions (en bas) sur cet appareil. Avec l'adaptation à la fenêtre, ce pourcentage s'applique par-dessus."
+      },
+      "ScaleAuto": {
+        "Name": "Adapter la taille à la fenêtre",
+        "Hint": "L'interface grandit et rétrécit avec la fenêtre de Foundry : taille normale dans une fenêtre de 1920 × 1080, plus petite en dessous, plus grande au-dessus (de 60 % à 200 %)."
+      },
+      "FadeOpacity": {
+        "Name": "Opacité hors survol (%)",
+        "Hint": "La Barre, le Groupe et la Frise s'estompent chacun jusqu'à cette opacité quand la souris ne les survole pas, et redeviennent nets au survol. La Barre reste nette pendant le tour de votre personnage. 100 % : jamais estompés. Vitesse et délai suivent le fondu de l'interface de Foundry (Configurer l'interface)."
+      },
+      "EnemyHealth": {
+        "Name": "PV des créatures vus par les joueurs",
+        "Hint": "Ce qu'un joueur voit des PV d'une créature dont il ne voit pas la fiche. Le MJ et les propriétaires voient toujours les PV exacts.",
+        "exact": "Exacts (voile au plus juste)",
+        "tiers": "Par paliers (indemne, blessé, en sang, critique)",
+        "none": "Aucun (seulement à terre / mort)"
+      },
+      "frieze": {
+        "Name": "Frise d'initiative",
+        "Hint": "Affiche l'ordre du tour en haut de l'écran pendant les combats."
+      },
+      "friezeRound": {
+        "Name": "Frise : numéro du round",
+        "Hint": "Affiche « Round n » à gauche de la frise."
+      },
+      "friezeInitiativeText": {
+        "Name": "Initiative au-dessus des têtes",
+        "Hint": "Au début du combat, chaque token affiche brièvement sa valeur d'initiative."
+      },
+      "friezePrepToPlayers": {
+        "Name": "Frise : montrer la préparation aux joueurs",
+        "Hint": "Les joueurs voient la frise dès que le combat est créé (pour lancer leur initiative), pas seulement une fois commencé."
+      },
+      "friezeEnemyInitiative": {
+        "Name": "Frise : initiative des créatures visible",
+        "Hint": "Les joueurs voient la valeur d'initiative des créatures qu'ils ne possèdent pas."
+      },
+      "friezeAutoSelect": {
+        "Name": "Frise : sélectionner le combattant actif",
+        "Hint": "À chaque tour, le token dont c'est le tour est sélectionné et la vue recentrée sur lui. Le MJ sélectionne n'importe quel combattant ; un joueur, seulement les siens."
+      },
+      "friezeHideDefeated": {
+        "Name": "Frise : retirer les vaincus",
+        "Hint": "Les créatures vaincues disparaissent de la frise des joueurs."
+      },
+      "party": {
+        "Name": "Portraits du groupe",
+        "Hint": "Affiche les personnages du groupe en colonne sur le côté de l'écran."
+      },
+      "partyPosition": {
+        "Name": "Groupe : côté",
+        "Hint": "Où placer la colonne des portraits.",
+        "left": "À gauche",
+        "right": "À droite",
+        "hidden": "Masquée"
+      },
+      "partyPlacement": {
+        "Name": "Groupe : placement à gauche",
+        "Hint": "Automatique : collé au bord de l'écran, sauf s'il recouvrirait les outils de scène (alors à côté d'eux).",
+        "auto": "Automatique",
+        "edge": "Toujours au bord de l'écran",
+        "beside": "Toujours à côté des outils de scène"
+      },
+      "partyHideInCombat": {
+        "Name": "Groupe : masquer en combat",
+        "Hint": "Cache la colonne des portraits pendant les combats (la frise suffit)."
+      },
+      "partyMembers": {
+        "Name": "Groupe : qui en fait partie",
+        "Hint": "Les personnages assignés aux joueurs seulement, ou tout personnage qu'un joueur possède.",
+        "owned": "Tout personnage possédé par un joueur",
+        "assigned": "Personnages assignés seulement"
+      },
+      "partyConnectedOnly": {
+        "Name": "Groupe : joueurs connectés seulement",
+        "Hint": "N'affiche que les personnages dont un joueur est connecté."
+      },
+      "partyCompanions": {
+        "Name": "Groupe : compagnons et invocations",
+        "Hint": "Affiche en petit, sous chaque personnage, ses invocations et les autres créatures de la scène que son joueur possède."
+      },
+      "partyHealthExact": {
+        "Name": "Groupe : PV exacts entre joueurs",
+        "Hint": "Chaque joueur voit les PV exacts de tous les membres du groupe, pas seulement des siens."
+      },
+      "bar": {
+        "Name": "Barre d'actions",
+        "Hint": "Affiche la barre d'actions façon BG3 en bas de l'écran pour le personnage contrôlé."
+      },
+      "barHideHotbar": {
+        "Name": "Barre : replier la barre de macros",
+        "Hint": "Cache la barre de macros de Foundry quand la Barre d'actions est là."
+      },
+      "barGMHotbar": {
+        "Name": "Barre : le MJ garde la barre de macros",
+        "Hint": "Chez le MJ, la barre de macros de Foundry reste affichée et la Barre d'actions se place au-dessus. Les joueurs suivent leur propre réglage."
+      },
+      "barFullTooltips": {
+        "Name": "Barre : infobulles détaillées",
+        "Hint": "Affiche toujours la description complète au survol d'une case (sinon : maintenir Alt)."
+      },
+      "barLockPlayers": {
+        "Name": "Barre : verrouiller pour les joueurs",
+        "Hint": "Les joueurs ne peuvent plus déplacer, ajouter ni retirer de cases."
+      }
+    }
+  }
+}

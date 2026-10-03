@@ -1,0 +1,72 @@
+{
+  "id": "darsh-dnd-ui",
+  "title": "darsh-dnd · Darsh UI DnD5",
+  "description": "Interface de combat façon Baldur's Gate 3 pour dnd5e : barre d'actions, portraits du groupe, frise d'initiative. S'appuie sur le moteur dnd5e-combat (budget du tour, déplacement, raisons des actions grisées).",
+  "version": "0.14.0",
+  "authors": [
+    {
+      "name": "Darshyne"
+    }
+  ],
+  "url": "https://github.com/Darshyne/darsh-dnd-ui",
+  "license": "https://github.com/Darshyne/darsh-dnd-ui/blob/main/LICENSE",
+  "compatibility": {
+    "minimum": "14",
+    "verified": "14.367"
+  },
+  "relationships": {
+    "systems": [
+      {
+        "id": "dnd5e",
+        "type": "system",
+        "compatibility": {
+          "minimum": "6.0.0"
+        }
+      }
+    ],
+    "requires": [
+      {
+        "id": "dnd5e-combat",
+        "type": "module",
+        "compatibility": {
+          "minimum": "0.146.0"
+        }
+      }
+    ],
+    "conflicts": [
+      {
+        "id": "bg3-hud-core",
+        "type": "module",
+        "reason": "La Barre le remplace : deux barres d'actions s'afficheraient."
+      },
+      {
+        "id": "combat-tracker-dock",
+        "type": "module",
+        "reason": "La Frise le remplace : deux ordres du tour s'afficheraient."
+      },
+      {
+        "id": "party-monitor-dock",
+        "type": "module",
+        "reason": "Le Groupe le remplace : deux colonnes de portraits s'afficheraient."
+      }
+    ]
+  },
+  "esmodules": [
+    "scripts/darsh-dnd-ui.mjs"
+  ],
+  "styles": [
+    "styles/darsh-dnd-ui.css"
+  ],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    },
+    {
+      "lang": "fr",
+      "name": "Français",
+      "path": "lang/fr.json"
+    }
+  ]
+}

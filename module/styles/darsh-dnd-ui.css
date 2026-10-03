@@ -1,0 +1,1009 @@
+/*
+ * Darsh UI DnD5 — thème « css » (V1). Toute couleur, bordure ou taille passe par une variable --ddu-* :
+ * la V2 (images, SPEC §10 bis) sera un thème qui redéfinit ces variables, pas une refonte.
+ */
+:root {
+  /* Posées par runtime/display.mjs : taille (réglage × adaptation à la fenêtre), opacité hors survol (1 = jamais). */
+  --ddu-scale: 1;
+  --ddu-fade-opacity: 1;
+
+  /* Couleurs */
+  --ddu-bg: rgba(18, 12, 10, 0.88);
+  --ddu-gold: #c9a45c;
+  --ddu-gold-dim: #7d6538;
+  --ddu-text: #f2e8d5;
+  --ddu-action: #3fae4a;
+  --ddu-bonus: #e5822a;
+  --ddu-reaction: #d9569b;
+  --ddu-slot: #8f5bd6;
+  --ddu-cantrip: #34c6c9;
+  --ddu-hurt: rgba(170, 16, 24, 0.58);
+  --ddu-temp: #4ea3e0;
+  --ddu-heal: rgba(70, 200, 90, 0.55);
+  --ddu-active: #36c9d6;
+  --ddu-side-friendly: #d8d4cc;
+  --ddu-side-neutral: #d9c46a;
+  --ddu-side-hostile: #b3232b;
+  --ddu-side-secret: #8a5bbd;
+
+  --ddu-frame-width: 2px;
+  --ddu-radius-card: 6px;
+
+  /* Police des titres et des chiffres : serif du cœur en attendant une police livrée (OFL). */
+  --ddu-font-title: "Modesto Condensed", "Signika", serif;
+}
+
+/*
+ * Tailles (multipliées par --ddu-scale). Redéclarées sur chaque composant : chacun a sa propre échelle (réglages
+ * « Taille de la Frise / du Groupe / de la Barre », posée en ligne par runtime/display.mjs), et une variable dérivée
+ * se calcule là où elle est déclarée.
+ */
+:root, .ddu-bar, .ddu-party, .ddu-frieze {
+  --ddu-cell: calc(52px * var(--ddu-scale));
+  --ddu-portrait-round: calc(160px * var(--ddu-scale));
+  --ddu-portrait-party-w: calc(72px * var(--ddu-scale));
+  --ddu-portrait-party-h: calc(96px * var(--ddu-scale));
+  --ddu-portrait-frieze-w: calc(64px * var(--ddu-scale));
+  --ddu-portrait-frieze-h: calc(86px * var(--ddu-scale));
+}
+
+/* ---------- Fondu hors survol ---------- */
+
+/*
+ * Un composant que la souris ne survole pas s'estompe (réglage client « Opacité hors survol »). Durée et délai :
+ * ceux du fondu de l'interface du cœur (barre de macros, joueurs…), qu'un thème peut remplacer par
+ * --ddu-fade-duration / --ddu-fade-delay. Reste net : survolé, initiative en cours de saisie, tiroir ou panneau
+ * ouvert, glisser au-dessus (.ddu-awake, le survol étant figé pendant un glisser).
+ */
+.ddu-bar, .ddu-party, .ddu-frieze {
+  opacity: var(--ddu-fade-opacity);
+  transition: opacity var(--ddu-fade-duration, var(--ui-fade-duration, 0.5s)) var(--ddu-fade-delay, var(--ui-fade-delay, 0.5s));
+}
+.ddu-bar:hover, .ddu-party:hover, .ddu-frieze:hover,
+.ddu-frieze:has(.ddu-frieze__init-input),   /* pas :focus-within : un bouton cliqué garde le focus, rien ne s'estomperait plus */
+.ddu-bar:has(.ddu-bar__popup, .ddu-d20),
+.ddu-bar--turn,                             /* tour du personnage affiché, si on le joue */
+.ddu-awake {
+  opacity: 1;
+  transition: opacity 150ms;
+}
+
+/* ---------- Portrait ---------- */
+
+.ddu-portrait {
+  --ddu-veil: 0;
+  position: relative;
+  overflow: hidden;
+  flex: none;
+  background: #000;
+  border: var(--ddu-frame-width) solid var(--ddu-gold);
+  box-shadow: 0 0 0 1px #000, 0 2px 8px rgba(0, 0, 0, 0.6);
+  user-select: none;
+}
+.ddu-portrait--round {
+  width: var(--ddu-portrait-round);
+  height: var(--ddu-portrait-round);
+  border-radius: 50%;
+  border-width: calc(3px * var(--ddu-scale));
+}
+.ddu-portrait--card {
+  width: var(--ddu-portrait-party-w);
+  height: var(--ddu-portrait-party-h);
+  border-radius: var(--ddu-radius-card);
+  border-color: var(--ddu-side-friendly);
+}
+.ddu-portrait--frieze {
+  width: var(--ddu-portrait-frieze-w);
+  height: var(--ddu-portrait-frieze-h);
+}
+.ddu-portrait[data-side="friendly"] { border-color: var(--ddu-side-friendly); }
+.ddu-portrait[data-side="neutral"]  { border-color: var(--ddu-side-neutral); }
+.ddu-portrait[data-side="secret"]   { border-color: var(--ddu-side-secret); }
+.ddu-portrait[data-side="hostile"] {
+  border-color: var(--ddu-side-hostile);
+  background: #3a0a0d;
+}
+
+.ddu-portrait__image,
+.ddu-portrait__image img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.ddu-portrait__image img {
+  object-fit: cover;
+  object-position: 50% 15%;
+  border: none;
+}
+.ddu-portrait[data-side="hostile"] .ddu-portrait__image img { opacity: 0.92; }
+
+/* Voile rouge des PV perdus : monte du bas (SPEC §7.3). */
+.ddu-portrait__veil {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: calc(var(--ddu-veil) * 100%);
+  background: linear-gradient(to top, var(--ddu-hurt), rgba(170, 16, 24, 0.42));
+  transition: height 300ms ease-out;
+  pointer-events: none;
+}
+
+.ddu-portrait[data-tier="down"] .ddu-portrait__image img,
+.ddu-portrait[data-tier="dead"] .ddu-portrait__image img {
+  filter: grayscale(1) brightness(0.7);
+}
+
+/* Flash au changement de PV */
+.ddu-portrait__flash {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+.ddu-portrait.ddu-flash--damage .ddu-portrait__flash {
+  background: rgba(220, 20, 30, 0.6);
+  animation: ddu-flash 450ms ease-out;
+}
+.ddu-portrait.ddu-flash--heal .ddu-portrait__flash {
+  background: var(--ddu-heal);
+  animation: ddu-flash 600ms ease-out;
+}
+@keyframes ddu-flash {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+/* PV en chiffres, en bas au centre (captures de la Barre et du Groupe) */
+.ddu-portrait__hp {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 6%;
+  text-align: center;
+  font-family: var(--ddu-font-title);
+  font-size: calc(18px * var(--ddu-scale));
+  color: var(--ddu-text);
+  text-shadow: 0 0 3px #000, 0 1px 2px #000;
+  pointer-events: none;
+}
+.ddu-portrait--round .ddu-portrait__hp {
+  bottom: 9%;
+  font-size: calc(24px * var(--ddu-scale));
+}
+.ddu-portrait__hp--temp { color: var(--ddu-temp); }
+.ddu-portrait--frieze .ddu-portrait__hp { display: none; }
+
+/* Jets contre la mort : 3 réussites / 3 échecs */
+.ddu-portrait__death {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 40%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+.ddu-death { display: flex; gap: 3px; }
+.ddu-pip {
+  width: calc(9px * var(--ddu-scale));
+  height: calc(9px * var(--ddu-scale));
+  border-radius: 50%;
+  border: 1px solid var(--ddu-gold);
+  background: rgba(0, 0, 0, 0.6);
+}
+.ddu-pip--success.ddu-pip--on { background: var(--ddu-action); }
+.ddu-pip--failure.ddu-pip--on { background: var(--ddu-side-hostile); }
+
+/* ---------- Frise (SPEC §7) ---------- */
+
+.ddu-frieze {
+  align-self: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 100%;
+  margin-top: 6px;
+  pointer-events: none;
+  z-index: 30;
+}
+.ddu-frieze[hidden] { display: none; }
+.ddu-frieze__bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  pointer-events: auto;
+}
+.ddu-frieze__round {
+  color: var(--ddu-text);
+  font-family: var(--ddu-font-title);
+  font-size: calc(15px * var(--ddu-scale));
+  text-shadow: 0 0 3px #000, 0 1px 2px #000;
+  white-space: nowrap;
+}
+/* Volutes dorées de part et d'autre (V1 : filets ; V2 : images, SPEC §10 bis). */
+.ddu-frieze__ornament {
+  flex: none;
+  width: calc(46px * var(--ddu-scale));
+  height: calc(28px * var(--ddu-scale));
+  border-top: 2px solid var(--ddu-gold);
+  border-bottom: 1px solid var(--ddu-gold-dim);
+}
+.ddu-ornament--left  { border-radius: 30px 0 0 30px; border-left: 2px solid var(--ddu-gold); }
+.ddu-ornament--right { border-radius: 0 30px 30px 0; border-right: 2px solid var(--ddu-gold); }
+
+.ddu-frieze__track {
+  display: flex;
+  gap: 0;                         /* portraits collés (capture) */
+  margin: 0;
+  padding: 0 0 calc(16px * var(--ddu-scale));
+  list-style: none;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+}
+.ddu-frieze__slot {
+  position: relative;
+  flex: none;
+  margin: 0 1px;
+  cursor: pointer;
+}
+.ddu-frieze__slot .ddu-portrait { transition: filter 150ms, width 200ms, height 200ms; }
+/* Combattant actif agrandi (demande de l'utilisateur, 2026-09-27 ; la capture BG3 les montrait égaux). */
+.ddu-frieze__slot--active .ddu-portrait--frieze {
+  width: calc(var(--ddu-portrait-frieze-w) * 1.3);
+  height: calc(var(--ddu-portrait-frieze-h) * 1.3);
+  border-color: var(--ddu-active);
+  box-shadow: 0 0 0 1px #000, 0 0 12px var(--ddu-active);
+}
+.ddu-frieze__slot--active { margin: 0 4px; }
+.ddu-frieze__slot:hover .ddu-portrait,
+.ddu-frieze__slot--hover .ddu-portrait { filter: brightness(1.15); }
+.ddu-frieze__slot--played .ddu-portrait { filter: brightness(0.6) saturate(0.7); }
+.ddu-frieze__slot--hidden .ddu-portrait { opacity: 0.45; border-style: dashed; }
+.ddu-frieze__slot--dragging { opacity: 0.4; }
+.ddu-frieze__slot.ddu-drop--before { box-shadow: -3px 0 0 var(--ddu-active); }
+.ddu-frieze__slot.ddu-drop--after  { box-shadow:  3px 0 0 var(--ddu-active); }
+
+/* Actif : trait cyan sous le portrait + ▲ plein ; survol : △ vide (capture). */
+.ddu-frieze__marker {
+  position: absolute;
+  left: 50%;
+  bottom: calc(-15px * var(--ddu-scale));
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+.ddu-frieze__slot--active::after {
+  content: "";
+  position: absolute;
+  left: 3px;
+  right: 3px;
+  bottom: -5px;
+  height: 3px;
+  background: var(--ddu-active);
+  box-shadow: 0 0 6px var(--ddu-active);
+}
+.ddu-frieze__slot--active .ddu-frieze__marker,
+.ddu-frieze__slot--hover .ddu-frieze__marker {
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 8px solid var(--ddu-text);
+}
+.ddu-frieze__slot--hover:not(.ddu-frieze__slot--active) .ddu-frieze__marker {
+  border-bottom-color: transparent;
+  filter: drop-shadow(0 -1.5px 0 var(--ddu-text)) drop-shadow(1px 0.8px 0 var(--ddu-text)) drop-shadow(-1px 0.8px 0 var(--ddu-text));
+}
+
+/* Pastille d'état, en bas au centre du portrait (capture). */
+.ddu-frieze__status {
+  position: absolute;
+  left: 50%;
+  bottom: 6px;
+  transform: translateX(-50%);
+  width: calc(22px * var(--ddu-scale));
+  height: calc(22px * var(--ddu-scale));
+  padding: 2px;
+  border: 1px solid var(--ddu-gold);
+  border-radius: 50%;
+  background: rgba(20, 14, 8, 0.85);
+  pointer-events: none;
+}
+
+/* Initiative : pastille en haut à gauche (MJ, ou pendant le lancer). */
+.ddu-frieze__init,
+.ddu-frieze__init-input {
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  min-width: calc(20px * var(--ddu-scale));
+  height: calc(18px * var(--ddu-scale));
+  padding: 0 3px;
+  border: 1px solid var(--ddu-gold);
+  border-radius: 9px;
+  background: var(--ddu-bg);
+  color: var(--ddu-text);
+  font-size: calc(11px * var(--ddu-scale));
+  line-height: calc(16px * var(--ddu-scale));
+  text-align: center;
+}
+.ddu-frieze--gm .ddu-frieze__init { cursor: text; }
+.ddu-frieze__init-input { width: calc(40px * var(--ddu-scale)); z-index: 2; }
+.ddu-frieze__roll {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: calc(32px * var(--ddu-scale));
+  height: calc(32px * var(--ddu-scale));
+  padding: 0;
+  border: 1px solid var(--ddu-gold);
+  border-radius: 50%;
+  background: var(--ddu-bg);
+  color: var(--ddu-gold);
+  font-size: calc(16px * var(--ddu-scale));
+  animation: ddu-pulse 1.6s ease-in-out infinite;
+}
+@keyframes ddu-pulse {
+  50% { box-shadow: 0 0 10px var(--ddu-gold); }
+}
+
+.ddu-frieze__controls {
+  display: flex;
+  gap: 2px;
+  margin-left: 4px;
+}
+.ddu-frieze__controls[hidden] { display: none; }
+.ddu-frieze__controls button {
+  width: calc(26px * var(--ddu-scale));
+  height: calc(26px * var(--ddu-scale));
+  padding: 0;
+  border: 1px solid var(--ddu-gold-dim);
+  border-radius: 4px;
+  background: var(--ddu-bg);
+  color: var(--ddu-text);
+  font-size: calc(12px * var(--ddu-scale));
+  line-height: 1;
+}
+.ddu-frieze__controls button:hover { border-color: var(--ddu-gold); color: var(--ddu-gold); }
+
+/* Nom et niveau en grand sous la frise (capture). */
+.ddu-frieze__caption {
+  min-height: calc(26px * var(--ddu-scale));
+  color: var(--ddu-text);
+  font-family: var(--ddu-font-title);
+  text-shadow: 0 0 4px #000, 0 1px 2px #000;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.ddu-frieze__name { font-size: calc(22px * var(--ddu-scale)); }
+.ddu-frieze__sub  { font-size: calc(15px * var(--ddu-scale)); opacity: 0.9; }
+
+/* Infobulle : pastilles du budget du moteur */
+.ddu-tooltip { text-align: left; }
+.ddu-budget { display: inline-flex; align-items: center; gap: 4px; }
+.ddu-pip--action   { border-radius: 50%; background: var(--ddu-action); border-color: var(--ddu-action); }
+.ddu-pip--bonus    { border-radius: 2px; background: var(--ddu-bonus); border-color: var(--ddu-bonus); clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+.ddu-pip--reaction { background: var(--ddu-reaction); border-color: var(--ddu-reaction); clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%); }
+.ddu-pip--spent    { background: transparent; opacity: 0.45; }
+
+/* ---------- Groupe (SPEC §6) ---------- */
+
+.ddu-party {
+  --ddu-player: transparent;
+  position: fixed;                /* left / right posés par Party#place */
+  top: 50%;
+  transform: translateY(-50%);
+  max-height: 70vh;
+  overflow-y: auto;               /* coupe aussi en largeur : d'où la marge pour épées et couronne */
+  scrollbar-width: none;
+  padding: 12px 8px 12px 22px;
+  border-left: 2px solid var(--ddu-gold);   /* filet doré le long du bord (V2 : ornement en image) */
+  pointer-events: auto;
+  z-index: 30;
+}
+.ddu-party[hidden] { display: none; }
+.ddu-party--right {
+  padding: 12px 22px 12px 8px;
+  border-left: none;
+  border-right: 2px solid var(--ddu-gold);
+}
+.ddu-party__list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;                         /* portraits empilés sans espace (capture) */
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.ddu-party__member {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  margin: 1px 0;
+  cursor: pointer;
+}
+.ddu-party--right .ddu-party__member { flex-direction: row-reverse; }
+.ddu-party__frame { position: relative; }
+.ddu-party__frame::before {       /* liseré à la couleur du joueur */
+  content: "";
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: -5px;
+  width: 3px;
+  border-radius: 2px;
+  background: var(--ddu-player);
+}
+.ddu-party__member:hover .ddu-portrait,
+.ddu-party__member--hover .ddu-portrait { filter: brightness(1.15); }
+.ddu-party__member--turn .ddu-portrait {
+  border-color: var(--ddu-gold);
+  box-shadow: 0 0 0 1px #000, 0 0 10px var(--ddu-gold);
+}
+.ddu-party__member--played .ddu-portrait { filter: brightness(0.7); }
+.ddu-party__member.ddu-drop--before { box-shadow: 0 -3px 0 var(--ddu-active); }
+.ddu-party__member.ddu-drop--after  { box-shadow: 0 3px 0 var(--ddu-active); }
+
+/* Compagnons et invocations : en petit, décalés sous leur personnage. */
+.ddu-party__member--companion { margin-left: calc(22px * var(--ddu-scale)); }
+.ddu-party__member--companion .ddu-portrait {
+  width: calc(var(--ddu-portrait-party-w) * 0.6);
+  height: calc(var(--ddu-portrait-party-h) * 0.6);
+}
+.ddu-party__member--companion .ddu-portrait__hp { font-size: calc(12px * var(--ddu-scale)); }
+
+/* Couronne (personnage contrôlé) et épées croisées (en combat), comme la capture. */
+.ddu-party__crown,
+.ddu-party__swords,
+.ddu-party__hand,
+.ddu-party__inspiration {
+  position: absolute;
+  display: none;
+  color: var(--ddu-gold);
+  text-shadow: 0 0 3px #000, 0 1px 2px #000;
+  pointer-events: none;
+}
+.ddu-party__crown { top: -9px; right: -7px; font-size: calc(15px * var(--ddu-scale)); transform: rotate(18deg); }
+.ddu-party__member--current .ddu-party__crown { display: block; }
+.ddu-party__swords { top: 38%; left: -16px; font-size: calc(14px * var(--ddu-scale)); color: #e8e2d6; }
+.ddu-party__member--combat .ddu-party__swords { display: block; }
+.ddu-party__hand { display: block; top: -8px; left: -6px; font-size: calc(15px * var(--ddu-scale)); color: #f0d060; pointer-events: auto; }
+.ddu-party__inspiration { display: block; bottom: 22%; right: -6px; font-size: calc(12px * var(--ddu-scale)); pointer-events: auto; }
+.ddu-party--right .ddu-party__swords { left: auto; right: -16px; }
+
+/* Pastilles A/B/R du moteur, en haut du portrait */
+.ddu-party__budget {
+  position: absolute;
+  top: 3px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 2px;
+  pointer-events: none;
+}
+.ddu-party__budget .ddu-pip { width: calc(8px * var(--ddu-scale)); height: calc(8px * var(--ddu-scale)); }
+
+/* Colonne d'effets à droite du portrait (capture : bouclier doré) */
+.ddu-party__effects {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-top: 2px;
+}
+.ddu-party__effect {
+  width: calc(20px * var(--ddu-scale));
+  height: calc(20px * var(--ddu-scale));
+  padding: 1px;
+  border: 1px solid var(--ddu-gold-dim);
+  border-radius: 50%;
+  background: rgba(20, 14, 8, 0.85);
+}
+.ddu-party__effect--concentration { border-color: var(--ddu-gold); box-shadow: 0 0 4px var(--ddu-gold); }
+.ddu-party__more {
+  color: var(--ddu-text);
+  font-size: calc(11px * var(--ddu-scale));
+  text-align: center;
+  text-shadow: 0 0 3px #000;
+}
+
+/* Mort : crâne sur le portrait */
+.ddu-portrait__skull {
+  position: absolute;
+  top: 30%;
+  left: 0;
+  right: 0;
+  display: none;
+  text-align: center;
+  font-size: calc(22px * var(--ddu-scale));
+  color: #e8e2d6;
+  text-shadow: 0 0 4px #000;
+  pointer-events: none;
+}
+.ddu-portrait[data-tier="dead"] .ddu-portrait__skull { display: block; }
+.ddu-portrait--round .ddu-portrait__skull { font-size: calc(44px * var(--ddu-scale)); }
+
+/* ---------- Barre (SPEC §5) ---------- */
+
+:root {
+  --ddu-separator: #9b1c1c;
+  --ddu-panel: linear-gradient(180deg, rgba(40, 18, 16, 0.94), rgba(22, 10, 9, 0.96));
+}
+
+body.ddu-hide-hotbar #hotbar { display: none; }
+
+/*
+ * Pas de fond commun (demande de l'utilisateur, 2026-09-27) : chaque élément garde son cadre, et les vides
+ * entre eux laissent passer les clics vers le canevas.
+ */
+.ddu-bar {
+  position: relative;
+  align-self: center;
+  display: flex;
+  align-items: flex-end;
+  gap: calc(10px * var(--ddu-scale));
+  max-width: calc(100vw - 40px);
+  margin-bottom: 6px;
+  padding: 0 calc(14px * var(--ddu-scale));
+  pointer-events: none;
+  z-index: 40;
+}
+.ddu-bar__d20, .ddu-bar__portrait, .ddu-bar__weapons, .ddu-bar__filters, .ddu-bar__effects, .ddu-bar__grid,
+.ddu-bar__tabs, .ddu-bar__rows, .ddu-bar__end, .ddu-bar__popup, .ddu-d20 {
+  pointer-events: auto;
+}
+.ddu-bar__grid, .ddu-bar__weapons { background: rgba(12, 6, 5, 0.82); }
+.ddu-bar[hidden] { display: none; }
+.ddu-bar button { line-height: 1; }
+
+/* Gauche : d20, portrait, armes */
+.ddu-bar__left { display: flex; align-items: flex-end; gap: calc(8px * var(--ddu-scale)); }
+.ddu-bar__d20 {
+  flex: none;
+  width: calc(46px * var(--ddu-scale));
+  height: calc(46px * var(--ddu-scale));
+  margin-bottom: calc(56px * var(--ddu-scale));
+  padding: 0;
+  border: 2px solid var(--ddu-gold);
+  border-radius: 50%;
+  background: radial-gradient(circle, #2a3a52, #101820);
+  color: var(--ddu-gold);
+  font-size: calc(20px * var(--ddu-scale));
+}
+.ddu-bar__d20:hover { box-shadow: 0 0 8px var(--ddu-gold); }
+.ddu-bar__portrait { position: relative; cursor: pointer; }
+.ddu-bar__portrait .ddu-portrait { box-shadow: 0 0 0 2px #000, 0 0 0 4px var(--ddu-gold-dim), 0 2px 10px #000; }
+.ddu-bar__concentration {
+  position: absolute;
+  left: -6px;
+  bottom: -4px;
+  width: calc(34px * var(--ddu-scale));
+  height: calc(34px * var(--ddu-scale));
+  border: 2px solid var(--ddu-gold);
+  border-radius: 50%;
+  background: #1a120c;
+}
+/* Témoin de luminosité (moteur de combat) : en haut à droite du portrait. */
+.ddu-bar__light {
+  position: absolute;
+  top: 2px;
+  right: -4px;
+  width: calc(32px * var(--ddu-scale));
+  height: calc(32px * var(--ddu-scale));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--ddu-gold);
+  border-radius: 50%;
+  background: #1a120c;
+  color: var(--ddu-text);
+  font-size: calc(15px * var(--ddu-scale));
+  cursor: help;
+}
+.ddu-bar__light[hidden] { display: none; }
+.ddu-bar__light[data-key="bright"] { color: #ffd65a; }
+.ddu-bar__light[data-key="dim"] { color: #c8b98a; }
+.ddu-bar__light[data-key="dark"] { color: #7f95c9; }
+.ddu-bar__light[data-key="magical"] { color: #b25cff; }
+.ddu-bar__concentration img { width: 100%; height: 100%; border: none; border-radius: 50%; }
+.ddu-bar__concentration button {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  display: none;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: 1px solid var(--ddu-gold);
+  border-radius: 50%;
+  background: #300;
+  color: #fff;
+  font-size: 10px;
+}
+.ddu-bar__concentration:hover button { display: block; }
+/* Boutons du MJ autour du portrait : soigner en haut à gauche, tuer en bas à droite. */
+.ddu-bar__gm {
+  position: absolute;
+  width: calc(24px * var(--ddu-scale));
+  height: calc(24px * var(--ddu-scale));
+  padding: 0;
+  border: 2px solid var(--ddu-gold);
+  border-radius: 50%;
+  background: #1a120c;
+  font-size: calc(11px * var(--ddu-scale));
+  line-height: 1;
+}
+.ddu-bar__gm--heal { top: 2px; left: -6px; color: #6fd27a; }
+.ddu-bar__gm--kill { bottom: -2px; right: -6px; color: #e05050; }
+.ddu-bar__gm:hover { background: #2b1d12; box-shadow: 0 0 6px var(--ddu-gold); }
+
+.ddu-bar__weapons {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--ddu-gold-dim);
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.35);
+}
+.ddu-weapons__active { display: flex; gap: 4px; }
+.ddu-weapons__set {
+  display: flex;
+  gap: 4px;
+  padding: 2px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.ddu-weapons__set--active { border-color: var(--ddu-active); box-shadow: 0 0 4px var(--ddu-active); }
+.ddu-weapon {
+  position: relative;
+  border: 1px solid var(--ddu-gold-dim);
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.55);
+}
+.ddu-weapon img { width: 100%; height: 100%; border: none; object-fit: cover; }
+.ddu-weapon--big { width: calc(56px * var(--ddu-scale)); height: calc(72px * var(--ddu-scale)); cursor: pointer; }
+.ddu-weapon--small { width: calc(26px * var(--ddu-scale)); height: calc(20px * var(--ddu-scale)); }
+.ddu-weapon--ghost img { opacity: 0.35; }
+.ddu-weapon.ddu-drop, .ddu-cell.ddu-drop { box-shadow: 0 0 0 2px var(--ddu-active); }
+
+/* Centre : filtres + effets au-dessus, grille, onglets en dessous */
+.ddu-bar__center { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0; }
+.ddu-bar__top { position: relative; display: flex; justify-content: center; width: 100%; min-height: calc(36px * var(--ddu-scale)); }
+.ddu-bar__filters {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border: 1px solid var(--ddu-gold-dim);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.5);
+}
+.ddu-filter {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  height: calc(28px * var(--ddu-scale));
+  min-width: calc(28px * var(--ddu-scale));
+  padding: 0 5px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--ddu-text);
+}
+.ddu-filter:hover { border-color: var(--ddu-gold-dim); }
+.ddu-filter--on { border-color: var(--ddu-gold); background: rgba(201, 164, 92, 0.2); }
+.ddu-filter--preview { box-shadow: 0 0 8px var(--ddu-gold); animation: ddu-pulse 0.9s ease-in-out infinite; }
+.ddu-filter .ddu-pip { width: calc(14px * var(--ddu-scale)); height: calc(14px * var(--ddu-scale)); }
+.ddu-pip--cantrip { border: 2px solid var(--ddu-cantrip); background: transparent; border-radius: 2px; }
+.ddu-filter__level { font-family: var(--ddu-font-title); font-size: calc(13px * var(--ddu-scale)); color: var(--ddu-gold); }
+.ddu-slots { display: flex; gap: 2px; }
+.ddu-slot {
+  width: calc(8px * var(--ddu-scale));
+  height: calc(10px * var(--ddu-scale));
+  border: 1px solid var(--ddu-slot);
+  background: rgba(255, 255, 255, 0.12);
+}
+.ddu-slot--on { background: var(--ddu-slot); }
+.ddu-filter--pact .ddu-slot { border-color: #6a3aa8; }
+.ddu-filter--pact .ddu-slot--on { background: #6a3aa8; }
+.ddu-slot--resource { border-color: var(--ddu-gold); border-radius: 50%; width: calc(8px * var(--ddu-scale)); height: calc(8px * var(--ddu-scale)); }
+.ddu-slot--resource.ddu-slot--on { background: var(--ddu-gold); }
+.ddu-resource { display: flex; align-items: center; gap: 3px; padding-left: 4px; border-left: 1px solid var(--ddu-gold-dim); }
+.ddu-resource img { width: calc(20px * var(--ddu-scale)); height: calc(20px * var(--ddu-scale)); border: none; border-radius: 3px; }
+.ddu-resource__count { color: var(--ddu-text); font-size: calc(12px * var(--ddu-scale)); }
+
+.ddu-bar__effects {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  gap: 2px;
+  padding: 2px 4px;
+  border: 1px solid var(--ddu-gold-dim);
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.5);
+}
+.ddu-bar__effects[hidden] { display: none; }
+.ddu-bar__effect { width: calc(26px * var(--ddu-scale)); height: calc(26px * var(--ddu-scale)); border: none; border-radius: 4px; cursor: pointer; }
+.ddu-bar__more { color: var(--ddu-text); font-size: 11px; align-self: center; }
+
+.ddu-bar__grid {
+  display: flex;
+  align-items: stretch;
+  padding: 4px;
+  border: 1px solid var(--ddu-gold-dim);
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.45);
+  max-width: 100%;
+  overflow-x: auto;
+}
+.ddu-bar__grid--scroll { max-height: calc((var(--ddu-cell) + 3px) * 4 + 8px); overflow-y: auto; }
+.ddu-bar__container {
+  display: grid;
+  grid-template-columns: repeat(var(--ddu-cols), var(--ddu-cell));
+  grid-auto-rows: var(--ddu-cell);
+  gap: 3px;
+}
+.ddu-bar__separator {
+  flex: none;
+  width: calc(10px * var(--ddu-scale));
+  margin: 0 5px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #5a0c0c, var(--ddu-separator), #5a0c0c);
+  box-shadow: 0 0 4px rgba(155, 28, 28, 0.7);
+  cursor: ew-resize;
+}
+
+.ddu-cell {
+  position: relative;
+  border: 1px solid rgba(201, 164, 92, 0.35);
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.55);
+  overflow: hidden;
+  cursor: pointer;
+}
+.ddu-cell--empty { cursor: default; background: rgba(0, 0, 0, 0.3); }
+.ddu-cell img { width: 100%; height: 100%; border: none; object-fit: cover; }
+/*
+ * Images jamais sources d'un glisser : le cœur V14 annule tout dragstart dont l'élément ne porte pas lui-même
+ * draggable="true" (client/game.mjs:2219-2225), et une <img> est glissable par défaut — c'est elle, pas la case, qui
+ * partait (bogue vu le 2026-09-27 : impossible de bouger les icônes à la souris). La case, l'arme ou le portrait
+ * (draggable="true") devient la source.
+ */
+.ddu-cell img, .ddu-weapon img, .ddu-portrait img, .ddu-frieze__status { pointer-events: none; -webkit-user-drag: none; }
+.ddu-cell:not(.ddu-cell--empty):hover { border-color: var(--ddu-gold); box-shadow: 0 0 6px var(--ddu-gold); }
+.ddu-cell--bonus { border-bottom: 3px solid var(--ddu-bonus); }
+.ddu-cell--reaction { border-bottom: 3px solid var(--ddu-reaction); }
+.ddu-cell--disabled img { filter: grayscale(1) brightness(0.5); }
+/* Attaques multiples ouvertes par le moteur : ce qui reste à jouer est souligné d'or, ce qui n'a plus rien est éteint. */
+.ddu-cell--multi-left { border-color: var(--ddu-gold); box-shadow: inset 0 0 0 2px var(--ddu-gold), 0 0 6px 1px var(--ddu-gold); }
+.ddu-cell--multi-spent img { filter: grayscale(1) brightness(0.45); }
+.ddu-cell--dim { opacity: 0.25; }
+.ddu-cell__uses, .ddu-cell__level, .ddu-cell__upcast, .ddu-cell__conc {
+  position: absolute;
+  color: #fff;
+  font-size: calc(11px * var(--ddu-scale));
+  font-weight: bold;
+  text-shadow: 0 0 2px #000, 0 0 3px #000;
+  pointer-events: none;
+}
+.ddu-cell__uses { right: 2px; bottom: 1px; }
+.ddu-cell__level { right: 3px; bottom: 1px; font-family: var(--ddu-font-title); color: var(--ddu-gold); }
+.ddu-cell__uses + .ddu-cell__level { bottom: 13px; }
+.ddu-cell__upcast { right: 3px; top: 0; color: var(--ddu-gold); font-size: calc(14px * var(--ddu-scale)); }
+.ddu-cell__conc { left: 3px; top: 1px; color: #9fd8ff; }
+.ddu-reason { color: #ff7a6e; }
+/* Arme ou objet enchanté : point violet (BG3 Patch 8) */
+.ddu-enchant {
+  position: absolute;
+  top: 3px;
+  left: 50%;                      /* en haut au centre : les coins portent déjà C, +, la touche */
+  transform: translateX(-50%);
+  width: calc(9px * var(--ddu-scale));
+  height: calc(9px * var(--ddu-scale));
+  border-radius: 50%;
+  background: #b25cff;
+  box-shadow: 0 0 5px #b25cff, 0 0 0 1px #000;
+  pointer-events: none;
+}
+.ddu-cell--enchanted { border-color: rgba(178, 92, 255, 0.7); }
+.ddu-enchanted { color: #cf9bff; }
+.ddu-cell__key {
+  position: absolute;
+  left: 2px;
+  bottom: 1px;
+  padding: 0 3px;
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.7);
+  color: var(--ddu-text);
+  font-size: calc(10px * var(--ddu-scale));
+  pointer-events: none;
+}
+
+/* Infobulle complète (Alt, épinglée) : description enrichie, défilable une fois épinglée. */
+.ddu-tooltip__hint { opacity: 0.6; font-size: 0.9em; }
+.ddu-tooltip--full { max-width: 380px; }
+.ddu-tooltip__extra { margin-top: 4px; }
+.ddu-tooltip__label { opacity: 0.7; }
+.ddu-tooltip__description {
+  max-height: 40vh;
+  overflow-y: auto;
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(201, 164, 92, 0.4);
+  text-align: left;
+}
+.ddu-tooltip__description p { margin: 0 0 4px; }
+
+.ddu-bar__tabs { display: flex; align-items: center; gap: 4px; }
+.ddu-tab {
+  height: calc(28px * var(--ddu-scale));
+  padding: 0 calc(14px * var(--ddu-scale));
+  border: 1px solid var(--ddu-gold-dim);
+  border-radius: 14px;
+  background: linear-gradient(180deg, #3a2618, #1c120b);
+  color: var(--ddu-text);
+  font-family: var(--ddu-font-title);
+  font-size: calc(14px * var(--ddu-scale));
+}
+.ddu-tab:hover { border-color: var(--ddu-gold); }
+.ddu-tab--active { border-color: var(--ddu-gold); color: var(--ddu-gold); box-shadow: 0 0 6px rgba(201, 164, 92, 0.5); }
+.ddu-tab--default {
+  width: calc(32px * var(--ddu-scale));
+  padding: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, #a3262a, #4a0b0d);
+}
+
+/* Verrou, + / − */
+.ddu-bar__rows { display: flex; flex-direction: column; gap: 4px; margin-bottom: calc(40px * var(--ddu-scale)); }
+.ddu-bar__rows button {
+  width: calc(24px * var(--ddu-scale));
+  height: calc(24px * var(--ddu-scale));
+  padding: 0;
+  border: 1px solid var(--ddu-gold-dim);
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.55);
+  color: var(--ddu-text);
+  font-size: calc(11px * var(--ddu-scale));
+}
+.ddu-bar__rows button.ddu-on { color: var(--ddu-gold); border-color: var(--ddu-gold); }
+
+/* Fin du tour / repos, avec l'anneau de déplacement */
+.ddu-bar__end {
+  position: relative;
+  flex: none;
+  width: var(--ddu-portrait-round);
+  height: var(--ddu-portrait-round);
+}
+.ddu-ring { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); pointer-events: none; }
+.ddu-ring circle { fill: none; stroke-width: 5; }
+.ddu-ring__track { stroke: rgba(255, 255, 255, 0.12); }
+.ddu-ring__left { stroke: #e0b43c; stroke-linecap: round; transition: stroke-dasharray 300ms; filter: drop-shadow(0 0 3px #e0b43c); }
+.ddu-end {
+  position: absolute;
+  top: 12%;
+  left: 12%;
+  width: 76%;                     /* taille explicite : le style des boutons du cœur impose une hauteur */
+  height: 76%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 0;
+  border: 3px solid var(--ddu-gold);
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 40%, #2f5f78, #0d2330 70%);
+  color: var(--ddu-text);
+  font-family: var(--ddu-font-title);
+  font-size: calc(20px * var(--ddu-scale));
+  text-shadow: 0 1px 3px #000;
+}
+.ddu-end:hover:not([disabled]) { box-shadow: 0 0 14px var(--ddu-active); }
+.ddu-end--waiting, .ddu-end[disabled] { filter: grayscale(0.7) brightness(0.7); cursor: default; }
+.ddu-end--rest { background: radial-gradient(circle at 50% 40%, #5a3a1c, #21130a 70%); font-size: calc(16px * var(--ddu-scale)); }
+.ddu-end--rest i { font-size: calc(30px * var(--ddu-scale)); color: var(--ddu-gold); }
+
+/* Tiroirs (surcharge, repos) */
+.ddu-bar__popup {
+  position: absolute;
+  z-index: 50;
+  display: flex;
+  gap: 4px;
+  padding: 5px;
+  transform: translateX(-50%);
+  border: 1px solid var(--ddu-gold);
+  border-radius: 8px;
+  background: var(--ddu-panel);
+  box-shadow: 0 4px 12px #000;
+}
+.ddu-bar__popup button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 8px;
+  border: 1px solid var(--ddu-gold-dim);
+  border-radius: 5px;
+  background: rgba(0, 0, 0, 0.4);
+  color: var(--ddu-text);
+  white-space: nowrap;
+}
+.ddu-bar__popup button:hover { border-color: var(--ddu-gold); }
+.ddu-bar__restmenu { flex-direction: column; }
+/* Tiroir des niveaux, plus grand que les filtres : c'est un choix à faire vite (demande du 2026-10-03). */
+.ddu-bar__upcast { gap: calc(6px * var(--ddu-scale)); padding: calc(7px * var(--ddu-scale)); }
+.ddu-bar__upcast button { gap: calc(8px * var(--ddu-scale)); padding: calc(8px * var(--ddu-scale)) calc(12px * var(--ddu-scale)); }
+.ddu-bar__upcast .ddu-filter__level { font-size: calc(19px * var(--ddu-scale)); }
+.ddu-bar__upcast .ddu-slots { gap: calc(3px * var(--ddu-scale)); }
+.ddu-bar__upcast .ddu-slot { width: calc(11px * var(--ddu-scale)); height: calc(15px * var(--ddu-scale)); }
+
+/* Panneau du d20 */
+.ddu-d20 {
+  position: absolute;
+  z-index: 50;
+  width: min(760px, calc(100vw - 60px));
+  max-height: 60vh;
+  overflow-y: auto;
+  padding: 8px 10px;
+  border: 1px solid var(--ddu-gold);
+  border-radius: 10px;
+  background: var(--ddu-panel);
+  box-shadow: 0 6px 20px #000;
+  color: var(--ddu-text);
+}
+.ddu-d20 header {
+  display: flex;
+  gap: 14px;
+  align-items: baseline;
+  margin-bottom: 6px;
+  font-family: var(--ddu-font-title);
+  font-size: 18px;
+  color: var(--ddu-gold);
+}
+.ddu-d20 header span { font-size: 13px; color: var(--ddu-text); }
+.ddu-d20__cols { display: grid; grid-template-columns: 1fr 1fr 1.4fr; gap: 12px; }
+.ddu-d20 h4 { margin: 4px 0; border-bottom: 1px solid var(--ddu-gold-dim); color: var(--ddu-gold); font-size: 13px; }
+.ddu-d20 ul { margin: 0; padding: 0; list-style: none; }
+.ddu-d20 li button {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 2px 6px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--ddu-text);
+  font-size: 13px;
+  text-align: left;
+}
+.ddu-d20 li button:hover { border-color: var(--ddu-gold-dim); background: rgba(201, 164, 92, 0.12); }
+.ddu-d20 small { opacity: 0.6; }
+.ddu-d20--prof span::before { content: "● "; color: var(--ddu-gold); font-size: 9px; }
+.ddu-d20--expert span::before { content: "◆ "; color: var(--ddu-gold); font-size: 9px; }
+
+/* ---------- Aperçu des portraits (étape 1) ---------- */
+
+.ddu-preview .window-content { padding: 12px; background: var(--ddu-bg); }
+.ddu-preview__row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--ddu-gold-dim);
+}
+.ddu-preview__row:last-child { border-bottom: none; }
+.ddu-preview__name {
+  width: 90px;
+  color: var(--ddu-text);
+  font-family: var(--ddu-font-title);
+  font-size: 16px;
+}
+.ddu-preview__empty { color: var(--ddu-text); }
