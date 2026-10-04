@@ -262,6 +262,22 @@
       "barLockPlayers": {
         "Name": "Bar: lock for players",
         "Hint": "Players can no longer move, add or remove cells."
+      },
+      "softPath": {
+        "Name": "Board: soft path",
+        "Hint": "Movement path cells are drawn as soft-edged pads instead of flat colour fills. Same colours (green, yellow, red by speed)."
+      },
+      "rulerOutOfCombat": {
+        "Name": "Board: path out of combat",
+        "Hint": "Also show a moving token's path and ruler out of combat. Off: they only appear in combat. The measuring Ruler tool is not affected."
+      },
+      "smoothMovement": {
+        "Name": "Board: smooth movement",
+        "Hint": "Tokens speed up when they set off and slow down when they arrive, over the whole path, instead of sliding at constant speed. Applies to every client."
+      },
+      "cameraFollow": {
+        "Name": "Board: camera follows my token",
+        "Hint": "When one of your tokens moves, the view smoothly recentres on it. For the GM: the token they control and move themselves."
       }
     }
   }

@@ -2,7 +2,7 @@
   "id": "darsh-dnd-ui",
   "title": "darsh-dnd · Darsh UI DnD5",
   "description": "Interface de combat façon Baldur's Gate 3 pour dnd5e : barre d'actions, portraits du groupe, frise d'initiative. S'appuie sur le moteur dnd5e-combat (budget du tour, déplacement, raisons des actions grisées).",
-  "version": "0.14.0",
+  "version": "0.15.0",
   "authors": [
     {
       "name": "Darshyne"

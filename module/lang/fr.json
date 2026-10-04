@@ -262,6 +262,22 @@
       "barLockPlayers": {
         "Name": "Barre : verrouiller pour les joueurs",
         "Hint": "Les joueurs ne peuvent plus déplacer, ajouter ni retirer de cases."
+      },
+      "softPath": {
+        "Name": "Plateau : chemin adouci",
+        "Hint": "Les cases du chemin de déplacement sont des pastilles aux bords fondus au lieu d'aplats de couleur. Mêmes couleurs (vert, jaune, rouge selon la vitesse)."
+      },
+      "rulerOutOfCombat": {
+        "Name": "Plateau : chemin hors combat",
+        "Hint": "Affiche aussi hors combat le chemin et la règle d'un token qui se déplace. Désactivé : ils n'apparaissent qu'en combat. L'outil Règle de mesure n'est pas concerné."
+      },
+      "smoothMovement": {
+        "Name": "Plateau : déplacement adouci",
+        "Hint": "Les tokens accélèrent au départ et freinent à l'arrivée, sur tout le chemin, au lieu de glisser à vitesse constante. Vaut pour tous les clients."
+      },
+      "cameraFollow": {
+        "Name": "Plateau : la caméra suit mon token",
+        "Hint": "Quand un de vos tokens se déplace, la vue se recentre sur lui en douceur. Pour le MJ : le token qu'il contrôle et déplace lui-même."
       }
     }
   }

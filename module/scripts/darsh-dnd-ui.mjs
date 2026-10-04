@@ -6,13 +6,16 @@
  * `activity.use()` ; elle ne décide aucune règle.
  */
 import { MODULE_ID, log } from "./shared.mjs";
-import { registerSettings, registerFriezeSettings, registerPartySettings, registerBarSettings } from "./settings.mjs";
+import { registerSettings, registerFriezeSettings, registerPartySettings, registerBarSettings,
+  registerCanvasSettings } from "./settings.mjs";
+import { refreshRulers } from "./apps/canvas.mjs";
 import { registerBar, startBar, getBar, applyHotbarSetting } from "./runtime/bar.mjs";
 import { applyScale, applyFade, startDisplay, migrateScale } from "./runtime/display.mjs";
 import { registerKeys } from "./runtime/keys.mjs";
 import { registerPortraits } from "./runtime/portraits.mjs";
 import { registerFrieze, startFrieze, getFrieze } from "./runtime/frieze.mjs";
 import { registerParty, startParty, getParty } from "./runtime/party.mjs";
+import { registerCanvas, setupCanvas } from "./runtime/canvas.mjs";
 import { route, listRoutes } from "./runtime/router.mjs";
 import { engineActive, engineReason } from "./adapter/engine.mjs";
 import { Portrait } from "./apps/portrait.mjs";
@@ -30,6 +33,8 @@ Hooks.once("init", () => {
   registerParty();
   registerBar();
   registerKeys(getBar);
+  registerCanvasSettings(refreshRulers);
+  registerCanvas();
 
   game.modules.get(MODULE_ID).api = {
     /** État vu par le module (le moteur est lu à la demande : il pose son api à son propre init). */
@@ -56,6 +61,8 @@ Hooks.once("init", () => {
     routes: listRoutes
   };
 });
+
+Hooks.once("setup", setupCanvas);
 
 Hooks.once("ready", async () => {
   await migrateScale();

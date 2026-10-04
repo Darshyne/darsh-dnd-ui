@@ -137,6 +137,21 @@ export function registerPartySettings(redraw, reattach) {
 }
 
 /**
+ * Réglages du plateau (SPEC §10, 0.15.0) : tracé du chemin, déplacement et caméra.
+ * @param {Function} rulers   Redessiner les règles affichées.
+ */
+export function registerCanvasSettings(rulers) {
+  const reg = (key, scope, def, extra = {}) => game.settings.register(MODULE_ID, key, {
+    name: `DDU.Settings.${key}.Name`, hint: `DDU.Settings.${key}.Hint`,
+    scope, config: true, type: Boolean, default: def, ...extra
+  });
+  reg("softPath", "client", true, { onChange: rulers });
+  reg("rulerOutOfCombat", "client", false, { onChange: rulers });
+  reg("smoothMovement", "world", true);
+  reg("cameraFollow", "client", true);
+}
+
+/**
  * Réglages de la Barre (SPEC §5, §9).
  * @param {Function} redraw   Redessiner la Barre.
  * @param {Function} hotbar   Appliquer « replier la barre de macros ».
