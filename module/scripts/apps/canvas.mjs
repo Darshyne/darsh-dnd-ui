@@ -9,6 +9,7 @@
  */
 import { setting } from "../shared.mjs";
 import { segmentPlan } from "../core/motion.mjs";
+import { settled, smoothDamp2D, viewAhead } from "../core/camera.mjs";
 
 /* -------------------------------------------- */
 /*  Tracé du chemin                             */
@@ -196,8 +197,62 @@ export function installMotion() {
 /*  Caméra                                      */
 /* -------------------------------------------- */
 
+/** Temps de réponse de la caméra (s) : elle part et freine en douceur. */
+const CAMERA_SMOOTH_TIME = 0.45;
+/** Vitesse maximale de la caméra, en cases par seconde : loin du token, elle met le temps qu'il faut. */
+const CAMERA_MAX_CELLS_PER_SECOND = 9;
+/** Écart (px du monde) entre la vue et la dernière position posée au-delà duquel on considère que le joueur a bougé la vue. */
+const CAMERA_USER_PAN = 2;
+
+/** Le suivi en cours : un seul à la fois, réutilisé quand le token repart (la vitesse est gardée, pas d'à-coup). */
+let follow = null;
+
+function stopFollow() {
+  if ( !follow ) return;
+  canvas.app?.ticker?.remove(follow.tick);
+  follow = null;
+}
+
+/** L'arrivée d'un déplacement : le dernier point encore à parcourir (une marche du moteur passe case par case), sinon sa destination. */
+function goalOf(document, movement) {
+  const last = movement.pending?.waypoints?.at(-1) ?? movement.destination;
+  return document.getCenterPoint(last);
+}
+
 /**
- * Centre la vue sur le token qui se déplace, avec accélération et freinage, en même temps que lui.
+ * À chaque image. Deux modes :
+ * - `follow` : la vue rejoint le centre AFFICHÉ du token (sa position animée, pas sa destination), par un ressort amorti à
+ *   vitesse plafonnée (core/camera.mjs) ;
+ * - `hold` : la vue est plus près de l'arrivée que le token — elle attend (en freinant si elle bougeait), le token vient
+ *   vers elle ; dès qu'il est au moins aussi près de l'arrivée qu'elle, elle le suit (elle avance avec lui, sans reculer).
+ * Le suivi cesse quand c'est fini, quand le joueur déplace la vue lui-même, ou quand le token disparaît.
+ */
+function followTick() {
+  const f = follow;
+  if ( !f ) return;
+  const object = f.document.object;
+  if ( !canvas.ready || !object || object.destroyed || (f.document.parent !== canvas.scene) ) return stopFollow();
+  const pivot = canvas.stage.pivot;
+  if ( Math.hypot(pivot.x - f.position.x, pivot.y - f.position.y) > CAMERA_USER_PAN ) return stopFollow();
+  const moving = (f.document.movement?.state === "pending") || (performance.now() - f.lastMove < 400);
+  const center = object.center;
+  // Le token a rattrapé la vue (ou s'est arrêté) : elle le suit.
+  if ( (f.mode === "hold") && (!moving || !viewAhead(f.position, center, f.goal)) ) f.mode = "follow";
+  const target = (f.mode === "hold") ? f.position : center;
+  const dt = Math.min(canvas.app.ticker.deltaMS / 1000, 0.1);
+  const maxSpeed = canvas.grid.size * CAMERA_MAX_CELLS_PER_SECOND;
+  const step = smoothDamp2D(f.position, target, f.velocity, CAMERA_SMOOTH_TIME, maxSpeed, dt);
+  f.velocity = step.velocity;
+  if ( Math.hypot(step.position.x - f.position.x, step.position.y - f.position.y) > 0.01 ) {
+    canvas.pan({ x: step.position.x, y: step.position.y });
+    // `pan` arrondit et borne la vue : on repart de ce qu'il a réellement posé.
+    f.position = { x: canvas.stage.pivot.x, y: canvas.stage.pivot.y };
+  }
+  if ( (f.mode === "follow") && !moving && settled(f.position, center, f.velocity, { distance: 2 }) ) stopFollow();
+}
+
+/**
+ * Suit le token qui se déplace (voir `followTick`).
  * Joueur : ses propres tokens, quel que soit celui qui les déplace. MJ : le token qu'il contrôle et
  * déplace lui-même.
  * @param {TokenDocument} document
@@ -211,8 +266,42 @@ export function followToken(document, movement, user) {
   const mine = game.user.isGM ? (object.controlled && (user?.id === game.user.id)) : document.isOwner;
   if ( !mine ) return;
   if ( game.user.isGM && (canvas.tokens.controlled.length > 1) ) return;
-  const target = document.getCenterPoint(movement.destination);
-  const duration = Math.max(movement.animation?.duration ?? 0, 400);
-  canvas.animatePan({ x: target.x, y: target.y, duration,
-    easing: foundry.canvas.animation.CanvasAnimation.easeInOutCosine });
+  const pivot = { x: canvas.stage.pivot.x, y: canvas.stage.pivot.y };
+  const goal = goalOf(document, movement);
+  if ( follow && (follow.document === document) ) {
+    follow.lastMove = performance.now();
+    follow.position = pivot;
+    // Nouvelle arrivée (un autre clic) : on refait le choix, depuis où sont la vue et le token maintenant.
+    if ( (goal.x !== follow.goal.x) || (goal.y !== follow.goal.y) ) {
+      follow.goal = goal;
+      follow.mode = viewAhead(pivot, object.center, goal) ? "hold" : "follow";
+    }
+    return;
+  }
+  stopFollow();
+  follow = { document, goal, mode: viewAhead(pivot, object.center, goal) ? "hold" : "follow",
+    position: pivot, velocity: { x: 0, y: 0 }, lastMove: performance.now(), tick: followTick };
+  canvas.app.ticker.add(followTick);
+}
+
+/**
+ * Chez le client qui lance le déplacement : le cœur recentre lui-même la vue, d'un panoramique rapide, sur un token contrôlé
+ * qui bouge hors de l'écran (client/canvas/placeables/token.mjs:4027-4030, `panCanvas`). Quand notre caméra suit ce token,
+ * on coupe ce recentrage par l'option prévue (`pan: false`, transmise aux autres clients avec la mise à jour).
+ * @param {TokenDocument} document
+ * @param {object} changes
+ * @param {object} options    Options de la mise à jour (modifiables ici).
+ */
+export function quietCorePan(document, changes, options) {
+  if ( !setting("cameraFollow") || !["x", "y"].some(k => k in changes) ) return;
+  if ( options.pan !== undefined ) return;
+  const object = document.object;
+  if ( !object?.controlled ) return;
+  if ( game.user.isGM && (canvas.tokens.controlled.length > 1) ) return;
+  options.pan = false;
+}
+
+/** Arrêter le suivi (changement de scène, plateau redessiné). */
+export function stopCameraFollow() {
+  stopFollow();
 }
