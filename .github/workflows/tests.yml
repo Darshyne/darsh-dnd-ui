@@ -1,0 +1,27 @@
+# Lance les tests (`npm test`, Vitest) à chaque push sur main et à chaque pull request.
+# Le résultat s'affiche à côté de chaque commit sur GitHub et alimente le badge « Tests » du README.
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm test
