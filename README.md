@@ -1,5 +1,7 @@
 # DAS · Combat UI (`darsh-dnd-ui`)
 
+[![Tests](https://github.com/Darshyne/darsh-dnd-ui/actions/workflows/tests.yml/badge.svg)](https://github.com/Darshyne/darsh-dnd-ui/actions/workflows/tests.yml)
+
 Part of **Darshyne's Automation Suite (DAS)**. A Baldur's Gate 3-style combat UI for **Foundry VTT V14** and
 **dnd5e 6.x**:
 
