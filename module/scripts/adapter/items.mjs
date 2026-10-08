@@ -12,7 +12,7 @@
  * Actions de base du moteur : items portant flags["dnd5e-combat"].basicAction (SPEC §4.1).
  */
 import { reasonsFor, upcastOptions } from "../core/cells.mjs";
-import { issuesOf } from "./engine.mjs";
+import { issuesOf, movableZoneOf } from "./engine.mjs";
 
 const TIMED = ["action", "bonus", "reaction"];
 
@@ -246,7 +246,9 @@ export function cellView(actor, ref, ctx) {
   const cost = TIMED.includes(type) ? type : (type ? "other" : null);
   const isSpell = item.type === "spell";
   const spellLevel = isSpell ? item.system.level : null;
-  const needsSlot = isSpell && spellLevel > 0 && (activity?.requiresSpellSlot
+  // 0.16.5 : une zone déjà posée à déplacer (Rayon de lune) ne dépense pas d'emplacement — ni grisée, ni tiroir des niveaux.
+  const moves = movableZoneOf(activity);
+  const needsSlot = !moves && isSpell && spellLevel > 0 && (activity?.requiresSpellSlot
     ?? !!CONFIG.DND5E.spellcasting[item.system.method]?.slots);
   const uses = usesOf(r.activity) ?? usesOf(item) ?? (r.activity ? null : usesOf(activity));
   const quantity = item.type === "consumable" ? (item.system.quantity ?? null) : null;
@@ -255,7 +257,7 @@ export function cellView(actor, ref, ctx) {
     ref, kind: r.activity ? "activity" : "item", item, activity: r.activity ?? null, primary: activity,
     name: r.activity ? `${item.name} : ${r.activity.name}` : item.name,
     img: r.activity?.img || item.img,
-    cost, spellLevel, needsSlot, uses, quantity, unprepared,
+    cost, spellLevel, needsSlot, uses, quantity, unprepared, moves,
     canUpcast: needsSlot && !!item.system.canScale,
     concentration: !!(item.system.properties?.has?.("concentration") || activity?.duration?.concentration),
     ritual: !!item.system.properties?.has?.("ritual"),

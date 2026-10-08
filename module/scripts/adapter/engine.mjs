@@ -86,6 +86,14 @@ export function tokenMenuOf(token) {
 }
 
 /**
+ * Une zone déplaçable déjà posée par cette activité (Rayon de lune) : l'utiliser la déplace, sans emplacement. Moteur ≥ 0.198.4
+ * (`api.ui.movableZone`, son SPEC §111) ; faux sinon.
+ */
+export function movableZoneOf(activity) {
+  return activity ? read("movableZone", activity) === true : false;
+}
+
+/**
  * Réserves actives qui absorbent les dégâts (Égide arcanique) : points restants et maximum. Moteur ≥ 0.198.1
  * (`api.ui.wards`, son SPEC §108) ; vide sinon.
  * @returns {{name: string, img: string, identifier: string, value: number, max: number}[]}
