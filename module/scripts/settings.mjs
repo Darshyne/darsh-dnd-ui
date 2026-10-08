@@ -92,7 +92,7 @@ export function registerFriezeSettings(redraw) {
   client("friezeRound", true);
   client("friezeInitiativeText", true);
   client("friezeAutoSelect", false, { onChange: undefined });
-  world("friezePrepToPlayers", false);
+  world("friezePrepToPlayers", true);
   world("friezeEnemyInitiative", true);
   world("friezeHideDefeated", false);
 }
