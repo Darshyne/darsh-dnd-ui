@@ -116,6 +116,14 @@ export class Party {
 
     this.element.replaceChildren();
     if ( !entries.length ) return;
+    // Bouton en tête de colonne : replier le Groupe (seul le bouton reste) ou le déplier. Réglage client.
+    const collapsed = !!setting("partyCollapsed");
+    this.element.classList.toggle("ddu-party--collapsed", collapsed);
+    const left = setting("partyPosition") !== "right";
+    const icon = collapsed ? "fa-users" : (left ? "fa-chevron-left" : "fa-chevron-right");
+    this.element.insertAdjacentHTML("beforeend", `<button type="button" class="ddu-party__toggle" data-tooltip="${
+      esc(loc(collapsed ? "Party.Show" : "Party.Hide"))}"><i class="fa-solid ${icon}"></i></button>`);
+    if ( collapsed ) return this.#place();
     const list = document.createElement("ol");
     list.className = "ddu-party__list";
     for ( const entry of entries ) list.append(this.#member(entry, combat, current));
@@ -221,6 +229,9 @@ export class Party {
   #listen() {
     const el = this.element;
     el.addEventListener("click", event => {
+      if ( event.target.closest?.(".ddu-party__toggle") ) {
+        return game.settings.set(MODULE_ID, "partyCollapsed", !setting("partyCollapsed"));
+      }
       const r = this.#resolve(event.target);
       if ( !r ) return;
       const placeable = r.token?.object;

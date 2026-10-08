@@ -412,6 +412,25 @@
   border-left: none;
   border-right: 2px solid var(--ddu-gold);
 }
+/* Bouton en tête de colonne : replier / déplier le Groupe (0.16.1). */
+.ddu-party__toggle {
+  display: block;
+  width: calc(24px * var(--ddu-scale));
+  height: calc(20px * var(--ddu-scale));
+  margin: 0 0 4px;
+  padding: 0;
+  border: 1px solid var(--ddu-gold);
+  border-radius: 4px;
+  background: rgba(10, 8, 6, 0.75);
+  color: var(--ddu-gold);
+  font-size: calc(11px * var(--ddu-scale));
+  line-height: 1;
+  cursor: pointer;
+}
+.ddu-party__toggle:hover { color: var(--ddu-text); box-shadow: 0 0 6px var(--ddu-gold); }
+.ddu-party--right .ddu-party__toggle { margin-left: auto; }
+.ddu-party--collapsed { padding-top: 4px; padding-bottom: 4px; }
+.ddu-party--collapsed .ddu-party__toggle { margin: 0; }
 .ddu-party__list {
   display: flex;
   flex-direction: column;
@@ -453,8 +472,8 @@
 /* Compagnons et invocations : en petit, décalés sous leur personnage. */
 .ddu-party__member--companion { margin-left: calc(22px * var(--ddu-scale)); }
 .ddu-party__member--companion .ddu-portrait {
-  width: calc(var(--ddu-portrait-party-w) * 0.6);
-  height: calc(var(--ddu-portrait-party-h) * 0.6);
+  width: calc(var(--ddu-portrait-party-w) * 0.45);
+  height: calc(var(--ddu-portrait-party-h) * 0.45);
 }
 .ddu-party__member--companion .ddu-portrait__hp { font-size: calc(12px * var(--ddu-scale)); }
 

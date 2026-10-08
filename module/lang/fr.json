@@ -133,6 +133,8 @@
     "Party": {
       "HandRaised": "Main levée",
       "Inspiration": "Inspiration héroïque",
+      "Hide": "Masquer le groupe",
+      "Show": "Afficher le groupe",
       "Menu": {
         "Sheet": "Ouvrir la fiche",
         "Target": "Cibler",

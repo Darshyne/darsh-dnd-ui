@@ -131,6 +131,10 @@ export function registerPartySettings(redraw, reattach) {
   reg("partyConnectedOnly", "world", Boolean, false);
   reg("partyCompanions", "world", Boolean, true);
   reg("partyHealthExact", "world", Boolean, true);
+  // Replié par le bouton en tête du Groupe (0.16.1).
+  game.settings.register(MODULE_ID, "partyCollapsed", {
+    scope: "client", config: false, type: Boolean, default: false, onChange: redraw
+  });
   game.settings.register(MODULE_ID, "partyOrder", {
     scope: "world", config: false, type: Array, default: [], onChange: redraw
   });

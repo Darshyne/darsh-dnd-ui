@@ -52,6 +52,9 @@ export class Portrait {
       <i class="ddu-portrait__skull fa-solid fa-skull"></i>
       <div class="ddu-portrait__hp"></div>
       <div class="ddu-portrait__death"></div>`;
+    // Le flash joué, sa classe s'en va : sinon le navigateur le rejoue chaque fois que le portrait est remis dans la page
+    // (le Groupe se redessine à chaque déplacement en combat — clignotement vert ou rouge, 0.16.1).
+    el.addEventListener("animationend", () => el.classList.remove("ddu-flash--damage", "ddu-flash--heal"));
     return el;
   }
 

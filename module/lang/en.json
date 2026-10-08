@@ -133,6 +133,8 @@
     "Party": {
       "HandRaised": "Hand raised",
       "Inspiration": "Heroic inspiration",
+      "Hide": "Hide the party",
+      "Show": "Show the party",
       "Menu": {
         "Sheet": "Open sheet",
         "Target": "Target",
