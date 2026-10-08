@@ -145,8 +145,10 @@ export class Party {
     li.dataset.key = key;
     li.dataset.actorId = actor.id;
     if ( token ) li.dataset.tokenId = token.id;
+    // Glisser : le MJ réordonne le groupe ; un joueur pose le token de son personnage s'il n'est pas déjà sur la scène.
+    // Jamais un compagnon ni une invocation : leur token existe déjà, le cœur en poserait un double (Lumière, 0.16.2).
     if ( game.user.isGM && !companion ) li.draggable = true;
-    else if ( actor.isOwner ) li.draggable = true;   // glisser sur le canevas : poser son token
+    else if ( actor.isOwner && !companion && !tokenOnScene(actor) ) li.draggable = true;
 
     const color = ownerColor(actor);
     if ( color ) li.style.setProperty("--ddu-player", color);
@@ -251,6 +253,7 @@ export class Party {
     el.addEventListener("dragstart", event => {
       const r = this.#resolve(event.target);
       if ( !r ) return;
+      if ( !r.li.draggable ) return event.preventDefault();
       this.dragId = r.li.classList.contains("ddu-party__member--companion") ? null : r.actor.id;
       event.dataTransfer.effectAllowed = "copyMove";
       event.dataTransfer.setData("text/plain", JSON.stringify({ type: "Actor", uuid: r.actor.uuid }));
