@@ -86,6 +86,16 @@ export function tokenMenuOf(token) {
 }
 
 /**
+ * Réserves actives qui absorbent les dégâts (Égide arcanique) : points restants et maximum. Moteur ≥ 0.198.0
+ * (`api.ui.wards`, son SPEC §108) ; vide sinon.
+ * @returns {{name: string, img: string, identifier: string, value: number, max: number}[]}
+ */
+export function wardsOf(actor) {
+  const wards = actor ? read("wards", actor) : null;
+  return Array.isArray(wards) ? wards : [];
+}
+
+/**
  * Attaques multiples ouvertes ce tour par l'acteur : uuids des items encore jouables et de ceux qui n'ont plus rien.
  * @returns {{left: Set<string>, spent: Set<string>}|null}  null sans plan ouvert.
  */

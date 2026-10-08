@@ -8,6 +8,7 @@
  */
 import { veilFor, changeOf } from "../core/health.mjs";
 import { healthOf, deathSavesOf, isDead, portraitImage, healthPolicyFor, sideOf } from "../adapter/actor.mjs";
+import { wardsOf } from "../adapter/engine.mjs";
 import { setting } from "../shared.mjs";
 
 /** @type {Set<Portrait>} */
@@ -51,6 +52,7 @@ export class Portrait {
       <div class="ddu-portrait__flash"></div>
       <i class="ddu-portrait__skull fa-solid fa-skull"></i>
       <div class="ddu-portrait__hp"></div>
+      <div class="ddu-portrait__ward" hidden></div>
       <div class="ddu-portrait__death"></div>`;
     // Le flash joué, sa classe s'en va : sinon le navigateur le rejoue chaque fois que le portrait est remis dans la page
     // (le Groupe se redessine à chaque déplacement en combat — clignotement vert ou rouge, 0.16.1).
@@ -89,6 +91,16 @@ export class Portrait {
       hp.textContent = `${health.value}/${health.max}`;
       hp.classList.toggle("ddu-portrait__hp--temp", health.temp > 0);
       hp.dataset.tooltip = health.temp > 0 ? `+${health.temp}` : "";
+    }
+
+    // Égide arcanique (réserve du moteur) : une bulle avec ses points, là où les PV se montrent en chiffres (0.16.3).
+    const ward = el.querySelector(".ddu-portrait__ward");
+    const wards = (health && view.numbers && !dead) ? wardsOf(actor) : [];
+    ward.hidden = !wards.length;
+    if ( wards.length ) {
+      ward.textContent = String(wards.reduce((n, w) => n + w.value, 0));
+      ward.dataset.tooltip = wards.map(w => `${w.name} : ${w.value}/${w.max}`).join(" · ");
+      ward.classList.toggle("ddu-portrait__ward--empty", wards.every(w => w.value <= 0));
     }
 
     this.#renderDeath(deathSavesOf(actor));

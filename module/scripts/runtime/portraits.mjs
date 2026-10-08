@@ -17,6 +17,10 @@ export function registerPortraits() {
     if ( "delta" in changes ) Portrait.refreshFor(token.actor);
     else Portrait.refreshToken(token);
   });
+  // Les points d'une réserve (Égide arcanique) sont les utilisations de son item.
+  route("updateItem", "portraits", item => {
+    if ( item.parent?.documentName === "Actor" ) Portrait.refreshFor(item.parent, { flash: false });
+  });
   for ( const hook of ["createActiveEffect", "updateActiveEffect", "deleteActiveEffect"] ) {
     route(hook, "portraits", effect => {
       const actor = actorOfEffect(effect);
