@@ -86,7 +86,7 @@ export function tokenMenuOf(token) {
 }
 
 /**
- * Réserves actives qui absorbent les dégâts (Égide arcanique) : points restants et maximum. Moteur ≥ 0.198.0
+ * Réserves actives qui absorbent les dégâts (Égide arcanique) : points restants et maximum. Moteur ≥ 0.198.1
  * (`api.ui.wards`, son SPEC §108) ; vide sinon.
  * @returns {{name: string, img: string, identifier: string, value: number, max: number}[]}
  */
