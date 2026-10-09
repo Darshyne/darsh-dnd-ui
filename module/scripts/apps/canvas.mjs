@@ -186,7 +186,7 @@ export function installMotion() {
         if ( !step ) return options;
         return { ...options, duration: step.duration, easing: step.easing };
       } catch(err) {
-        console.error("darsh-dnd-ui | déplacement adouci", err);
+        console.error("darsh-dnd-ui | smooth movement", err);
         return options;
       }
     };

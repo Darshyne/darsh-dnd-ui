@@ -1,8 +1,8 @@
 {
   "id": "darsh-dnd-ui",
   "title": "DAS · Combat UI",
-  "description": "Interface de combat façon Baldur's Gate 3 pour dnd5e : barre d'actions, portraits du groupe, frise d'initiative. S'appuie sur le moteur dnd5e-combat (budget du tour, déplacement, raisons des actions grisées).",
-  "version": "0.16.5",
+  "description": "A Baldur's Gate 3-style combat UI for dnd5e: action bar, party portraits, initiative strip. Built on the dnd5e-combat engine (turn budget, movement, reasons why actions are greyed out).",
+  "version": "0.17.0",
   "authors": [
     {
       "name": "Darshyne"
@@ -39,17 +39,17 @@
       {
         "id": "bg3-hud-core",
         "type": "module",
-        "reason": "La Barre le remplace : deux barres d'actions s'afficheraient."
+        "reason": "The Bar replaces it: two action bars would be shown."
       },
       {
         "id": "combat-tracker-dock",
         "type": "module",
-        "reason": "La Frise le remplace : deux ordres du tour s'afficheraient."
+        "reason": "The Strip replaces it: two turn orders would be shown."
       },
       {
         "id": "party-monitor-dock",
         "type": "module",
-        "reason": "Le Groupe le remplace : deux colonnes de portraits s'afficheraient."
+        "reason": "The Party replaces it: two portrait columns would be shown."
       }
     ]
   },

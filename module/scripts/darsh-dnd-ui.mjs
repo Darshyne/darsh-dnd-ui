@@ -77,5 +77,5 @@ Hooks.once("ready", async () => {
   route("controlToken", "preview", () => {
     if ( preview?.rendered ) preview.render();
   });
-  log.info(`prêt (moteur de combat ${engineActive() ? "actif" : "absent ou en veille"})`);
+  log.info(`ready (combat engine ${engineActive() ? "active" : "missing or on standby"})`);
 });

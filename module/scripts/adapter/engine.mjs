@@ -28,7 +28,7 @@ function read(name, ...args) {
   try {
     return fn(...args) ?? null;
   } catch ( err ) {
-    log.warn(`moteur : api.ui.${name} a échoué`, err);
+    log.warn(`engine: api.ui.${name} failed`, err);
     return null;
   }
 }

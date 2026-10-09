@@ -143,6 +143,9 @@
         "Ping": "Signaler"
       }
     },
+    "Portrait": {
+      "Ward": "{name} : {value}/{max}"
+    },
     "Settings": {
       "PortraitImage": {
         "Name": "Image des portraits",

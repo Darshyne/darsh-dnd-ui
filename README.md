@@ -26,7 +26,13 @@ https://github.com/Darshyne/darsh-dnd-ui/releases/latest/download/module.json
 From source: the Foundry module is the `module/` subfolder, to copy or link into `Data/modules/darsh-dnd-ui`.
 Tests: `npm install && npm test`.
 
-The interface is in French only for now. Under active development.
+Under active development.
+
+## Translations
+
+The module ships in English and French. To add a language, copy `module/lang/en.json` to
+`module/lang/<code>.json`, translate the values (keep the keys and the `{placeholders}` as they are), and add an
+entry to `languages` in `module/module.json`. Any key missing from a translation falls back to English.
 
 ## License
 

@@ -9,7 +9,7 @@
 import { veilFor, changeOf } from "../core/health.mjs";
 import { healthOf, deathSavesOf, isDead, portraitImage, healthPolicyFor, sideOf } from "../adapter/actor.mjs";
 import { wardsOf } from "../adapter/engine.mjs";
-import { setting } from "../shared.mjs";
+import { loc, setting } from "../shared.mjs";
 
 /** @type {Set<Portrait>} */
 const live = new Set();
@@ -99,7 +99,7 @@ export class Portrait {
     ward.hidden = !wards.length;
     if ( wards.length ) {
       ward.textContent = String(wards.reduce((n, w) => n + w.value, 0));
-      ward.dataset.tooltip = wards.map(w => `${w.name} : ${w.value}/${w.max}`).join(" · ");
+      ward.dataset.tooltip = wards.map(w => loc("Portrait.Ward", { name: w.name, value: w.value, max: w.max })).join(" · ");
       ward.classList.toggle("ddu-portrait__ward--empty", wards.every(w => w.value <= 0));
     }
 

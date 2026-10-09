@@ -8,12 +8,12 @@ import { route } from "./router.mjs";
 export function registerCanvas() {
   installMotion();
   for ( const hook of ["combatStart", "updateCombat", "deleteCombat", "createCombatant", "deleteCombatant"] ) {
-    route(hook, "règle des tokens : combat ou non", refreshRulers);
+    route(hook, "token ruler: combat or not", refreshRulers);
   }
-  route("moveToken", "caméra : suivre son token", (document, movement, operation, user) =>
+  route("moveToken", "camera: follow own token", (document, movement, operation, user) =>
     followToken(document, movement, user));
-  route("preUpdateToken", "caméra : sans le recentrage rapide du cœur", quietCorePan);
-  route("canvasTearDown", "caméra : arrêter le suivi", stopCameraFollow);
+  route("preUpdateToken", "camera: skip the core quick pan", quietCorePan);
+  route("canvasTearDown", "camera: stop following", stopCameraFollow);
 }
 
 /** Au `setup` : classe de règle déjà posée par le système, plateau pas encore dessiné. */

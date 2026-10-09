@@ -1,14 +1,14 @@
 {
   "DDU": {
     "Preview": {
-      "Title": "Darsh UI — portrait preview",
+      "Title": "DAS · Combat UI — portrait preview",
       "Empty": "Control one or more tokens to see their portraits."
     },
     "Budget": {
       "Action": "Action",
-      "Bonus": "Bonus action",
+      "Bonus": "Bonus Action",
       "Reaction": "Reaction",
-      "Attacks": "{n} attack(s) left"
+      "Attacks": "{n} attack(s) remaining"
     },
     "Frieze": {
       "Round": "Round {round}",
@@ -16,42 +16,42 @@
       "CR": "CR {cr}",
       "InitiativeValue": "Initiative {value}",
       "InitiativeText": "Initiative {value}",
-      "RollInitiative": "Roll initiative",
-      "RollAll": "Roll initiative for all",
-      "RollNPC": "Roll initiative for NPCs",
-      "Reset": "Clear all initiatives",
-      "Start": "Begin combat",
-      "PreviousRound": "Previous round",
-      "PreviousTurn": "Previous turn",
-      "NextTurn": "Next turn",
-      "NextRound": "Next round",
-      "End": "End combat",
-      "OpenTracker": "Open the combat tracker",
-      "EndTurn": "End turn",
+      "RollInitiative": "Roll Initiative",
+      "RollAll": "Roll Initiative for all",
+      "RollNPC": "Roll Initiative for NPCs",
+      "Reset": "Reset all Initiative",
+      "Start": "Begin Combat",
+      "PreviousRound": "Previous Round",
+      "PreviousTurn": "Previous Turn",
+      "NextTurn": "Next Turn",
+      "NextRound": "Next Round",
+      "End": "End Combat",
+      "OpenTracker": "Open the Combat Tracker",
+      "EndTurn": "End Turn",
       "Menu": {
         "Ping": "Ping",
-        "Reroll": "Reroll initiative",
-        "ClearInitiative": "Clear initiative",
+        "Reroll": "Reroll Initiative",
+        "ClearInitiative": "Clear Initiative",
         "SetActive": "Make active",
-        "ToggleHidden": "Hide / show",
+        "ToggleHidden": "Hide / reveal",
         "ToggleDefeated": "Defeated",
         "Remove": "Remove from combat"
       }
     },
     "Bar": {
-      "Checks": "Checks, saves and skills",
+      "Checks": "Ability checks, saving throws and skills",
       "AC": "AC",
       "Speed": "Speed",
       "Concentration": "Concentration: {name}",
-      "EndConcentration": "End concentration",
-      "GMHeal": "GM: heal fully (HP to maximum)",
-      "GMKill": "GM: kill (0 HP)",
+      "EndConcentration": "End Concentration",
+      "GMHeal": "GM: restore all Hit Points",
+      "GMKill": "GM: reduce to 0 Hit Points",
       "ConcentrationTag": "Concentration",
       "Ritual": "Ritual",
       "Cantrip": "Cantrip",
       "SpellLevel": "Level {level}",
       "Uses": "{value}/{max} uses",
-      "UpcastHint": "Click: choose the level · Shift+click: system dialog",
+      "UpcastHint": "Click: choose the spell level · Shift+click: system dialog",
       "MainHand": "Main hand",
       "OffHand": "Off hand",
       "WeaponSet": "Weapon set {n}",
@@ -66,25 +66,25 @@
       },
       "AddRow": "Add a row",
       "RemoveRow": "Remove a row",
-      "EndTurn": "End turn",
+      "EndTurn": "End Turn",
       "TurnOf": "{name}'s turn",
       "Movement": "Movement: {left} / {allowed}",
       "Rest": "Rest",
-      "ShortRest": "Short rest",
-      "LongRest": "Long rest",
-      "NotOwnedItem": "Darsh UI: add this item to the character sheet first.",
-      "TooltipHint": "Alt: details · T or middle click: pin",
+      "ShortRest": "Short Rest",
+      "LongRest": "Long Rest",
+      "NotOwnedItem": "DAS · Combat UI: add this item to the character sheet first.",
+      "TooltipHint": "Alt: details · T or middle-click: pin",
       "Enchanted": "Enchanted: {names}",
       "Form": "Form: {name}",
       "Target": "Target",
       "Duration": "Duration",
       "Filter": {
         "action": "Actions",
-        "bonus": "Bonus actions",
+        "bonus": "Bonus Actions",
         "reaction": "Reactions",
         "cantrip": "Cantrips",
-        "level": "Level {level}: {value}/{max} slots",
-        "pact": "Pact (level {level}): {value}/{max} slots"
+        "level": "Level {level} Spell Slots: {value}/{max}",
+        "pact": "Pact Magic Slots (level {level}): {value}/{max}"
       },
       "Tab": {
         "default": "Default view",
@@ -97,18 +97,18 @@
     },
     "Reason": {
       "NoUses": "No uses left",
-      "NoQuantity": "None left",
+      "NoQuantity": "None remaining",
       "Unprepared": "Spell not prepared",
-      "NoSlot": "No spell slot available"
+      "NoSlot": "No Spell Slot available"
     },
     "Keys": {
       "CustomSlot": "Bar: Custom cell {n}",
       "CustomSlotHint": "Uses the matching cell of the Custom tab. An empty cell leaves the key to the macro bar.",
       "PinTooltip": "Bar: pin tooltip",
-      "PinTooltipHint": "Pins the detailed tooltip of the hovered cell (outside the bar, the key keeps its role: target).",
-      "SwapWeapons": "Bar: swap weapon set",
+      "PinTooltipHint": "Pins the detailed tooltip of the hovered cell (outside the bar, the key keeps its usual role: target).",
+      "SwapWeapons": "Bar: swap weapon sets",
       "SwapWeaponsHint": "Switches to the other weapon set (while measuring, the key adds a waypoint).",
-      "BasicHint": "Uses this combat engine basic action for the bar's character.",
+      "BasicHint": "Takes this basic action of the combat engine for the character shown in the bar.",
       "Basic": {
         "dash": "Action: Dash",
         "disengage": "Action: Disengage",
@@ -121,18 +121,18 @@
       }
     },
     "D20": {
-      "Checks": "Abilities",
-      "Saves": "Saving throws",
+      "Checks": "Ability Checks",
+      "Saves": "Saving Throws",
       "Skills": "Skills",
       "Other": "Other",
       "Initiative": "Initiative",
       "Concentration": "Concentration",
-      "SpellDC": "Spell DC",
+      "SpellDC": "Spell save DC",
       "Passive": "Passive: {value}"
     },
     "Party": {
       "HandRaised": "Hand raised",
-      "Inspiration": "Heroic inspiration",
+      "Inspiration": "Heroic Inspiration",
       "Hide": "Hide the party",
       "Show": "Show the party",
       "Menu": {
@@ -142,6 +142,9 @@
         "LowerHand": "Lower hand",
         "Ping": "Ping"
       }
+    },
+    "Portrait": {
+      "Ward": "{name}: {value}/{max}"
     },
     "Settings": {
       "PortraitImage": {
@@ -168,13 +171,13 @@
       },
       "FadeOpacity": {
         "Name": "Opacity when not hovered (%)",
-        "Hint": "The Bar, the Party and the Frieze each fade to this opacity while the mouse is not over them, and come back on hover. The Bar stays opaque during your character's turn. 100%: never faded. Speed and delay follow Foundry's own interface fade (Configure UI)."
+        "Hint": "The Bar, the Party and the Strip each fade to this opacity while the mouse is not over them, and come back on hover. The Bar stays opaque during your character's turn. 100%: never faded. Speed and delay follow Foundry's own interface fade (Configure UI)."
       },
       "EnemyHealth": {
-        "Name": "Creature HP shown to players",
+        "Name": "Creature Hit Points shown to players",
         "Hint": "What a player sees of the HP of a creature whose sheet they cannot see. The GM and owners always see exact HP.",
-        "exact": "Exact (precise veil)",
-        "tiers": "By tier (unhurt, hurt, bloodied, critical)",
+        "exact": "Exact (veil matches the HP lost)",
+        "tiers": "By tier (unhurt, hurt, Bloodied, critical)",
         "none": "None (only down / dead)"
       },
       "frieze": {
@@ -239,10 +242,10 @@
       },
       "partyCompanions": {
         "Name": "Party: companions and summons",
-        "Hint": "Shows, small, under each character, their summons and the other creatures on the scene their player owns."
+        "Hint": "Shows, in small portraits under each character, their summons and the other creatures on the scene their player owns."
       },
       "partyHealthExact": {
-        "Name": "Party: exact HP between players",
+        "Name": "Party: exact Hit Points between players",
         "Hint": "Every player sees the exact HP of all party members, not only their own."
       },
       "bar": {
