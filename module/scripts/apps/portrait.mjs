@@ -88,9 +88,15 @@ export class Portrait {
     const hp = el.querySelector(".ddu-portrait__hp");
     hp.hidden = !(health && view.numbers);
     if ( health && view.numbers ) {
+      // PV temporaires en clair, à la suite (0.17.1) : l'infobulle d'avant ne s'ouvrait jamais (le chiffre ignore la souris).
       hp.textContent = `${health.value}/${health.max}`;
+      if ( health.temp > 0 ) {
+        const temp = document.createElement("span");
+        temp.className = "ddu-portrait__temp";
+        temp.textContent = ` +${health.temp}`;
+        hp.append(temp);
+      }
       hp.classList.toggle("ddu-portrait__hp--temp", health.temp > 0);
-      hp.dataset.tooltip = health.temp > 0 ? `+${health.temp}` : "";
     }
 
     // Égide arcanique (réserve du moteur) : une bulle avec ses points, là où les PV se montrent en chiffres (0.16.3).

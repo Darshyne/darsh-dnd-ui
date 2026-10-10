@@ -172,7 +172,7 @@
   bottom: 9%;
   font-size: calc(24px * var(--ddu-scale));
 }
-.ddu-portrait__hp--temp { color: var(--ddu-temp); }
+.ddu-portrait__temp { color: var(--ddu-temp); }   /* PV temporaires, à la suite des PV (0.17.1) */
 .ddu-portrait--frieze .ddu-portrait__hp { display: none; }
 
 /* Égide arcanique : bulle bleue en haut à gauche, avec ses points (0.16.3). */
