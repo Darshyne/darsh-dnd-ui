@@ -120,7 +120,9 @@ export function autoEntries(actor) {
   for ( const item of items ) {
     const tab = tabOf(item);
     if ( !tab || tab === "passives" ) continue;
-    if ( item.type === "weapon" && !item.system.equipped ) continue;
+    // Une arme naturelle (Attaque à mains nues du Moine, griffes…) n'est jamais « équipée » : elle ne se tient pas en main.
+    // Vu en jeu le 2026-10-10 : le Moine n'avait aucune attaque dans sa Barre.
+    if ( item.type === "weapon" && !item.system.equipped && (item.system.type?.value !== "natural") ) continue;
     if ( item.type === "spell" && !isSpellReady(item) ) continue;
     out.push({ ref: `Item.${item.id}`, container: tab });
   }
@@ -248,8 +250,20 @@ export function cellView(actor, ref, ctx) {
   const spellLevel = isSpell ? item.system.level : null;
   // 0.16.5 : une zone déjà posée à déplacer (Rayon de lune) ne dépense pas d'emplacement — ni grisée, ni tiroir des niveaux.
   const moves = movableZoneOf(activity);
-  const needsSlot = !moves && isSpell && spellLevel > 0 && (activity?.requiresSpellSlot
-    ?? !!CONFIG.DND5E.spellcasting[item.system.method]?.slots);
+  // 0.19.1 : comme dnd5e (`requiresSpellSlot && consumption.spellSlot`), une activité qui ne dépense pas d'emplacement n'en
+  // demande pas — l'« Incantation gratuite (1/jour) » d'Initié à la magie grisait le sort chez un Moine sans emplacement. Une
+  // case d'objet n'est grisée que si aucune de ses activités ne se lance sans emplacement (utilisations comprises).
+  const leveled = !moves && isSpell && spellLevel > 0;
+  const acts = item.system.activities?.contents ?? [];
+  // L'activité « forward » que dnd5e crée pour une incantation gratuite (SpellConfigurationData#applySpellChanges) relance le sort
+  // sans emplacement (ForwardActivity#use : `spellSlot: false`) et dépense les utilisations de l'objet.
+  const slotted = a => !!(a?.requiresSpellSlot && a.consumption?.spellSlot) && (a.type !== "forward");
+  const spent = u => (u?.max > 0) && (u.value <= 0);
+  const itemSpent = a => (a?.consumption?.targets ?? []).some(t => t.type === "itemUses" && !t.target) && spent(usesOf(item));
+  const free = a => !slotted(a) && !spent(usesOf(a)) && !itemSpent(a);
+  const needsSlot = leveled && (r.activity ? slotted(r.activity)
+    : acts.length ? !acts.some(free) : !!CONFIG.DND5E.spellcasting[item.system.method]?.slots);
+  const castsWithSlot = leveled && (r.activity ? slotted(r.activity) : acts.some(slotted));
   const uses = usesOf(r.activity) ?? usesOf(item) ?? (r.activity ? null : usesOf(activity));
   const quantity = item.type === "consumable" ? (item.system.quantity ?? null) : null;
   const unprepared = isSpell && !isSpellReady(item);
@@ -258,7 +272,7 @@ export function cellView(actor, ref, ctx) {
     name: r.activity ? `${item.name} : ${r.activity.name}` : item.name,
     img: r.activity?.img || item.img,
     cost, spellLevel, needsSlot, uses, quantity, unprepared, moves,
-    canUpcast: needsSlot && !!item.system.canScale,
+    canUpcast: castsWithSlot && !!item.system.canScale,
     concentration: !!(item.system.properties?.has?.("concentration") || activity?.duration?.concentration),
     ritual: !!item.system.properties?.has?.("ritual"),
     equipped: item.system.equipped ?? null,
