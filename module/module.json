@@ -2,7 +2,7 @@
   "id": "darsh-dnd-ui",
   "title": "DAS · Combat UI",
   "description": "A Baldur's Gate 3-style combat UI for dnd5e: action bar, party portraits, initiative strip. Built on the dnd5e-combat engine (turn budget, movement, reasons why actions are greyed out).",
-  "version": "0.19.0",
+  "version": "0.19.1",
   "authors": [
     {
       "name": "Darshyne"
