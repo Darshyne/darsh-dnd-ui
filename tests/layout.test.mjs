@@ -208,3 +208,70 @@ describe("armes", () => {
     expect(seedWeapons(l, [{ ref: "Item.sword", equipped: true }]).changed).toBe(false);
   });
 });
+
+import { restoreLost, activeWeaponRefs, LOST_MAX } from "../module/scripts/core/layout.mjs";
+
+describe("0.19.0 : une arme lâchée reprend sa place quand elle revient", () => {
+  const base = () => {
+    const l = emptyLayout();
+    l.weapons.sets = [["Item.sword", "Item.shield"], ["Item.bow", null]];
+    return l;
+  };
+  it("le nettoyage retient la place d'une arme partie", () => {
+    const { layout, changed } = cleanup(base(), new Set(["Item.shield", "Item.bow"]));
+    expect(changed).toBe(true);
+    expect(layout.weapons.sets[0]).toEqual([null, "Item.shield"]);
+    expect(layout.weapons.lost).toEqual([{ ref: "Item.sword", set: 0, hand: 0 }]);
+  });
+  it("revenue, elle reprend sa place ; l'entrée s'efface", () => {
+    const gone = cleanup(base(), new Set(["Item.shield", "Item.bow"])).layout;
+    const r = restoreLost(gone, new Set(["Item.sword", "Item.shield", "Item.bow"]));
+    expect(r.changed).toBe(true);
+    expect(r.layout.weapons.sets[0]).toEqual(["Item.sword", "Item.shield"]);
+    expect(r.restored).toEqual([{ ref: "Item.sword", from: "Item.sword", set: 0, hand: 0 }]);
+    expect(r.layout.weapons.lost).toEqual([]);
+    expect(activeWeaponRefs(r.layout)).toEqual(["Item.sword", "Item.shield"]);
+  });
+  it("place prise entre-temps : elle n'écrase rien, l'entrée s'efface quand même", () => {
+    const gone = cleanup(base(), new Set(["Item.shield", "Item.bow", "Item.axe"])).layout;
+    gone.weapons.sets[0][0] = "Item.axe";
+    const r = restoreLost(gone, new Set(["Item.sword", "Item.shield", "Item.bow", "Item.axe"]));
+    expect(r.layout.weapons.sets[0]).toEqual(["Item.axe", "Item.shield"]);
+    expect(r.restored).toEqual([]);
+    expect(r.layout.weapons.lost).toEqual([]);
+  });
+  it("pas encore revenue : rien ne change", () => {
+    const gone = cleanup(base(), new Set(["Item.shield", "Item.bow"])).layout;
+    expect(restoreLost(gone, new Set(["Item.shield", "Item.bow"])).changed).toBe(false);
+  });
+  it("une ancienne disposition sans liste se normalise ; la liste est bornée", () => {
+    expect(normalize({ weapons: { sets: [[null, null], [null, null]], active: 0 } }).weapons.lost).toEqual([]);
+    let l = emptyLayout();
+    for ( let i = 0; i < LOST_MAX + 5; i++ ) {
+      l.weapons.sets[0][0] = `Item.w${i}`;
+      l = cleanup(l, new Set()).layout;
+    }
+    expect(l.weapons.lost.length).toBe(LOST_MAX);
+    expect(l.weapons.lost.at(-1).ref).toBe(`Item.w${LOST_MAX + 4}`);
+  });
+});
+
+describe("0.19.0 : revenue sous un autre identifiant", () => {
+  it("le rapprochement donne la nouvelle référence", () => {
+    const l = emptyLayout();
+    l.weapons.sets = [["Item.old", null], [null, null]];
+    const gone = cleanup(l, new Set(["Item.new"])).layout;
+    const r = restoreLost(gone, new Set(["Item.new"]), e => (e.ref === "Item.old" ? "Item.new" : null));
+    expect(r.layout.weapons.sets[0]).toEqual(["Item.new", null]);
+    expect(r.restored).toEqual([{ ref: "Item.new", from: "Item.old", set: 0, hand: 0 }]);
+    expect(r.layout.weapons.lost).toEqual([]);
+  });
+  it("deux places perdues ne prennent pas le même objet", () => {
+    const l = emptyLayout();
+    l.weapons.sets = [["Item.a", "Item.b"], [null, null]];
+    const gone = cleanup(l, new Set(["Item.c"])).layout;
+    const r = restoreLost(gone, new Set(["Item.c"]), () => "Item.c");
+    expect(r.layout.weapons.sets[0]).toEqual(["Item.c", null]);
+    expect(r.layout.weapons.lost.map(e => e.ref)).toEqual(["Item.b"]);
+  });
+});

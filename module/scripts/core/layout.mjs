@@ -41,7 +41,7 @@ export function emptyLayout() {
     },
     known: [],
     tabKnown: Object.fromEntries(TABS.map(t => [tabContainer(t), []])),
-    weapons: { sets: [[null, null], [null, null]], active: 0 }
+    weapons: { sets: [[null, null], [null, null]], active: 0, lost: [] }
   };
 }
 
@@ -56,7 +56,9 @@ export function normalize(raw) {
     cells: { ...base.cells, ...(raw.cells ?? {}) },
     weapons: {
       active: raw.weapons?.active === 1 ? 1 : 0,
-      sets: [0, 1].map(s => [0, 1].map(h => raw.weapons?.sets?.[s]?.[h] ?? null))
+      sets: [0, 1].map(s => [0, 1].map(h => raw.weapons?.sets?.[s]?.[h] ?? null)),
+      lost: (Array.isArray(raw.weapons?.lost) ? raw.weapons.lost : [])
+        .filter(l => l && (typeof l.ref === "string") && [0, 1].includes(l.set) && [0, 1].includes(l.hand)).map(l => ({ ...l }))
     },
     v: Number(raw.v) || 1,
     known: Array.isArray(raw.known) ? [...raw.known] : [],
@@ -201,11 +203,55 @@ export function cleanup(layout, valid) {
     const kept = list.filter(ref => valid.has(ref));
     if ( kept.length !== list.length ) { out.tabKnown[k] = kept; changed = true; }
   }
-  for ( const set of out.weapons.sets ) {
-    for ( let h = 0; h < 2; h++ ) if ( set[h] && !valid.has(set[h]) ) { set[h] = null; changed = true; }
-  }
+  // 0.19.0 : une arme qui quitte la fiche (lâchée, lancée, posée) laisse sa place — retenue (`weapons.lost`) pour l'y remettre
+  // quand elle revient (restoreLost). Les plus anciennes s'oublient au-delà de LOST_MAX.
+  out.weapons.lost ??= [];
+  out.weapons.sets.forEach((set, s) => {
+    for ( let h = 0; h < 2; h++ ) {
+      if ( !set[h] || valid.has(set[h]) ) continue;
+      out.weapons.lost = [...out.weapons.lost.filter(l => l.ref !== set[h]), { ref: set[h], set: s, hand: h }].slice(-LOST_MAX);
+      set[h] = null;
+      changed = true;
+    }
+  });
   return { layout: out, changed };
 }
+
+/** Le nombre de places d'armes retenues au plus (`weapons.lost`). */
+export const LOST_MAX = 12;
+
+/**
+ * 0.19.0 : les armes revenues sur la fiche reprennent la place qu'elles avaient quittée, si elle est libre et qu'elles ne sont pas
+ * déjà dans un jeu ; l'entrée retenue s'efface dès que l'arme est retrouvée. Retrouvée : sa référence est de nouveau valide, ou
+ * `matchOf(entrée)` rend la référence de l'objet revenu sous un autre identifiant (Darsh Loot recrée l'objet au sol puis au
+ * ramassage — reconnu par son nom, son type et sa source : adapter/weapon-return.mjs).
+ * @param {Set<string>} valid
+ * @param {(lost: {ref: string, set: number, hand: number}) => string|null} [matchOf]
+ * @returns {{layout: object, changed: boolean, restored: Array<{ref: string, from: string, set: number, hand: number}>}}
+ */
+export function restoreLost(layout, valid, matchOf=null) {
+  const lost = layout.weapons.lost ?? [];
+  const found = new Map();
+  for ( const l of lost ) {
+    const ref = valid.has(l.ref) ? l.ref : (matchOf?.(l) ?? null);
+    if ( ref && ![...found.values()].includes(ref) ) found.set(l, ref);
+  }
+  if ( !found.size ) return { layout, changed: false, restored: [] };
+  const out = clone(layout);
+  const restored = [];
+  for ( const [l, ref] of found ) {
+    const placed = out.weapons.sets.some(set => set.includes(ref));
+    if ( !placed && !out.weapons.sets[l.set][l.hand] ) {
+      out.weapons.sets[l.set][l.hand] = ref;
+      restored.push({ ref, from: l.ref, set: l.set, hand: l.hand });
+    }
+  }
+  out.weapons.lost = lost.filter(l => !found.has(l));
+  return { layout: out, changed: true, restored };
+}
+
+/** Les armes du jeu en main (références). */
+export const activeWeaponRefs = layout => (layout.weapons.sets[layout.weapons.active] ?? []).filter(Boolean);
 
 /**
  * Passage à la version 2 : retire des conteneurs remplis automatiquement (vue par défaut, onglets Commun, Classe,

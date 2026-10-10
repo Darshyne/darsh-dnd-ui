@@ -3,7 +3,8 @@
  */
 import { Bar } from "../apps/bar.mjs";
 import { route } from "./router.mjs";
-import { setting } from "../shared.mjs";
+import { setting, log } from "../shared.mjs";
+import { recordDeparture, returnWeapons } from "../adapter/weapon-return.mjs";
 
 /** @type {Bar|null} */
 let bar = null;
@@ -38,6 +39,16 @@ export function registerBar() {
       if ( mine(item.parent) ) redraw();
     });
   }
+  // 0.19.0 : une arme d'un jeu qui quitte la fiche est notée ; ramassée, elle reprend sa place (équipée si son jeu est en main).
+  // Chez le MJ actif (adapter/weapon-return.mjs).
+  route("preDeleteItem", "bar", item => {
+    if ( game.users.activeGM?.isSelf ) recordDeparture(item);
+  });
+  route("createItem", "bar", async item => {
+    if ( !game.users.activeGM?.isSelf || (item.parent?.documentName !== "Actor") ) return;
+    const back = await returnWeapons(item.parent);
+    for ( const r of back ) log.info?.(`${item.parent.name}: ${item.name} back in weapon set ${r.set + 1}`);
+  });
   for ( const hook of ["createActiveEffect", "updateActiveEffect", "deleteActiveEffect"] ) {
     route(hook, "bar", effect => {
       const actor = effect.parent?.documentName === "Item" ? effect.parent.parent : effect.parent;

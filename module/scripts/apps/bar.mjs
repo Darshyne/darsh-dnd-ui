@@ -13,7 +13,7 @@ import { D20Panel } from "./d20.mjs";
 import { shortTooltip, fullTooltip } from "./tooltip.mjs";
 import {
   CONTAINERS, TABS, tabContainer, isMove, normalize, columnsOf, place, remove, move, populate, populateTab, cleanup, withdrawRefs, VERSION,
-  resize, setRows, setWeapon, setActiveWeapons, seedWeapons
+  resize, setRows, setWeapon, setActiveWeapons, seedWeapons, restoreLost
 } from "../core/layout.mjs";
 import { roman, matchesFilter } from "../core/cells.mjs";
 import {
@@ -22,6 +22,7 @@ import {
 } from "../adapter/items.mjs";
 import { iconEffectsOf } from "../adapter/actor.mjs";
 import { layoutHost, readLayout, writeLayout } from "../adapter/forms.mjs";
+import { matcherFor, equipActive } from "../adapter/weapon-return.mjs";
 import { viewedCombat, nameFor } from "../adapter/combat.mjs";
 import { combatantOf, currentActor } from "../adapter/party.mjs";
 import { budgetOf, movementOf, multiattackOf, lightOf, carriedLightOf, toggleLight } from "../adapter/engine.mjs";
@@ -97,6 +98,14 @@ export class Bar {
     let dirty = false;
     const c = cleanup(layout, validRefs(actor));
     if ( c.changed ) { layout = c.layout; dirty = true; }
+    // 0.19.0 : une arme revenue (ramassée, sous un nouvel identifiant) reprend la place qu'elle avait quittée ; équipée si son jeu
+    // est en main (adapter/weapon-return.mjs). Le MJ actif le fait aussi à l'arrivée de l'objet, même sans Barre ouverte.
+    const back = restoreLost(layout, validRefs(actor), matcherFor(actor, layout));
+    if ( back.changed ) {
+      layout = back.layout;
+      dirty = true;
+      if ( this.canEdit && back.restored.length ) equipActive(actor, layout, back.restored);
+    }
     if ( layout.v < VERSION ) { layout = withdrawRefs(layout, inactiveRefs(actor)); dirty = true; }
     const p = populate(layout, autoEntries(actor));
     if ( p.changed ) { layout = p.layout; dirty = true; }
