@@ -16,6 +16,15 @@ const cache = new Map();
  * Infobulle courte (HTML) d'une case.
  * @param {object} view   Retour de cellView (adapter/items.mjs).
  */
+/** 0.18.0 : l'état d'une source de lumière portée — « Allumée — reste 5 h 20 », « Éteinte — reste 1 h 00 », « Vide ». */
+export function lightLine(light) {
+  const left = Number(light.left);
+  if ( Number.isFinite(left) && (left <= 0) ) return loc("Bar.Light.Empty");
+  const minutes = Number.isFinite(left) ? Math.ceil(left / 60) : null;
+  const time = (minutes === null) ? "" : loc("Bar.Light.Left", { h: Math.floor(minutes / 60), m: String(minutes % 60).padStart(2, "0") });
+  return `${loc(light.lit ? "Bar.Light.Lit" : "Bar.Light.Out")}${time}`;
+}
+
 export function shortTooltip(view) {
   const lines = [`<strong>${esc(view.name)}</strong>`];
   const bits = [];
@@ -33,6 +42,7 @@ export function shortTooltip(view) {
   if ( bits.length ) lines.push(bits.map(esc).join(" · "));
   const damage = view.primary?.labels?.damage?.map?.(d => d.label).filter(Boolean).join(" + ");
   if ( damage ) lines.push(esc(damage));
+  if ( view.light ) lines.push(`<span class="ddu-light-state">${esc(lightLine(view.light))}</span>`);
   if ( view.enchantments?.length ) {
     lines.push(`<span class="ddu-enchanted">${esc(loc("Bar.Enchanted", { names: view.enchantments.join(", ") }))}</span>`);
   }

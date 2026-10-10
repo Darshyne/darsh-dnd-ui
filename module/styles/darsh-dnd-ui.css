@@ -858,6 +858,18 @@ body.ddu-hide-hotbar #hotbar { display: none; }
   pointer-events: none;
 }
 .ddu-cell--enchanted { border-color: rgba(178, 92, 255, 0.7); }
+/* 0.18.0 : source de lumière allumée — bordure et lueur orangées, flamme en haut à droite. */
+.ddu-cell--lit { border-color: rgba(255, 170, 60, 0.9); box-shadow: 0 0 8px rgba(255, 150, 40, 0.6) inset; }
+.ddu-cell__flame {
+  position: absolute;
+  top: 1px;
+  right: 3px;
+  color: #ffb347;
+  font-size: calc(11px * var(--ddu-scale));
+  text-shadow: 0 0 3px #000;
+  pointer-events: none;
+}
+.ddu-light-state { color: #ffb347; }
 .ddu-enchanted { color: #cf9bff; }
 .ddu-cell__key {
   position: absolute;

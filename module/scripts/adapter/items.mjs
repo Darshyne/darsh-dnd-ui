@@ -12,7 +12,7 @@
  * Actions de base du moteur : items portant flags["dnd5e-combat"].basicAction (SPEC §4.1).
  */
 import { reasonsFor, upcastOptions } from "../core/cells.mjs";
-import { issuesOf, movableZoneOf } from "./engine.mjs";
+import { issuesOf, movableZoneOf, carriedLightOf } from "./engine.mjs";
 
 const TIMED = ["action", "bonus", "reaction"];
 
@@ -263,7 +263,9 @@ export function cellView(actor, ref, ctx) {
     ritual: !!item.system.properties?.has?.("ritual"),
     equipped: item.system.equipped ?? null,
     basic: isBasicAction(item),
-    enchantments: enchantmentsOf(item)
+    enchantments: enchantmentsOf(item),
+    // 0.18.0 : torche, lampe, lanterne, bougie — allumée ou non, temps restant (moteur, SPEC §121).
+    light: carriedLightOf(item)
   };
   view.reasons = reasonsFor({ ...view, slots: ctx.slots });
   view.issues = issuesOf(activity) ?? [];

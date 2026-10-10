@@ -62,7 +62,8 @@
       "Menu": {
         "Details": "Details",
         "Sheet": "Open sheet",
-        "Remove": "Remove from the bar"
+        "Remove": "Remove from the bar",
+        "Light": "Light / put out"
       },
       "AddRow": "Add a row",
       "RemoveRow": "Remove a row",
@@ -93,6 +94,12 @@
         "items": "Items",
         "passives": "Passives",
         "custom": "Custom"
+      },
+      "Light": {
+        "Lit": "Lit",
+        "Out": "Out",
+        "Left": " — {h} h {m} left",
+        "Empty": "Empty — needs oil"
       }
     },
     "Reason": {

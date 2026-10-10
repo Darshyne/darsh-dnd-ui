@@ -62,7 +62,8 @@
       "Menu": {
         "Details": "Détails",
         "Sheet": "Ouvrir la fiche",
-        "Remove": "Retirer de la barre"
+        "Remove": "Retirer de la barre",
+        "Light": "Allumer / éteindre"
       },
       "AddRow": "Ajouter une rangée",
       "RemoveRow": "Retirer une rangée",
@@ -93,6 +94,12 @@
         "items": "Objets",
         "passives": "Passifs",
         "custom": "Personnalisé"
+      },
+      "Light": {
+        "Lit": "Allumée",
+        "Out": "Éteinte",
+        "Left": " — reste {h} h {m}",
+        "Empty": "Vide — il faut de l'huile"
       }
     },
     "Reason": {

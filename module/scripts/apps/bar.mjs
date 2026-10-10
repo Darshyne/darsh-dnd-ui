@@ -24,7 +24,7 @@ import { iconEffectsOf } from "../adapter/actor.mjs";
 import { layoutHost, readLayout, writeLayout } from "../adapter/forms.mjs";
 import { viewedCombat, nameFor } from "../adapter/combat.mjs";
 import { combatantOf, currentActor } from "../adapter/party.mjs";
-import { budgetOf, movementOf, multiattackOf, lightOf } from "../adapter/engine.mjs";
+import { budgetOf, movementOf, multiattackOf, lightOf, carriedLightOf, toggleLight } from "../adapter/engine.mjs";
 import { MODULE_ID, loc, setting } from "../shared.mjs";
 
 const esc = s => foundry.utils.escapeHTML(String(s ?? ""));
@@ -442,6 +442,7 @@ export class Bar {
     if ( !matchesFilter(view, this.filter) ) cls.push("ddu-cell--dim");
     if ( view.cost === "bonus" || view.cost === "reaction" ) cls.push(`ddu-cell--${view.cost}`);
     if ( view.enchantments?.length ) cls.push("ddu-cell--enchanted");
+    if ( view.light?.lit ) cls.push("ddu-cell--lit");
     const draggable = this.canArrange;
     const badges = [];
     if ( view.uses ) badges.push(`<span class="ddu-cell__uses">${view.uses.value}/${view.uses.max}</span>`);
@@ -452,6 +453,7 @@ export class Bar {
     if ( view.canUpcast ) badges.push('<span class="ddu-cell__upcast">+</span>');
     if ( view.concentration ) badges.push('<span class="ddu-cell__conc">C</span>');
     if ( view.enchantments?.length ) badges.push('<span class="ddu-enchant"></span>');
+    if ( view.light?.lit ) badges.push('<span class="ddu-cell__flame"><i class="fa-solid fa-fire"></i></span>');
     const key = container === "custom" ? this.#keyLabel(index) : null;
     if ( key ) badges.push(`<span class="ddu-cell__key">${esc(key)}</span>`);
     return `<div class="${cls.join(" ")}" ${attrs} data-ref="${esc(view.ref)}" data-cost="${view.cost ?? ""}"
@@ -630,6 +632,9 @@ export class Bar {
     if ( r.macro ) return r.macro.execute({ actor: this.actor });
     if ( !this.actor.isOwner ) return;
     const activities = r.item.system.activities;
+    // 0.18.0 : une source de lumière sans activité pour l'allumer (la Torche du Manuel des joueurs n'a que son attaque) — la case
+    // l'allume ou l'éteint par le moteur. Avec une activité « Lumière » (Lampe, Bougie), on l'utilise : son coût d'action compte.
+    if ( !r.activity && carriedLightOf(r.item) && !activities?.some(a => a.type === "utility") ) return toggleLight(r.item);
     let activity = r.activity ?? (activities?.size === 1 ? activities.contents[0] : null);
     // Niveau choisi dans le tiroir : l'activité qui dépense l'emplacement (Marque du chasseur en a trois,
     // dont une seule le consomme), sinon dnd5e ouvrirait son choix d'activité et perdrait le niveau.
@@ -667,6 +672,15 @@ export class Bar {
         label: "DDU.Bar.Menu.Details", icon: '<i class="fa-solid fa-circle-info"></i>',
         visible: t => t.classList.contains("ddu-cell"),
         onClick: (_e, t) => this.#showFull(t, { locked: true })
+      },
+      {
+        // 0.18.0 : allumer / éteindre une source de lumière portée, case ou arme (une torche dans un jeu d'armes).
+        label: "DDU.Bar.Menu.Light", icon: '<i class="fa-solid fa-fire"></i>',
+        visible: t => {
+          const item = resolveRef(this.actor, this.#refOf(t))?.item;
+          return !!item?.isOwner && !!carriedLightOf(item);
+        },
+        onClick: (_e, t) => toggleLight(resolveRef(this.actor, this.#refOf(t))?.item)
       },
       {
         label: "DDU.Bar.Menu.Sheet", icon: '<i class="fa-solid fa-book-open"></i>',

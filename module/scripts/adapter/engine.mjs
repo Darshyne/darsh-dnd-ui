@@ -34,6 +34,20 @@ function read(name, ...args) {
 }
 
 /**
+ * Source de lumière portée (torche, lampe, lanterne, bougie), d'après le moteur (≥ 0.206.0, son SPEC §121) : allumée ou non, temps
+ * restant (secondes), combustible. null si l'item n'en est pas une.
+ * @returns {{uuid: string, name: string, lit: boolean, left: number|null, full: number|null, fuel: object|null}|null}
+ */
+export function carriedLightOf(item) {
+  return item ? read("carriedLight", item) : null;
+}
+
+/** Allumer ou éteindre une source portée par le moteur (main libre, durée, huile) ; rend son résultat, ou null. */
+export function toggleLight(item) {
+  return item ? read("toggleLight", item) : null;
+}
+
+/**
  * Lumière où se tient un token, calculée par le moteur : lumière vive / faible / ténèbres (magiques), et ce que ça
  * change.
  * @returns {{key: string, icon: string, name: string, tooltip: string, enabled: boolean}|null}
