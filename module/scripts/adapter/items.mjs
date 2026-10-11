@@ -270,7 +270,10 @@ export function cellView(actor, ref, ctx) {
     : acts.length ? !acts.some(free) : !!CONFIG.DND5E.spellcasting[item.system.method]?.slots);
   const castsWithSlot = leveled && (r.activity ? slotted(r.activity) : acts.some(slotted));
   const uses = usesOf(r.activity) ?? usesOf(item) ?? (r.activity ? null : usesOf(activity));
-  const quantity = item.type === "consumable" ? (item.system.quantity ?? null) : null;
+  // 0.20.1 : une arme compte aussi (javelines, dagues) — lancée ou lâchée par darsh-loot, la dernière reste sur la fiche à 0 et la case
+  // la lançait encore. Pas une arme naturelle (Attaque à mains nues, griffes).
+  const counted = (item.type === "consumable") || ((item.type === "weapon") && (item.system.type?.value !== "natural"));
+  const quantity = counted ? (item.system.quantity ?? null) : null;
   const unprepared = isSpell && !ritualCast && !isSpellReady(item);
   const view = {
     ref, kind: r.activity ? "activity" : "item", item, activity: r.activity ?? null, primary: activity,
