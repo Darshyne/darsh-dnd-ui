@@ -98,6 +98,9 @@ export function isSpellReady(item) {
  * "items" (consommables et autres objets à activité), "passives" (aptitude sans activité qu'on déclenche) ou null.
  */
 export function tabOf(item) {
+  // 0.20.2 : la copie d'un sort que dnd5e garde pour une activité « cast » (Ennemi juré → Marque du chasseur, objet magique) — la
+  // fiche de dnd5e la cache ; la Barre en faisait une seconde case « non préparé ».
+  if ( item?.getFlag?.("dnd5e", "cachedFor") ) return null;
   if ( isBasicAction(item) ) return "common";
   if ( !hasActivities(item) ) return ["feat", "spell"].includes(item.type) ? "passives" : null;
   if ( item.type === "weapon" ) return "common";
@@ -243,6 +246,7 @@ export function cellView(actor, ref, ctx) {
     return { ref, kind: "macro", name: r.macro.name, img: r.macro.img, cost: null, reasons: [], issues: [], spellLevel: null };
   }
   const { item } = r;
+  if ( item.getFlag?.("dnd5e", "cachedFor") ) return null;   // 0.20.2 : copie de sort d'une activité « cast » (voir tabOf)
   const activity = r.activity ?? item.system.activities?.contents?.[0] ?? null;
   const type = activity?.activation?.type ?? null;
   // 0.19.2 : le coût que le moteur fera payer (Observateur : Chercher par une action Bonus), sinon l'activation de la donnée.
@@ -263,11 +267,21 @@ export function cellView(actor, ref, ctx) {
   const spent = u => (u?.max > 0) && (u.value <= 0);
   const itemSpent = a => (a?.consumption?.targets ?? []).some(t => t.type === "itemUses" && !t.target) && spent(usesOf(item));
   const free = a => !slotted(a) && !spent(usesOf(a)) && !itemSpent(a);
+  // 0.20.2 : une incantation gratuite, c'est une activité qui LANCE le sort sans emplacement — la « forward » de dnd5e, ou une activité
+  // à utilisations limitées (les siennes ou celles de l'objet). Les activités sans emplacement d'un sort en cours (« Dégâts bonus de
+  // marque », « Déplacer la marque » de Marque du chasseur) n'en sont pas : elles laissaient la case active sans emplacement, et le clic
+  // ne faisait rien (dnd5e refusait le lancement).
+  const limited = a => (usesOf(a)?.max > 0) || (a?.consumption?.targets ?? []).some(t => (t.type === "itemUses") && !t.target);
+  const freeCast = a => free(a) && ((a.type === "forward") || limited(a));
+  // Le sort déjà en cours (concentration sur lui) : ses activités sans emplacement servent (déplacer la marque).
+  // Lancé par un autre objet (Ennemi juré), la concentration porte sur la copie du sort que dnd5e crée : même identifiant.
+  const running = isSpell && Array.from(item.actor?.concentration?.items ?? []).some(i => (i === item)
+    || (!!item.system.identifier && (i.system?.identifier === item.system.identifier)));
   // 0.20.0 : un sort que le moteur lancera en rituel d'office (hors combat, sans emplacement — même non préparé avec Savoir rituel,
   // moteur §139) n'est grisé ni « non préparé » ni « pas d'emplacement », et n'ouvre pas le tiroir des niveaux.
   const ritualCast = isSpell && !!activity && (game.modules.get("dnd5e-combat")?.api?.ui?.ritual?.(r.activity ?? activity) === "ritual");
-  const needsSlot = !ritualCast && leveled && (r.activity ? slotted(r.activity)
-    : acts.length ? !acts.some(free) : !!CONFIG.DND5E.spellcasting[item.system.method]?.slots);
+  const needsSlot = !ritualCast && !running && leveled && (r.activity ? slotted(r.activity)
+    : acts.length ? (acts.some(slotted) && !acts.some(freeCast)) : !!CONFIG.DND5E.spellcasting[item.system.method]?.slots);
   const castsWithSlot = leveled && (r.activity ? slotted(r.activity) : acts.some(slotted));
   const uses = usesOf(r.activity) ?? usesOf(item) ?? (r.activity ? null : usesOf(activity));
   // 0.20.1 : une arme compte aussi (javelines, dagues) — lancée ou lâchée par darsh-loot, la dernière reste sur la fiche à 0 et la case
