@@ -325,6 +325,15 @@ export function cellView(actor, ref, ctx) {
 /*  Armes                                       */
 /* -------------------------------------------- */
 
+/**
+ * 0.20.3 : le mode « main secondaire » de l'arme selon dnd5e (une arme Légère : « offhand », « thrown-offhand » pour une arme de
+ * lancer), ou null — une arme sans ce mode ne fait pas d'attaque de main secondaire.
+ */
+export function offhandMode(item) {
+  const modes = (item?.system?.attackModes ?? []).map(m => m.value);
+  return modes.includes("offhand") ? "offhand" : modes.includes("thrown-offhand") ? "thrown-offhand" : null;
+}
+
 /** Armes de l'acteur pour le premier remplissage des jeux d'armes. */
 export function weaponsOf(actor) {
   return (actor?.items ?? []).filter(i => i.type === "weapon").map(i => ({

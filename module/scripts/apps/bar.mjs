@@ -18,7 +18,7 @@ import {
 import { roman, matchesFilter } from "../core/cells.mjs";
 import {
   refOf, resolveRef, validRefs, inactiveRefs, autoEntries, tabRefs, classLabel, slotsOf, hasCantrips, classResources,
-  cellView, weaponsOf, equipWeaponSet, enchantmentsOf, tabOf
+  cellView, weaponsOf, equipWeaponSet, enchantmentsOf, tabOf, offhandMode
 } from "../adapter/items.mjs";
 import { iconEffectsOf } from "../adapter/actor.mjs";
 import { layoutHost, readLayout, writeLayout } from "../adapter/forms.mjs";
@@ -606,6 +606,10 @@ export class Bar {
         const { sets, active } = this.layout.weapons;
         const ref = sets[active][Number(target.dataset.weaponHand)];
         const item = resolveRef(this.actor, ref)?.item;
+        // 0.20.3 : la main secondaire — l'attaque de l'arme Légère tenue dans l'autre main (mode « offhand » de dnd5e : sans le
+        // modificateur positif aux dégâts ; le moteur la fait payer de l'action Bonus). Une arme qui n'a pas ce mode part normalement.
+        const offhand = (Number(target.dataset.weaponHand) === 1) ? offhandMode(item) : null;
+        if ( offhand ) return item.use({ event, "dnd5e-combat": { attackMode: offhand } });
         return item?.use({ event });
       }
       case "upcast": return this.#useCell(this.popupRef, event, target.dataset.slot);
