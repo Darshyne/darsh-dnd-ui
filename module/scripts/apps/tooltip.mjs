@@ -44,6 +44,7 @@ export function shortTooltip(view) {
   if ( bits.length ) lines.push(bits.map(esc).join(" · "));
   const damage = view.primary?.labels?.damage?.map?.(d => d.label).filter(Boolean).join(" + ");
   if ( damage ) lines.push(esc(damage));
+  if ( view.ritualCast ) lines.push(`<em>${esc(loc("Bar.RitualCast"))}</em>`);
   if ( view.light ) lines.push(`<span class="ddu-light-state">${esc(lightLine(view.light))}</span>`);
   if ( view.enchantments?.length ) {
     lines.push(`<span class="ddu-enchanted">${esc(loc("Bar.Enchanted", { names: view.enchantments.join(", ") }))}</span>`);

@@ -48,6 +48,7 @@
       "GMKill": "GM: reduce to 0 Hit Points",
       "ConcentrationTag": "Concentration",
       "Ritual": "Ritual",
+      "RitualCast": "As a Ritual: no spell slot, 10 more minutes",
       "Cantrip": "Cantrip",
       "SpellLevel": "Level {level}",
       "Uses": "{value}/{max} uses",

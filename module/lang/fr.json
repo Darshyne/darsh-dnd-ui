@@ -48,6 +48,7 @@
       "GMKill": "MJ : tuer (0 PV)",
       "ConcentrationTag": "Concentration",
       "Ritual": "Rituel",
+      "RitualCast": "En rituel : sans emplacement, 10 minutes de plus",
       "Cantrip": "Sort mineur",
       "SpellLevel": "Niveau {level}",
       "Uses": "{value}/{max} utilisations",

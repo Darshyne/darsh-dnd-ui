@@ -263,18 +263,22 @@ export function cellView(actor, ref, ctx) {
   const spent = u => (u?.max > 0) && (u.value <= 0);
   const itemSpent = a => (a?.consumption?.targets ?? []).some(t => t.type === "itemUses" && !t.target) && spent(usesOf(item));
   const free = a => !slotted(a) && !spent(usesOf(a)) && !itemSpent(a);
-  const needsSlot = leveled && (r.activity ? slotted(r.activity)
+  // 0.20.0 : un sort que le moteur lancera en rituel d'office (hors combat, sans emplacement — même non préparé avec Savoir rituel,
+  // moteur §139) n'est grisé ni « non préparé » ni « pas d'emplacement », et n'ouvre pas le tiroir des niveaux.
+  const ritualCast = isSpell && !!activity && (game.modules.get("dnd5e-combat")?.api?.ui?.ritual?.(r.activity ?? activity) === "ritual");
+  const needsSlot = !ritualCast && leveled && (r.activity ? slotted(r.activity)
     : acts.length ? !acts.some(free) : !!CONFIG.DND5E.spellcasting[item.system.method]?.slots);
   const castsWithSlot = leveled && (r.activity ? slotted(r.activity) : acts.some(slotted));
   const uses = usesOf(r.activity) ?? usesOf(item) ?? (r.activity ? null : usesOf(activity));
   const quantity = item.type === "consumable" ? (item.system.quantity ?? null) : null;
-  const unprepared = isSpell && !isSpellReady(item);
+  const unprepared = isSpell && !ritualCast && !isSpellReady(item);
   const view = {
     ref, kind: r.activity ? "activity" : "item", item, activity: r.activity ?? null, primary: activity,
     name: r.activity ? `${item.name} : ${r.activity.name}` : item.name,
     img: r.activity?.img || item.img,
     cost, spellLevel, needsSlot, uses, quantity, unprepared, moves,
-    canUpcast: castsWithSlot && !!item.system.canScale,
+    canUpcast: !ritualCast && castsWithSlot && !!item.system.canScale,
+    ritualCast,
     concentration: !!(item.system.properties?.has?.("concentration") || activity?.duration?.concentration),
     ritual: !!item.system.properties?.has?.("ritual"),
     equipped: item.system.equipped ?? null,
