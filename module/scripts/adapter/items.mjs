@@ -245,7 +245,9 @@ export function cellView(actor, ref, ctx) {
   const { item } = r;
   const activity = r.activity ?? item.system.activities?.contents?.[0] ?? null;
   const type = activity?.activation?.type ?? null;
-  const cost = TIMED.includes(type) ? type : (type ? "other" : null);
+  // 0.19.2 : le coût que le moteur fera payer (Observateur : Chercher par une action Bonus), sinon l'activation de la donnée.
+  const engineCost = activity ? game.modules.get("dnd5e-combat")?.api?.ui?.cost?.(activity) : null;
+  const cost = TIMED.includes(engineCost) ? engineCost : TIMED.includes(type) ? type : (type ? "other" : null);
   const isSpell = item.type === "spell";
   const spellLevel = isSpell ? item.system.level : null;
   // 0.16.5 : une zone déjà posée à déplacer (Rayon de lune) ne dépense pas d'emplacement — ni grisée, ni tiroir des niveaux.

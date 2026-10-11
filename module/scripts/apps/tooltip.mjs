@@ -29,7 +29,9 @@ export function shortTooltip(view) {
   const lines = [`<strong>${esc(view.name)}</strong>`];
   const bits = [];
   if ( view.cost && view.primary ) {
-    const label = CONFIG.DND5E.activityActivationTypes?.[view.primary.activation?.type]?.label;
+    // 0.19.2 : le coût que le moteur fera payer s'il diffère de la donnée (Observateur : Chercher par une action Bonus).
+    const type = ["action", "bonus", "reaction"].includes(view.cost) ? view.cost : view.primary.activation?.type;
+    const label = CONFIG.DND5E.activityActivationTypes?.[type]?.label;
     if ( label ) bits.push(game.i18n.localize(label));
   }
   if ( view.spellLevel === 0 ) bits.push(loc("Bar.Cantrip"));
