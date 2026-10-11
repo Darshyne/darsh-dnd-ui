@@ -89,6 +89,31 @@ export function isMove(from, to) {
 }
 
 /**
+ * 0.20.2 : un objet rangé dans un onglet généré qui n'est plus le sien (son classement a changé : Vœu d'hostilité, de Passifs à Classe)
+ * en sort, et redevient « nouveau » pour son onglet — `populateTab` l'y place ensuite. Un objet retiré à la main n'est pas concerné :
+ * il n'est plus dans aucun onglet.
+ * @param {object} layout
+ * @param {(ref: string) => string|null} tabFor  L'onglet où l'objet se range aujourd'hui (null : aucun, ou objet disparu — laissé).
+ * @returns {{layout: object, changed: boolean}}
+ */
+export function retab(layout, tabFor) {
+  let out = null;
+  for ( const tab of TABS ) {
+    const key = tabContainer(tab);
+    (layout.cells[key] ?? []).forEach((ref, i) => {
+      if ( !ref ) return;
+      const now = tabFor(ref);
+      if ( !now || (now === tab) || !TABS.includes(now) ) return;
+      out ??= clone(layout);
+      out.cells[key][i] = null;
+      const known = out.tabKnown?.[tabContainer(now)];
+      if ( known ) out.tabKnown[tabContainer(now)] = known.filter(r => r !== ref);
+    });
+  }
+  return out ? { layout: out, changed: true } : { layout, changed: false };
+}
+
+/**
  * Remplissage d'un onglet : ce qui s'y range et n'y a jamais été placé va dans la première place libre (l'onglet
  * s'allonge au besoin). Retiré à la main, un objet ne revient pas (`tabKnown`).
  * @param {string[]} refs   Ce qui se range dans l'onglet, dans l'ordre voulu.

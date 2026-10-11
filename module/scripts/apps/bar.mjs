@@ -12,13 +12,13 @@ import { Portrait } from "./portrait.mjs";
 import { D20Panel } from "./d20.mjs";
 import { shortTooltip, fullTooltip } from "./tooltip.mjs";
 import {
-  CONTAINERS, TABS, tabContainer, isMove, normalize, columnsOf, place, remove, move, populate, populateTab, cleanup, withdrawRefs, VERSION,
+  CONTAINERS, TABS, tabContainer, isMove, normalize, columnsOf, place, remove, move, populate, populateTab, retab, cleanup, withdrawRefs, VERSION,
   resize, setRows, setWeapon, setActiveWeapons, seedWeapons, restoreLost
 } from "../core/layout.mjs";
 import { roman, matchesFilter } from "../core/cells.mjs";
 import {
   refOf, resolveRef, validRefs, inactiveRefs, autoEntries, tabRefs, classLabel, slotsOf, hasCantrips, classResources,
-  cellView, weaponsOf, equipWeaponSet, enchantmentsOf
+  cellView, weaponsOf, equipWeaponSet, enchantmentsOf, tabOf
 } from "../adapter/items.mjs";
 import { iconEffectsOf } from "../adapter/actor.mjs";
 import { layoutHost, readLayout, writeLayout } from "../adapter/forms.mjs";
@@ -109,6 +109,9 @@ export class Bar {
     if ( layout.v < VERSION ) { layout = withdrawRefs(layout, inactiveRefs(actor)); dirty = true; }
     const p = populate(layout, autoEntries(actor));
     if ( p.changed ) { layout = p.layout; dirty = true; }
+    // 0.20.2 : un objet que son classement a changé d'onglet y part (puis populateTab l'y range).
+    const moved = retab(layout, ref => { const item = actor.items.get(ref.split(".")[1]); return item ? tabOf(item) : null; });
+    if ( moved.changed ) { layout = moved.layout; dirty = true; }
     for ( const tab of TABS ) {
       const t = populateTab(layout, tab, tabRefs(actor, tab));
       if ( t.changed ) { layout = t.layout; dirty = true; }

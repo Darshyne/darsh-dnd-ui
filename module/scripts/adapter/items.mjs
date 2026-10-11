@@ -73,10 +73,19 @@ function hasActivities(item) {
  * d'aptitudes passives : Régénération, Affinité élémentaire…) ou d'un type que dnd5e marque `passive` (repos, début
  * et fin de tour, rencontre ; config.mjs:1031-1096, lu de même par la fiche PNJ, applications/actor/npc-sheet.mjs:514).
  * Sauf « Spécial », marqué passif lui aussi mais porté par des aptitudes qu'on clique (Fougue, Frappe brutale).
+ * 0.20.2 : sans type d'activation, une activité qui dépense les utilisations d'un AUTRE objet (une option d'une réserve commune) se
+ * déclenche quand même — Vœu d'hostilité (2024 : « quand vous entreprenez l'action Attaque », sans coût propre) dépense le Conduit
+ * divin et restait dans les Passifs, impossible à utiliser. Une aptitude qui ne dépense que ses propres utilisations (Acharnement,
+ * Chanceux : le moteur les joue) reste passive.
  */
+function spendsUses(activity) {
+  const own = activity?.item?.id;
+  return (activity?.consumption?.targets ?? []).some(t => (t.type === "itemUses") && t.target && (t.target !== own));
+}
+
 function isActiveActivity(activity) {
   const type = activity?.activation?.type;
-  if ( !type || (type === "none") ) return false;
+  if ( !type || (type === "none") ) return spendsUses(activity);
   if ( type === "special" ) return true;
   return !CONFIG.DND5E.activityActivationTypes[type]?.passive;
 }
