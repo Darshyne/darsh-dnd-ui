@@ -818,6 +818,69 @@ export class Bar {
     return true;
   }
 
+  /**
+   * 0.21.0 : la Barre sans souris, pour une autre façon de jouer (manette : une roue d'actions) — ce que la Barre montre, page par
+   * page, sans DOM. Pages : le jeu d'armes actif, la vue par défaut (conteneurs dans l'ordre), Personnalisé, puis les onglets
+   * (sans Passifs, rien n'y est utilisable). Une page vide est omise. Chaque case est celle que dessine #cell : mêmes grisés,
+   * mêmes raisons (traduites), mêmes niveaux de surcharge.
+   * @returns {{tab: string, label: string, cells: object[]}[]}
+   */
+  pages() {
+    if ( !this.actor || this.element.hidden || !this.layout ) return [];
+    const ctx = this.ctx ?? this.#context();
+    const out = [];
+    const cell = (ref, extra = {}) => {
+      const view = ref ? cellView(this.actor, ref, ctx) : null;
+      if ( !view ) return null;
+      return {
+        ref: view.ref, name: view.name, img: view.img, cost: view.cost ?? null, spellLevel: view.spellLevel ?? null,
+        uses: view.uses ? { value: view.uses.value, max: view.uses.max } : null, quantity: view.quantity ?? null,
+        concentration: !!view.concentration, ritualCast: !!view.ritualCast, multi: view.multi ?? null,
+        reasons: [...(view.reasons ?? []).map(r => loc(`Reason.${r}`)), ...(view.issues ?? [])],
+        disabled: !!(view.reasons?.length || view.issues?.length),
+        upcast: (view.canUpcast ? view.upcast : []).map(s => ({ key: s.key, level: s.level, pact: !!s.pact, value: s.value, max: s.max })),
+        ...extra
+      };
+    };
+    const add = (tab, label, cells) => {
+      const list = cells.filter(Boolean);
+      if ( list.length ) out.push({ tab, label, cells: list });
+    };
+    const { sets, active } = this.layout.weapons;
+    add("weapons", loc("Bar.WeaponSet", { n: active + 1 }), [0, 1].map(hand => {
+      const item = resolveRef(this.actor, sets[active][hand])?.item;
+      if ( !item || (hand === 1 && !offhandMode(item)) ) return null;
+      return cell(sets[active][hand], { hand });
+    }));
+    add("default", loc("Bar.Tab.default"), CONTAINERS.flatMap(c => this.layout.cells[c] ?? []).map(ref => cell(ref)));
+    add("custom", loc("Bar.Tab.custom"), (this.layout.cells.custom ?? []).map(ref => cell(ref)));
+    for ( const tab of ["common", "class", "items"] ) {
+      const label = tab === "class" ? (classLabel(this.actor) || loc("Bar.Tab.class")) : loc(`Bar.Tab.${tab}`);
+      add(tab, label, (this.layout.cells[tabContainer(tab)] ?? []).map(ref => cell(ref)));
+    }
+    return out;
+  }
+
+  /**
+   * 0.21.0 : utilise une case comme un clic (voir pages()). `slot` : le niveau de surcharge choisi (clé de `upcast`), sans le tiroir.
+   * `hand` : une arme du jeu actif (1 = main secondaire, attaque « offhand » de dnd5e). Les grisés ne bloquent pas, comme à la souris :
+   * le moteur et le système décident.
+   * @returns {boolean} false si la case n'existe pas (ou plus) pour l'acteur affiché.
+   */
+  use(ref, { slot = null, hand = null, event = null } = {}) {
+    if ( !this.actor || this.element.hidden || !ref ) return false;
+    const r = resolveRef(this.actor, ref);
+    if ( !r ) return false;
+    if ( hand !== null ) {
+      const offhand = (hand === 1) ? offhandMode(r.item) : null;
+      if ( offhand ) r.item.use({ event, "dnd5e-combat": { attackMode: offhand } });
+      else r.item.use({ event });
+      return true;
+    }
+    this.#useCell(ref, event, slot);
+    return true;
+  }
+
   async #switchWeapons(set) {
     if ( !this.canEdit ) return;
     const layout = setActiveWeapons(this.layout, set);
