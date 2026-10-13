@@ -21,6 +21,14 @@ It replaces BG3 Inspired HUD, Party HUD and Carousel Combat Tracker (declared as
 budget, movement, reasons why an action is greyed out, multiattack, light) without recomputing anything itself.
 No code or image from the replaced modules or from the game is reused.
 
+### Colours
+
+Every colour of the interface can be changed: **Configure Settings → DAS · Combat UI → Interface colours**. Pick a
+built-in theme — **BG3** (default), **Gothic Mist** (plum and magenta), **Parchment** (light) and **Shadow Parchment**
+(dark) — or adjust each colour and its opacity while watching the interface change, then save it under a name.
+Themes can be **exported** to a JSON file and **imported** on another world or computer. Each user picks their own
+theme, or follows the **table theme** chosen by the GM (who can share their own themes with the table).
+
 ## Installation
 
 In Foundry (or on The Forge), *Install Module* → paste the manifest URL:

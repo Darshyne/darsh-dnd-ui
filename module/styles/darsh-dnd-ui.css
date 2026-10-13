@@ -26,6 +26,52 @@
   --ddu-side-hostile: #b3232b;
   --ddu-side-secret: #8a5bbd;
 
+  /* Couleurs de base dont le CSS tire des transparences (color-mix), et couleurs nommées (thèmes : runtime/theme.mjs) */
+  --ddu-shade: #000;
+  --ddu-well: #000;
+  --ddu-text-strong: #fff;
+  --ddu-text-on-image: #f2e8d5;
+  --ddu-glint: #fff;
+  --ddu-hostile-bg: #3a0a0d;
+  --ddu-flash-damage: rgba(220, 20, 30, 0.6);
+  --ddu-ward-edge: #bfe3ff;
+  --ddu-ward-hi: #6cc2ff;
+  --ddu-ward-lo: #1d5f9e;
+  --ddu-ward-glow: rgba(80, 170, 255, 0.8);
+  --ddu-chip: rgba(20, 14, 8, 0.85);
+  --ddu-toggle: rgba(10, 8, 6, 0.75);
+  --ddu-icon: #e8e2d6;
+  --ddu-hand: #f0d060;
+  --ddu-grid: rgba(12, 6, 5, 0.82);
+  --ddu-d20-hi: #2a3a52;
+  --ddu-d20-lo: #101820;
+  --ddu-button: #1a120c;
+  --ddu-light-bright: #ffd65a;
+  --ddu-light-dim: #c8b98a;
+  --ddu-light-dark: #7f95c9;
+  --ddu-magic: #b25cff;
+  --ddu-button-danger: #300;
+  --ddu-gm-heal: #6fd27a;
+  --ddu-gm-kill: #e05050;
+  --ddu-button-hover: #2b1d12;
+  --ddu-pact: #6a3aa8;
+  --ddu-separator-dark: #5a0c0c;
+  --ddu-concentration: #9fd8ff;
+  --ddu-reason: #ff7a6e;
+  --ddu-lit-edge: rgba(255, 170, 60, 0.9);
+  --ddu-lit-glow: rgba(255, 150, 40, 0.6);
+  --ddu-flame: #ffb347;
+  --ddu-magic-text: #cf9bff;
+  --ddu-tab-hi: #3a2618;
+  --ddu-tab-lo: #1c120b;
+  --ddu-tab-default-hi: #a3262a;
+  --ddu-tab-default-lo: #4a0b0d;
+  --ddu-movement: #e0b43c;
+  --ddu-end-hi: #2f5f78;
+  --ddu-end-lo: #0d2330;
+  --ddu-rest-hi: #5a3a1c;
+  --ddu-rest-lo: #21130a;
+
   --ddu-frame-width: 2px;
   --ddu-radius-card: 6px;
 
@@ -75,9 +121,9 @@
   position: relative;
   overflow: hidden;
   flex: none;
-  background: #000;
+  background: var(--ddu-shade);
   border: var(--ddu-frame-width) solid var(--ddu-gold);
-  box-shadow: 0 0 0 1px #000, 0 2px 8px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 0 0 1px var(--ddu-shade), 0 2px 8px color-mix(in srgb, var(--ddu-shade) 60%, transparent);
   user-select: none;
 }
 .ddu-portrait--round {
@@ -101,7 +147,7 @@
 .ddu-portrait[data-side="secret"]   { border-color: var(--ddu-side-secret); }
 .ddu-portrait[data-side="hostile"] {
   border-color: var(--ddu-side-hostile);
-  background: #3a0a0d;
+  background: var(--ddu-hostile-bg);
 }
 
 .ddu-portrait__image,
@@ -125,7 +171,7 @@
   right: 0;
   bottom: 0;
   height: calc(var(--ddu-veil) * 100%);
-  background: linear-gradient(to top, var(--ddu-hurt), rgba(170, 16, 24, 0.42));
+  background: linear-gradient(to top, var(--ddu-hurt), color-mix(in srgb, var(--ddu-hurt) 72.4138%, transparent));
   transition: height 300ms ease-out;
   pointer-events: none;
 }
@@ -143,7 +189,7 @@
   pointer-events: none;
 }
 .ddu-portrait.ddu-flash--damage .ddu-portrait__flash {
-  background: rgba(220, 20, 30, 0.6);
+  background: var(--ddu-flash-damage);
   animation: ddu-flash 450ms ease-out;
 }
 .ddu-portrait.ddu-flash--heal .ddu-portrait__flash {
@@ -164,8 +210,8 @@
   text-align: center;
   font-family: var(--ddu-font-title);
   font-size: calc(18px * var(--ddu-scale));
-  color: var(--ddu-text);
-  text-shadow: 0 0 3px #000, 0 1px 2px #000;
+  color: var(--ddu-text-on-image);
+  text-shadow: 0 0 3px var(--ddu-shade), 0 1px 2px var(--ddu-shade);
   pointer-events: none;
 }
 .ddu-portrait--round .ddu-portrait__hp {
@@ -183,16 +229,16 @@
   min-width: calc(20px * var(--ddu-scale));
   height: calc(20px * var(--ddu-scale));
   padding: 0 3px;
-  border: 1px solid #bfe3ff;
+  border: 1px solid var(--ddu-ward-edge);
   border-radius: 999px;
-  background: radial-gradient(circle at 35% 30%, #6cc2ff, #1d5f9e);
-  box-shadow: 0 0 6px rgba(80, 170, 255, 0.8);
-  color: #fff;
+  background: radial-gradient(circle at 35% 30%, var(--ddu-ward-hi), var(--ddu-ward-lo));
+  box-shadow: 0 0 6px var(--ddu-ward-glow);
+  color: var(--ddu-text-strong);
   font-family: var(--ddu-font-title);
   font-size: calc(12px * var(--ddu-scale));
   line-height: calc(18px * var(--ddu-scale));
   text-align: center;
-  text-shadow: 0 1px 2px #000;
+  text-shadow: 0 1px 2px var(--ddu-shade);
   pointer-events: auto;
 }
 .ddu-portrait__ward[hidden] { display: none; }
@@ -217,7 +263,7 @@
   height: calc(9px * var(--ddu-scale));
   border-radius: 50%;
   border: 1px solid var(--ddu-gold);
-  background: rgba(0, 0, 0, 0.6);
+  background: color-mix(in srgb, var(--ddu-well) 60%, transparent);
 }
 .ddu-pip--success.ddu-pip--on { background: var(--ddu-action); }
 .ddu-pip--failure.ddu-pip--on { background: var(--ddu-side-hostile); }
@@ -246,7 +292,7 @@
   color: var(--ddu-text);
   font-family: var(--ddu-font-title);
   font-size: calc(15px * var(--ddu-scale));
-  text-shadow: 0 0 3px #000, 0 1px 2px #000;
+  text-shadow: 0 0 3px var(--ddu-shade), 0 1px 2px var(--ddu-shade);
   white-space: nowrap;
 }
 /* Volutes dorées de part et d'autre (V1 : filets ; V2 : images, SPEC §10 bis). */
@@ -282,7 +328,7 @@
   width: calc(var(--ddu-portrait-frieze-w) * 1.3);
   height: calc(var(--ddu-portrait-frieze-h) * 1.3);
   border-color: var(--ddu-active);
-  box-shadow: 0 0 0 1px #000, 0 0 12px var(--ddu-active);
+  box-shadow: 0 0 0 1px var(--ddu-shade), 0 0 12px var(--ddu-active);
 }
 .ddu-frieze__slot--active { margin: 0 4px; }
 .ddu-frieze__slot:hover .ddu-portrait,
@@ -335,7 +381,7 @@
   padding: 2px;
   border: 1px solid var(--ddu-gold);
   border-radius: 50%;
-  background: rgba(20, 14, 8, 0.85);
+  background: var(--ddu-chip);
   pointer-events: none;
 }
 
@@ -401,7 +447,7 @@
   min-height: calc(26px * var(--ddu-scale));
   color: var(--ddu-text);
   font-family: var(--ddu-font-title);
-  text-shadow: 0 0 4px #000, 0 1px 2px #000;
+  text-shadow: 0 0 4px var(--ddu-shade), 0 1px 2px var(--ddu-shade);
   pointer-events: none;
   white-space: nowrap;
 }
@@ -446,7 +492,7 @@
   padding: 0;
   border: 1px solid var(--ddu-gold);
   border-radius: 4px;
-  background: rgba(10, 8, 6, 0.75);
+  background: var(--ddu-toggle);
   color: var(--ddu-gold);
   font-size: calc(11px * var(--ddu-scale));
   line-height: 1;
@@ -488,7 +534,7 @@
 .ddu-party__member--hover .ddu-portrait { filter: brightness(1.15); }
 .ddu-party__member--turn .ddu-portrait {
   border-color: var(--ddu-gold);
-  box-shadow: 0 0 0 1px #000, 0 0 10px var(--ddu-gold);
+  box-shadow: 0 0 0 1px var(--ddu-shade), 0 0 10px var(--ddu-gold);
 }
 .ddu-party__member--played .ddu-portrait { filter: brightness(0.7); }
 .ddu-party__member.ddu-drop--before { box-shadow: 0 -3px 0 var(--ddu-active); }
@@ -510,14 +556,14 @@
   position: absolute;
   display: none;
   color: var(--ddu-gold);
-  text-shadow: 0 0 3px #000, 0 1px 2px #000;
+  text-shadow: 0 0 3px var(--ddu-shade), 0 1px 2px var(--ddu-shade);
   pointer-events: none;
 }
 .ddu-party__crown { top: -9px; right: -7px; font-size: calc(15px * var(--ddu-scale)); transform: rotate(18deg); }
 .ddu-party__member--current .ddu-party__crown { display: block; }
-.ddu-party__swords { top: 38%; left: -16px; font-size: calc(14px * var(--ddu-scale)); color: #e8e2d6; }
+.ddu-party__swords { top: 38%; left: -16px; font-size: calc(14px * var(--ddu-scale)); color: var(--ddu-icon); }
 .ddu-party__member--combat .ddu-party__swords { display: block; }
-.ddu-party__hand { display: block; top: -8px; left: -6px; font-size: calc(15px * var(--ddu-scale)); color: #f0d060; pointer-events: auto; }
+.ddu-party__hand { display: block; top: -8px; left: -6px; font-size: calc(15px * var(--ddu-scale)); color: var(--ddu-hand); pointer-events: auto; }
 .ddu-party__inspiration { display: block; bottom: 22%; right: -6px; font-size: calc(12px * var(--ddu-scale)); pointer-events: auto; }
 .ddu-party--right .ddu-party__swords { left: auto; right: -16px; }
 
@@ -546,14 +592,14 @@
   padding: 1px;
   border: 1px solid var(--ddu-gold-dim);
   border-radius: 50%;
-  background: rgba(20, 14, 8, 0.85);
+  background: var(--ddu-chip);
 }
 .ddu-party__effect--concentration { border-color: var(--ddu-gold); box-shadow: 0 0 4px var(--ddu-gold); }
 .ddu-party__more {
   color: var(--ddu-text);
   font-size: calc(11px * var(--ddu-scale));
   text-align: center;
-  text-shadow: 0 0 3px #000;
+  text-shadow: 0 0 3px var(--ddu-shade);
 }
 
 /* Mort : crâne sur le portrait */
@@ -565,8 +611,8 @@
   display: none;
   text-align: center;
   font-size: calc(22px * var(--ddu-scale));
-  color: #e8e2d6;
-  text-shadow: 0 0 4px #000;
+  color: var(--ddu-icon);
+  text-shadow: 0 0 4px var(--ddu-shade);
   pointer-events: none;
 }
 .ddu-portrait[data-tier="dead"] .ddu-portrait__skull { display: block; }
@@ -576,7 +622,9 @@
 
 :root {
   --ddu-separator: #9b1c1c;
-  --ddu-panel: linear-gradient(180deg, rgba(40, 18, 16, 0.94), rgba(22, 10, 9, 0.96));
+  --ddu-panel-top: rgba(40, 18, 16, 0.94);
+  --ddu-panel-bottom: rgba(22, 10, 9, 0.96);
+  --ddu-panel: linear-gradient(180deg, var(--ddu-panel-top), var(--ddu-panel-bottom));
 }
 
 body.ddu-hide-hotbar #hotbar { display: none; }
@@ -601,7 +649,7 @@ body.ddu-hide-hotbar #hotbar { display: none; }
 .ddu-bar__tabs, .ddu-bar__rows, .ddu-bar__end, .ddu-bar__popup, .ddu-d20 {
   pointer-events: auto;
 }
-.ddu-bar__grid, .ddu-bar__weapons { background: rgba(12, 6, 5, 0.82); }
+.ddu-bar__grid, .ddu-bar__weapons { background: var(--ddu-grid); }
 .ddu-bar[hidden] { display: none; }
 .ddu-bar button { line-height: 1; }
 
@@ -615,13 +663,13 @@ body.ddu-hide-hotbar #hotbar { display: none; }
   padding: 0;
   border: 2px solid var(--ddu-gold);
   border-radius: 50%;
-  background: radial-gradient(circle, #2a3a52, #101820);
+  background: radial-gradient(circle, var(--ddu-d20-hi), var(--ddu-d20-lo));
   color: var(--ddu-gold);
   font-size: calc(20px * var(--ddu-scale));
 }
 .ddu-bar__d20:hover { box-shadow: 0 0 8px var(--ddu-gold); }
 .ddu-bar__portrait { position: relative; cursor: pointer; }
-.ddu-bar__portrait .ddu-portrait { box-shadow: 0 0 0 2px #000, 0 0 0 4px var(--ddu-gold-dim), 0 2px 10px #000; }
+.ddu-bar__portrait .ddu-portrait { box-shadow: 0 0 0 2px var(--ddu-shade), 0 0 0 4px var(--ddu-gold-dim), 0 2px 10px var(--ddu-shade); }
 .ddu-bar__concentration {
   position: absolute;
   left: -6px;
@@ -630,7 +678,7 @@ body.ddu-hide-hotbar #hotbar { display: none; }
   height: calc(34px * var(--ddu-scale));
   border: 2px solid var(--ddu-gold);
   border-radius: 50%;
-  background: #1a120c;
+  background: var(--ddu-button);
 }
 /* Témoin de luminosité (moteur de combat) : en haut à droite du portrait. */
 .ddu-bar__light {
@@ -644,16 +692,16 @@ body.ddu-hide-hotbar #hotbar { display: none; }
   justify-content: center;
   border: 2px solid var(--ddu-gold);
   border-radius: 50%;
-  background: #1a120c;
+  background: var(--ddu-button);
   color: var(--ddu-text);
   font-size: calc(15px * var(--ddu-scale));
   cursor: help;
 }
 .ddu-bar__light[hidden] { display: none; }
-.ddu-bar__light[data-key="bright"] { color: #ffd65a; }
-.ddu-bar__light[data-key="dim"] { color: #c8b98a; }
-.ddu-bar__light[data-key="dark"] { color: #7f95c9; }
-.ddu-bar__light[data-key="magical"] { color: #b25cff; }
+.ddu-bar__light[data-key="bright"] { color: var(--ddu-light-bright); }
+.ddu-bar__light[data-key="dim"] { color: var(--ddu-light-dim); }
+.ddu-bar__light[data-key="dark"] { color: var(--ddu-light-dark); }
+.ddu-bar__light[data-key="magical"] { color: var(--ddu-magic); }
 .ddu-bar__concentration img { width: 100%; height: 100%; border: none; border-radius: 50%; }
 .ddu-bar__concentration button {
   position: absolute;
@@ -665,8 +713,8 @@ body.ddu-hide-hotbar #hotbar { display: none; }
   padding: 0;
   border: 1px solid var(--ddu-gold);
   border-radius: 50%;
-  background: #300;
-  color: #fff;
+  background: var(--ddu-button-danger);
+  color: var(--ddu-text-strong);
   font-size: 10px;
 }
 .ddu-bar__concentration:hover button { display: block; }
@@ -678,13 +726,13 @@ body.ddu-hide-hotbar #hotbar { display: none; }
   padding: 0;
   border: 2px solid var(--ddu-gold);
   border-radius: 50%;
-  background: #1a120c;
+  background: var(--ddu-button);
   font-size: calc(11px * var(--ddu-scale));
   line-height: 1;
 }
-.ddu-bar__gm--heal { top: 2px; left: -6px; color: #6fd27a; }
-.ddu-bar__gm--kill { bottom: -2px; right: -6px; color: #e05050; }
-.ddu-bar__gm:hover { background: #2b1d12; box-shadow: 0 0 6px var(--ddu-gold); }
+.ddu-bar__gm--heal { top: 2px; left: -6px; color: var(--ddu-gm-heal); }
+.ddu-bar__gm--kill { bottom: -2px; right: -6px; color: var(--ddu-gm-kill); }
+.ddu-bar__gm:hover { background: var(--ddu-button-hover); box-shadow: 0 0 6px var(--ddu-gold); }
 
 .ddu-bar__weapons {
   display: grid;
@@ -693,7 +741,7 @@ body.ddu-hide-hotbar #hotbar { display: none; }
   padding: 4px;
   border: 1px solid var(--ddu-gold-dim);
   border-radius: 6px;
-  background: rgba(0, 0, 0, 0.35);
+  background: color-mix(in srgb, var(--ddu-well) 35%, transparent);
 }
 .ddu-weapons__active { display: flex; gap: 4px; }
 .ddu-weapons__set {
@@ -709,7 +757,7 @@ body.ddu-hide-hotbar #hotbar { display: none; }
   position: relative;
   border: 1px solid var(--ddu-gold-dim);
   border-radius: 4px;
-  background: rgba(0, 0, 0, 0.55);
+  background: color-mix(in srgb, var(--ddu-well) 55%, transparent);
 }
 .ddu-weapon img { width: 100%; height: 100%; border: none; object-fit: cover; }
 .ddu-weapon--big { width: calc(56px * var(--ddu-scale)); height: calc(72px * var(--ddu-scale)); cursor: pointer; }
@@ -727,7 +775,7 @@ body.ddu-hide-hotbar #hotbar { display: none; }
   padding: 3px 8px;
   border: 1px solid var(--ddu-gold-dim);
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.5);
+  background: color-mix(in srgb, var(--ddu-well) 50%, transparent);
 }
 .ddu-filter {
   display: flex;
@@ -738,11 +786,11 @@ body.ddu-hide-hotbar #hotbar { display: none; }
   padding: 0 5px;
   border: 1px solid transparent;
   border-radius: 5px;
-  background: rgba(255, 255, 255, 0.04);
+  background: color-mix(in srgb, var(--ddu-glint) 4%, transparent);
   color: var(--ddu-text);
 }
 .ddu-filter:hover { border-color: var(--ddu-gold-dim); }
-.ddu-filter--on { border-color: var(--ddu-gold); background: rgba(201, 164, 92, 0.2); }
+.ddu-filter--on { border-color: var(--ddu-gold); background: color-mix(in srgb, var(--ddu-gold) 20%, transparent); }
 .ddu-filter--preview { box-shadow: 0 0 8px var(--ddu-gold); animation: ddu-pulse 0.9s ease-in-out infinite; }
 .ddu-filter .ddu-pip { width: calc(14px * var(--ddu-scale)); height: calc(14px * var(--ddu-scale)); }
 .ddu-pip--cantrip { border: 2px solid var(--ddu-cantrip); background: transparent; border-radius: 2px; }
@@ -752,11 +800,11 @@ body.ddu-hide-hotbar #hotbar { display: none; }
   width: calc(8px * var(--ddu-scale));
   height: calc(10px * var(--ddu-scale));
   border: 1px solid var(--ddu-slot);
-  background: rgba(255, 255, 255, 0.12);
+  background: color-mix(in srgb, var(--ddu-glint) 12%, transparent);
 }
 .ddu-slot--on { background: var(--ddu-slot); }
-.ddu-filter--pact .ddu-slot { border-color: #6a3aa8; }
-.ddu-filter--pact .ddu-slot--on { background: #6a3aa8; }
+.ddu-filter--pact .ddu-slot { border-color: var(--ddu-pact); }
+.ddu-filter--pact .ddu-slot--on { background: var(--ddu-pact); }
 .ddu-slot--resource { border-color: var(--ddu-gold); border-radius: 50%; width: calc(8px * var(--ddu-scale)); height: calc(8px * var(--ddu-scale)); }
 .ddu-slot--resource.ddu-slot--on { background: var(--ddu-gold); }
 .ddu-resource { display: flex; align-items: center; gap: 3px; padding-left: 4px; border-left: 1px solid var(--ddu-gold-dim); }
@@ -772,7 +820,7 @@ body.ddu-hide-hotbar #hotbar { display: none; }
   padding: 2px 4px;
   border: 1px solid var(--ddu-gold-dim);
   border-radius: 6px;
-  background: rgba(0, 0, 0, 0.5);
+  background: color-mix(in srgb, var(--ddu-well) 50%, transparent);
 }
 .ddu-bar__effects[hidden] { display: none; }
 .ddu-bar__effect { width: calc(26px * var(--ddu-scale)); height: calc(26px * var(--ddu-scale)); border: none; border-radius: 4px; cursor: pointer; }
@@ -784,7 +832,7 @@ body.ddu-hide-hotbar #hotbar { display: none; }
   padding: 4px;
   border: 1px solid var(--ddu-gold-dim);
   border-radius: 6px;
-  background: rgba(0, 0, 0, 0.45);
+  background: color-mix(in srgb, var(--ddu-well) 45%, transparent);
   max-width: 100%;
   overflow-x: auto;
 }
@@ -800,20 +848,20 @@ body.ddu-hide-hotbar #hotbar { display: none; }
   width: calc(10px * var(--ddu-scale));
   margin: 0 5px;
   border-radius: 2px;
-  background: linear-gradient(90deg, #5a0c0c, var(--ddu-separator), #5a0c0c);
-  box-shadow: 0 0 4px rgba(155, 28, 28, 0.7);
+  background: linear-gradient(90deg, var(--ddu-separator-dark), var(--ddu-separator), var(--ddu-separator-dark));
+  box-shadow: 0 0 4px color-mix(in srgb, var(--ddu-separator) 70%, transparent);
   cursor: ew-resize;
 }
 
 .ddu-cell {
   position: relative;
-  border: 1px solid rgba(201, 164, 92, 0.35);
+  border: 1px solid color-mix(in srgb, var(--ddu-gold) 35%, transparent);
   border-radius: 4px;
-  background: rgba(0, 0, 0, 0.55);
+  background: color-mix(in srgb, var(--ddu-well) 55%, transparent);
   overflow: hidden;
   cursor: pointer;
 }
-.ddu-cell--empty { cursor: default; background: rgba(0, 0, 0, 0.3); }
+.ddu-cell--empty { cursor: default; background: color-mix(in srgb, var(--ddu-well) 30%, transparent); }
 .ddu-cell img { width: 100%; height: 100%; border: none; object-fit: cover; }
 /*
  * Images jamais sources d'un glisser : le cœur V14 annule tout dragstart dont l'élément ne porte pas lui-même
@@ -832,18 +880,18 @@ body.ddu-hide-hotbar #hotbar { display: none; }
 .ddu-cell--dim { opacity: 0.25; }
 .ddu-cell__uses, .ddu-cell__level, .ddu-cell__upcast, .ddu-cell__conc {
   position: absolute;
-  color: #fff;
+  color: var(--ddu-text-strong);
   font-size: calc(11px * var(--ddu-scale));
   font-weight: bold;
-  text-shadow: 0 0 2px #000, 0 0 3px #000;
+  text-shadow: 0 0 2px var(--ddu-shade), 0 0 3px var(--ddu-shade);
   pointer-events: none;
 }
 .ddu-cell__uses { right: 2px; bottom: 1px; }
 .ddu-cell__level { right: 3px; bottom: 1px; font-family: var(--ddu-font-title); color: var(--ddu-gold); }
 .ddu-cell__uses + .ddu-cell__level { bottom: 13px; }
 .ddu-cell__upcast { right: 3px; top: 0; color: var(--ddu-gold); font-size: calc(14px * var(--ddu-scale)); }
-.ddu-cell__conc { left: 3px; top: 1px; color: #9fd8ff; }
-.ddu-reason { color: #ff7a6e; }
+.ddu-cell__conc { left: 3px; top: 1px; color: var(--ddu-concentration); }
+.ddu-reason { color: var(--ddu-reason); }
 /* Arme ou objet enchanté : point violet (BG3 Patch 8) */
 .ddu-enchant {
   position: absolute;
@@ -853,31 +901,31 @@ body.ddu-hide-hotbar #hotbar { display: none; }
   width: calc(9px * var(--ddu-scale));
   height: calc(9px * var(--ddu-scale));
   border-radius: 50%;
-  background: #b25cff;
-  box-shadow: 0 0 5px #b25cff, 0 0 0 1px #000;
+  background: var(--ddu-magic);
+  box-shadow: 0 0 5px var(--ddu-magic), 0 0 0 1px var(--ddu-shade);
   pointer-events: none;
 }
-.ddu-cell--enchanted { border-color: rgba(178, 92, 255, 0.7); }
+.ddu-cell--enchanted { border-color: color-mix(in srgb, var(--ddu-magic) 70%, transparent); }
 /* 0.18.0 : source de lumière allumée — bordure et lueur orangées, flamme en haut à droite. */
-.ddu-cell--lit { border-color: rgba(255, 170, 60, 0.9); box-shadow: 0 0 8px rgba(255, 150, 40, 0.6) inset; }
+.ddu-cell--lit { border-color: var(--ddu-lit-edge); box-shadow: 0 0 8px var(--ddu-lit-glow) inset; }
 .ddu-cell__flame {
   position: absolute;
   top: 1px;
   right: 3px;
-  color: #ffb347;
+  color: var(--ddu-flame);
   font-size: calc(11px * var(--ddu-scale));
-  text-shadow: 0 0 3px #000;
+  text-shadow: 0 0 3px var(--ddu-shade);
   pointer-events: none;
 }
-.ddu-light-state { color: #ffb347; }
-.ddu-enchanted { color: #cf9bff; }
+.ddu-light-state { color: var(--ddu-flame); }
+.ddu-enchanted { color: var(--ddu-magic-text); }
 .ddu-cell__key {
   position: absolute;
   left: 2px;
   bottom: 1px;
   padding: 0 3px;
   border-radius: 3px;
-  background: rgba(0, 0, 0, 0.7);
+  background: color-mix(in srgb, var(--ddu-well) 70%, transparent);
   color: var(--ddu-text);
   font-size: calc(10px * var(--ddu-scale));
   pointer-events: none;
@@ -893,7 +941,7 @@ body.ddu-hide-hotbar #hotbar { display: none; }
   overflow-y: auto;
   margin-top: 6px;
   padding-top: 6px;
-  border-top: 1px solid rgba(201, 164, 92, 0.4);
+  border-top: 1px solid color-mix(in srgb, var(--ddu-gold) 40%, transparent);
   text-align: left;
 }
 .ddu-tooltip__description p { margin: 0 0 4px; }
@@ -904,18 +952,18 @@ body.ddu-hide-hotbar #hotbar { display: none; }
   padding: 0 calc(14px * var(--ddu-scale));
   border: 1px solid var(--ddu-gold-dim);
   border-radius: 14px;
-  background: linear-gradient(180deg, #3a2618, #1c120b);
+  background: linear-gradient(180deg, var(--ddu-tab-hi), var(--ddu-tab-lo));
   color: var(--ddu-text);
   font-family: var(--ddu-font-title);
   font-size: calc(14px * var(--ddu-scale));
 }
 .ddu-tab:hover { border-color: var(--ddu-gold); }
-.ddu-tab--active { border-color: var(--ddu-gold); color: var(--ddu-gold); box-shadow: 0 0 6px rgba(201, 164, 92, 0.5); }
+.ddu-tab--active { border-color: var(--ddu-gold); color: var(--ddu-gold); box-shadow: 0 0 6px color-mix(in srgb, var(--ddu-gold) 50%, transparent); }
 .ddu-tab--default {
   width: calc(32px * var(--ddu-scale));
   padding: 0;
   border-radius: 50%;
-  background: radial-gradient(circle, #a3262a, #4a0b0d);
+  background: radial-gradient(circle, var(--ddu-tab-default-hi), var(--ddu-tab-default-lo));
 }
 
 /* Verrou, + / − */
@@ -926,7 +974,7 @@ body.ddu-hide-hotbar #hotbar { display: none; }
   padding: 0;
   border: 1px solid var(--ddu-gold-dim);
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.55);
+  background: color-mix(in srgb, var(--ddu-well) 55%, transparent);
   color: var(--ddu-text);
   font-size: calc(11px * var(--ddu-scale));
 }
@@ -941,8 +989,8 @@ body.ddu-hide-hotbar #hotbar { display: none; }
 }
 .ddu-ring { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); pointer-events: none; }
 .ddu-ring circle { fill: none; stroke-width: 5; }
-.ddu-ring__track { stroke: rgba(255, 255, 255, 0.12); }
-.ddu-ring__left { stroke: #e0b43c; stroke-linecap: round; transition: stroke-dasharray 300ms; filter: drop-shadow(0 0 3px #e0b43c); }
+.ddu-ring__track { stroke: color-mix(in srgb, var(--ddu-glint) 12%, transparent); }
+.ddu-ring__left { stroke: var(--ddu-movement); stroke-linecap: round; transition: stroke-dasharray 300ms; filter: drop-shadow(0 0 3px var(--ddu-movement)); }
 .ddu-end {
   position: absolute;
   top: 12%;
@@ -957,15 +1005,15 @@ body.ddu-hide-hotbar #hotbar { display: none; }
   padding: 0;
   border: 3px solid var(--ddu-gold);
   border-radius: 50%;
-  background: radial-gradient(circle at 50% 40%, #2f5f78, #0d2330 70%);
+  background: radial-gradient(circle at 50% 40%, var(--ddu-end-hi), var(--ddu-end-lo) 70%);
   color: var(--ddu-text);
   font-family: var(--ddu-font-title);
   font-size: calc(20px * var(--ddu-scale));
-  text-shadow: 0 1px 3px #000;
+  text-shadow: 0 1px 3px var(--ddu-shade);
 }
 .ddu-end:hover:not([disabled]) { box-shadow: 0 0 14px var(--ddu-active); }
 .ddu-end--waiting, .ddu-end[disabled] { filter: grayscale(0.7) brightness(0.7); cursor: default; }
-.ddu-end--rest { background: radial-gradient(circle at 50% 40%, #5a3a1c, #21130a 70%); font-size: calc(16px * var(--ddu-scale)); }
+.ddu-end--rest { background: radial-gradient(circle at 50% 40%, var(--ddu-rest-hi), var(--ddu-rest-lo) 70%); font-size: calc(16px * var(--ddu-scale)); }
 .ddu-end--rest i { font-size: calc(30px * var(--ddu-scale)); color: var(--ddu-gold); }
 
 /* Tiroirs (surcharge, repos) */
@@ -979,7 +1027,7 @@ body.ddu-hide-hotbar #hotbar { display: none; }
   border: 1px solid var(--ddu-gold);
   border-radius: 8px;
   background: var(--ddu-panel);
-  box-shadow: 0 4px 12px #000;
+  box-shadow: 0 4px 12px var(--ddu-shade);
 }
 .ddu-bar__popup button {
   display: flex;
@@ -988,7 +1036,7 @@ body.ddu-hide-hotbar #hotbar { display: none; }
   padding: 5px 8px;
   border: 1px solid var(--ddu-gold-dim);
   border-radius: 5px;
-  background: rgba(0, 0, 0, 0.4);
+  background: color-mix(in srgb, var(--ddu-well) 40%, transparent);
   color: var(--ddu-text);
   white-space: nowrap;
 }
@@ -1012,7 +1060,7 @@ body.ddu-hide-hotbar #hotbar { display: none; }
   border: 1px solid var(--ddu-gold);
   border-radius: 10px;
   background: var(--ddu-panel);
-  box-shadow: 0 6px 20px #000;
+  box-shadow: 0 6px 20px var(--ddu-shade);
   color: var(--ddu-text);
 }
 .ddu-d20 header {
@@ -1040,7 +1088,7 @@ body.ddu-hide-hotbar #hotbar { display: none; }
   font-size: 13px;
   text-align: left;
 }
-.ddu-d20 li button:hover { border-color: var(--ddu-gold-dim); background: rgba(201, 164, 92, 0.12); }
+.ddu-d20 li button:hover { border-color: var(--ddu-gold-dim); background: color-mix(in srgb, var(--ddu-gold) 12%, transparent); }
 .ddu-d20 small { opacity: 0.6; }
 .ddu-d20--prof span::before { content: "● "; color: var(--ddu-gold); font-size: 9px; }
 .ddu-d20--expert span::before { content: "◆ "; color: var(--ddu-gold); font-size: 9px; }
@@ -1063,3 +1111,22 @@ body.ddu-hide-hotbar #hotbar { display: none; }
   font-size: 16px;
 }
 .ddu-preview__empty { color: var(--ddu-text); }
+
+/* ---------- Éditeur de couleurs (SPEC §45) ---------- */
+
+/* Fenêtre du cœur : ses couleurs sont celles du thème Foundry de l'utilisateur, pas celles du HUD. */
+.ddu-theme-editor .window-content { padding: 0.5rem 0.75rem; }
+.ddu-theme { display: flex; flex-direction: column; gap: 0.5rem; height: 100%; }
+.ddu-theme__head { display: flex; align-items: center; gap: 0.75rem; }
+.ddu-theme__head select { flex: 1; }
+.ddu-theme__advanced { display: flex; align-items: center; gap: 0.25rem; white-space: nowrap; }
+.ddu-theme .hint { margin: 0; }
+.ddu-theme__list { flex: 1; overflow-y: auto; padding-right: 0.25rem; }
+.ddu-theme fieldset { margin: 0 0 0.5rem; }
+.ddu-theme__row { display: grid; grid-template-columns: 1fr 2.5rem 7rem 2.75rem 1.75rem; align-items: center; gap: 0.4rem; margin: 0.15rem 0; }
+.ddu-theme__row input[type="color"] { width: 2.5rem; height: 1.6rem; padding: 0; border: none; background: none; cursor: pointer; }
+.ddu-theme__row input[type="range"] { width: 100%; }
+.ddu-theme__alpha { text-align: right; font-variant-numeric: tabular-nums; opacity: 0.8; }
+.ddu-theme__row button { padding: 0; height: 1.6rem; line-height: 1; }
+.ddu-theme__actions { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.ddu-theme__actions button { flex: 1 1 auto; white-space: nowrap; }

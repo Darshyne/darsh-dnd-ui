@@ -20,6 +20,9 @@ import { route, listRoutes } from "./runtime/router.mjs";
 import { engineActive, engineReason } from "./adapter/engine.mjs";
 import { Portrait } from "./apps/portrait.mjs";
 import { PortraitPreview } from "./apps/preview.mjs";
+import { registerTheme, startTheme } from "./runtime/theme.mjs";
+import { ThemeEditor } from "./apps/theme-editor.mjs";
+import { currentTheme } from "./adapter/theme.mjs";
 
 let preview = null;
 
@@ -35,6 +38,7 @@ Hooks.once("init", () => {
   registerKeys(getBar);
   registerCanvasSettings(refreshRulers);
   registerCanvas();
+  registerTheme();
 
   game.modules.get(MODULE_ID).api = {
     /** État vu par le module (le moteur est lu à la demande : il pose son api à son propre init). */
@@ -58,7 +62,57 @@ Hooks.once("init", () => {
       preview ??= new PortraitPreview();
       return preview.render({ force: true });
     },
-    routes: listRoutes
+    routes: listRoutes,
+    /** Thèmes de couleurs (SPEC §45) : l'éditeur, et le thème en vigueur `{ id, colors }`. */
+    theme: {
+      open: () => new ThemeEditor().render({ force: true }),
+      current: () => currentTheme()
+    }
+  };
+  // Pour le connecteur MCP (`call-module-api`, verrou « Outils de test ») : vérifier les thèmes sans relancer le monde.
+  game.modules.get(MODULE_ID).api.mcp = {
+    /** Le thème en vigueur et les couleurs calculées d'éléments du HUD présents à l'écran. */
+    themeProbe() {
+      const root = getComputedStyle(document.documentElement);
+      const vars = Object.fromEntries(["bg", "gold", "text", "grid", "well", "panel-top", "action"].map(k => [k, root.getPropertyValue(`--ddu-${k}`).trim()]));
+      const look = (selector, props) => {
+        const el = document.querySelector(selector);
+        if ( !el ) return null;
+        const cs = getComputedStyle(el);
+        return Object.fromEntries(props.map(p => [p, cs.getPropertyValue(p)]));
+      };
+      return {
+        theme: currentTheme(), vars,
+        elements: {
+          party: look(".ddu-party .ddu-portrait", ["border-top-color", "background-color"]),
+          partyName: look(".ddu-party .ddu-portrait__name, .ddu-party__name", ["color"]),
+          barGrid: look(".ddu-bar__grid", ["background-color"]),
+          cell: look(".ddu-cell", ["background-color", "border-top-color"]),
+          frieze: look(".ddu-frieze .ddu-portrait", ["border-top-color"])
+        }
+      };
+    },
+    /** Choisir un thème : pour soi (`choice`) ou pour la table (`world`). Rend l'ancien. */
+    async themeSet({ choice, world }={}) {
+      const before = { choice: game.settings.get(MODULE_ID, "theme"), world: game.settings.get(MODULE_ID, "themeWorld") };
+      if ( choice !== undefined ) await game.settings.set(MODULE_ID, "theme", choice);
+      if ( world !== undefined ) await game.settings.set(MODULE_ID, "themeWorld", world);
+      return before;
+    },
+    /**
+     * Le CSS du module tel qu'il est sur le disque, ajouté à chaud (le cœur V14 n'agrège le CSS des modules qu'au lancement du
+     * monde : foundry-core-notes/v14-migration.md). Pour un test seulement ; `remove: true` le retire.
+     */
+    async freshStyles({ remove=false }={}) {
+      document.getElementById("ddu-fresh-css")?.remove();
+      if ( remove ) return { removed: true };
+      const text = await (await fetch(`modules/${MODULE_ID}/styles/darsh-dnd-ui.css?t=${Date.now()}`)).text();
+      const style = document.createElement("style");
+      style.id = "ddu-fresh-css";
+      style.textContent = text;
+      document.head.append(style);
+      return { injected: text.length };
+    }
   };
 });
 
@@ -66,6 +120,7 @@ Hooks.once("setup", setupCanvas);
 
 Hooks.once("ready", async () => {
   await migrateScale();
+  startTheme();
   applyScale();   // la racine d'abord : les composants se dessinent à la bonne taille
   applyFade();
   startFrieze();
