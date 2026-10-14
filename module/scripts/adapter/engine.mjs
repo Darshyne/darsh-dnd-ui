@@ -127,7 +127,7 @@ export function multiattackOf(actor) {
 }
 
 /**
- * Mode furtif d'un token (moteur ≥ 0.239.0, son SPEC §183) : true / false, ou null si le moteur ne le publie pas.
+ * Le token est-il caché (Furtivité du moteur ≥ 0.239.0, son SPEC §183, §185) : true / false, ou null si le moteur ne le publie pas.
  */
 export function sneakingOf(token) {
   if ( !engineActive() || !token ) return null;
@@ -135,7 +135,7 @@ export function sneakingOf(token) {
   return typeof api?.is === "function" ? api.is(token) : null;
 }
 
-/** Basculer le mode furtif d'un token par le moteur ; rend `{ sneaking, reason? }`, ou null. */
+/** Se cacher (action Furtivité hors combat) ou ne plus l'être, par le moteur ; rend `{ hidden, reason? }`, ou null. */
 export async function toggleSneak(token) {
   if ( !engineActive() || !token ) return null;
   const api = game.modules.get(ENGINE_ID).api.sneak;

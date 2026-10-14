@@ -528,7 +528,7 @@ export class Bar {
         data-tooltip="${esc(move ? loc("Bar.Movement", { left: round(move.left), allowed: round(move.allowed) }) : label)}">
         <span>${esc(label)}</span></button>`;
     } else {
-      // 0.23.0 : le mode furtif du moteur (son §183), hors combat — les cônes de vision des créatures vues s'affichent.
+      // 0.23.0 : la Furtivité du moteur (son §183, §185), hors combat — se cacher ; caché, les cônes de vision des créatures vues s'affichent.
       const token = this.#sceneToken();
       const sneaking = sneakingOf(token);
       const sneak = (sneaking === null) ? "" : `<button type="button" class="ddu-sneak${sneaking ? " ddu-on" : ""}" data-action="sneak"
