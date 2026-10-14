@@ -25,7 +25,7 @@ import { layoutHost, readLayout, writeLayout } from "../adapter/forms.mjs";
 import { matcherFor, equipActive } from "../adapter/weapon-return.mjs";
 import { viewedCombat, nameFor } from "../adapter/combat.mjs";
 import { combatantOf, currentActor } from "../adapter/party.mjs";
-import { budgetOf, movementOf, multiattackOf, lightOf, carriedLightOf, toggleLight } from "../adapter/engine.mjs";
+import { budgetOf, movementOf, multiattackOf, lightOf, carriedLightOf, toggleLight, sneakingOf, toggleSneak } from "../adapter/engine.mjs";
 import { MODULE_ID, loc, setting } from "../shared.mjs";
 
 const esc = s => foundry.utils.escapeHTML(String(s ?? ""));
@@ -528,11 +528,22 @@ export class Bar {
         data-tooltip="${esc(move ? loc("Bar.Movement", { left: round(move.left), allowed: round(move.allowed) }) : label)}">
         <span>${esc(label)}</span></button>`;
     } else {
+      // 0.23.0 : le mode furtif du moteur (son §183), hors combat — les cônes de vision des créatures vues s'affichent.
+      const token = this.#sceneToken();
+      const sneaking = sneakingOf(token);
+      const sneak = (sneaking === null) ? "" : `<button type="button" class="ddu-sneak${sneaking ? " ddu-on" : ""}" data-action="sneak"
+        ${this.canEdit ? "" : "disabled"} data-tooltip="${esc(loc(sneaking ? "Bar.SneakOff" : "Bar.SneakOn"))}"><i class="fa-solid fa-user-ninja"></i></button>`;
       box.innerHTML = `<button type="button" class="ddu-end ddu-end--rest" data-action="rest"
         ${this.canEdit ? "" : "disabled"} data-tooltip="${esc(loc("Bar.Rest"))}">
-        <i class="fa-solid fa-campground"></i><span>${esc(loc("Bar.Rest"))}</span></button>`;
+        <i class="fa-solid fa-campground"></i><span>${esc(loc("Bar.Rest"))}</span></button>${sneak}`;
     }
     return box;
+  }
+
+  /** Le token de l'acteur de la Barre sur la scène affichée (contrôlé d'abord). */
+  #sceneToken() {
+    const tokens = this.actor?.getActiveTokens?.(false, true)?.filter(t => t.parent === canvas?.scene) ?? [];
+    return tokens.find(t => t.object?.controlled) ?? tokens[0] ?? null;
   }
 
   /** Déplacement restant ce tour (anneau), tel que le moteur le compte ; null sans vitesse, sans token ou sans moteur. */
@@ -599,6 +610,7 @@ export class Bar {
         return;
       }
       case "rest": return this.#openRestMenu(target);
+      case "sneak": return toggleSneak(this.#sceneToken());
       case "shortRest": this.#closePopup(); return this.actor.shortRest();
       case "longRest": this.#closePopup(); return this.actor.longRest();
       case "switchWeapons": return this.#switchWeapons(Number(target.dataset.weaponSet));

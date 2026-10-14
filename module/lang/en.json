@@ -72,6 +72,8 @@
       "TurnOf": "{name}'s turn",
       "Movement": "Movement: {left} / {allowed}",
       "Rest": "Rest",
+      "SneakOn": "Sneak mode: show the vision cones of the creatures you see (Alt+C)",
+      "SneakOff": "Leave sneak mode (Alt+C)",
       "ShortRest": "Short Rest",
       "LongRest": "Long Rest",
       "NotOwnedItem": "DAS · Combat UI: add this item to the character sheet first.",

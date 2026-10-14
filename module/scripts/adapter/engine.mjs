@@ -125,3 +125,19 @@ export function multiattackOf(actor) {
   const m = actor ? read("multiattackLeft", actor) : null;
   return m ? { left: new Set(m.left), spent: new Set(m.spent) } : null;
 }
+
+/**
+ * Mode furtif d'un token (moteur ≥ 0.239.0, son SPEC §183) : true / false, ou null si le moteur ne le publie pas.
+ */
+export function sneakingOf(token) {
+  if ( !engineActive() || !token ) return null;
+  const api = game.modules.get(ENGINE_ID).api.sneak;
+  return typeof api?.is === "function" ? api.is(token) : null;
+}
+
+/** Basculer le mode furtif d'un token par le moteur ; rend `{ sneaking, reason? }`, ou null. */
+export async function toggleSneak(token) {
+  if ( !engineActive() || !token ) return null;
+  const api = game.modules.get(ENGINE_ID).api.sneak;
+  return typeof api?.toggle === "function" ? api.toggle(token) : null;
+}

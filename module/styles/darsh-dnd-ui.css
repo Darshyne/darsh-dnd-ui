@@ -1130,3 +1130,12 @@ body.ddu-hide-hotbar #hotbar { display: none; }
 .ddu-theme__row button { padding: 0; height: 1.6rem; line-height: 1; }
 .ddu-theme__actions { display: flex; flex-wrap: wrap; gap: 0.35rem; }
 .ddu-theme__actions button { flex: 1 1 auto; white-space: nowrap; }
+
+/* 0.23.0 : mode furtif du moteur (§183), hors combat, coin du bouton Repos */
+.ddu-sneak {
+  position: absolute; top: 0; right: 0; width: 32%; height: 32%; min-height: 0; padding: 0; margin: 0;
+  border-radius: 50%; border: 1px solid var(--ddu-gold); background: var(--ddu-rest-lo); color: var(--ddu-gold);
+  display: flex; align-items: center; justify-content: center; font-size: calc(14px * var(--ddu-scale)); cursor: pointer; z-index: 2;
+}
+.ddu-sneak.ddu-on { background: var(--ddu-active); color: var(--ddu-gold); box-shadow: 0 0 10px var(--ddu-active); }
+.ddu-sneak[disabled] { filter: grayscale(0.7) brightness(0.7); cursor: default; }
