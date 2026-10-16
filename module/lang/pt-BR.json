@@ -1,0 +1,412 @@
+{
+  "DDU": {
+    "Preview": {
+      "Title": "DAS · Combat UI — prévia dos retratos",
+      "Empty": "Selecione um ou mais tokens para ver seus retratos."
+    },
+    "Budget": {
+      "Action": "Ação",
+      "Bonus": "Ação Bônus",
+      "Reaction": "Reação",
+      "Attacks": "Ataques restantes: {n}"
+    },
+    "Frieze": {
+      "Round": "Rodada {round}",
+      "Level": "Nv. {level}",
+      "CR": "ND {cr}",
+      "InitiativeValue": "Iniciativa {value}",
+      "InitiativeText": "Iniciativa {value}",
+      "RollInitiative": "Rolar iniciativa",
+      "RollAll": "Rolar iniciativa de todos",
+      "RollNPC": "Rolar iniciativa dos PNJs",
+      "Reset": "Zerar todas as iniciativas",
+      "Start": "Iniciar combate",
+      "PreviousRound": "Rodada anterior",
+      "PreviousTurn": "Turno anterior",
+      "NextTurn": "Próximo turno",
+      "NextRound": "Próxima rodada",
+      "End": "Encerrar combate",
+      "OpenTracker": "Abrir o rastreador de combate",
+      "EndTurn": "Encerrar turno",
+      "Menu": {
+        "Ping": "Sinalizar",
+        "Reroll": "Rolar iniciativa novamente",
+        "ClearInitiative": "Limpar iniciativa",
+        "SetActive": "Tornar ativo",
+        "ToggleHidden": "Ocultar / revelar",
+        "ToggleDefeated": "Derrotado",
+        "Remove": "Remover do combate"
+      }
+    },
+    "Bar": {
+      "Checks": "Testes de atributo, testes de resistência e perícias",
+      "AC": "CA",
+      "Speed": "Deslocamento",
+      "Concentration": "Concentração: {name}",
+      "EndConcentration": "Encerrar concentração",
+      "GMHeal": "Mestre: restaurar todos os Pontos de Vida",
+      "GMKill": "Mestre: reduzir a 0 Pontos de Vida",
+      "ConcentrationTag": "Concentração",
+      "Ritual": "Ritual",
+      "RitualCast": "Como ritual: sem gastar espaço de magia; mais 10 minutos",
+      "Cantrip": "Truque",
+      "SpellLevel": "Nível {level}",
+      "Uses": "Usos: {value}/{max}",
+      "UpcastHint": "Clique: escolher o nível da magia · Shift+clique: janela do sistema",
+      "MainHand": "Mão principal",
+      "OffHand": "Mão secundária",
+      "WeaponSet": "Conjunto de armas {n}",
+      "RemoveEffect": "Clique com o botão direito para remover",
+      "Separator": "Arraste para aumentar a largura de uma seção",
+      "Lock": "Bloquear a barra (impede mover, adicionar ou remover ícones)",
+      "Unlock": "Desbloquear a barra",
+      "Menu": {
+        "Details": "Detalhes",
+        "Sheet": "Abrir ficha",
+        "Remove": "Remover da barra",
+        "Light": "Acender / apagar"
+      },
+      "AddRow": "Adicionar linha",
+      "RemoveRow": "Remover linha",
+      "EndTurn": "Encerrar turno",
+      "TurnOf": "Turno de {name}",
+      "Movement": "Deslocamento: {left} / {allowed}",
+      "Rest": "Descanso",
+      "SneakOn": "Esconder-se (ação Esconder-se, Alt+C): mostra os cones de visão das criaturas que você consegue ver",
+      "SneakOff": "Parar de se esconder (Alt+C)",
+      "ShortRest": "Descanso Curto",
+      "LongRest": "Descanso Longo",
+      "NotOwnedItem": "DAS · Combat UI: primeiro adicione este item à ficha do personagem.",
+      "TooltipHint": "Alt: detalhes · T ou botão do meio: fixar dica",
+      "Enchanted": "Encantado: {names}",
+      "Form": "Forma: {name}",
+      "Target": "Alvo",
+      "Duration": "Duração",
+      "Filter": {
+        "action": "Ações",
+        "bonus": "Ações Bônus",
+        "reaction": "Reações",
+        "cantrip": "Truques",
+        "level": "Espaços de magia de nível {level}: {value}/{max}",
+        "pact": "Espaços de Magia de Pacto (nível {level}): {value}/{max}"
+      },
+      "Tab": {
+        "default": "Visão padrão",
+        "common": "Comum",
+        "class": "Classe",
+        "items": "Itens",
+        "passives": "Passivas",
+        "custom": "Personalizado"
+      },
+      "Light": {
+        "Lit": "Acesa",
+        "Out": "Apagada",
+        "Left": " — restam {h} h {m} min",
+        "Empty": "Vazia — precisa de óleo"
+      }
+    },
+    "Reason": {
+      "NoUses": "Sem usos restantes",
+      "NoQuantity": "Nenhuma unidade restante",
+      "Unprepared": "Magia não preparada",
+      "NoSlot": "Nenhum espaço de magia disponível"
+    },
+    "Keys": {
+      "CustomSlot": "Barra: célula personalizada {n}",
+      "CustomSlotHint": "Usa a célula correspondente da aba Personalizado. Se estiver vazia, a tecla continua funcionando na barra de macros.",
+      "PinTooltip": "Barra: fixar dica",
+      "PinTooltipHint": "Fixa a dica detalhada da célula sob o cursor (fora da barra, a tecla mantém sua função normal de selecionar alvos).",
+      "SwapWeapons": "Barra: alternar conjuntos de armas",
+      "SwapWeaponsHint": "Alterna para o outro conjunto de armas (durante uma medição, a tecla adiciona um ponto intermediário).",
+      "BasicHint": "Executa esta ação básica do mecanismo de combate para o personagem exibido na barra.",
+      "Basic": {
+        "dash": "Ação: Disparada",
+        "disengage": "Ação: Desengajar",
+        "dodge": "Ação: Esquivar",
+        "hide": "Ação: Esconder-se",
+        "search": "Ação: Procurar",
+        "help": "Ação: Ajudar",
+        "ready": "Ação: Preparar",
+        "escape": "Ação: Escapar"
+      }
+    },
+    "D20": {
+      "Checks": "Testes de Atributo",
+      "Saves": "Testes de Resistência",
+      "Skills": "Perícias",
+      "Other": "Outros",
+      "Initiative": "Iniciativa",
+      "Concentration": "Concentração",
+      "SpellDC": "CD de resistência das magias",
+      "Passive": "Passiva: {value}"
+    },
+    "Party": {
+      "HandRaised": "Mão levantada",
+      "Inspiration": "Inspiração Heroica",
+      "Hide": "Ocultar grupo",
+      "Show": "Mostrar grupo",
+      "Menu": {
+        "Sheet": "Abrir ficha",
+        "Target": "Selecionar como alvo",
+        "RaiseHand": "Levantar a mão",
+        "LowerHand": "Abaixar a mão",
+        "Ping": "Sinalizar"
+      }
+    },
+    "Portrait": {
+      "Ward": "{name}: {value}/{max}"
+    },
+    "Settings": {
+      "PortraitImage": {
+        "Name": "Imagem dos retratos",
+        "Hint": "Use a ilustração do personagem (imagem do ator) ou a imagem do token. Sem ilustração própria, será usada a imagem do token.",
+        "Actor": "Imagem do ator",
+        "Token": "Imagem do token"
+      },
+      "scaleFrieze": {
+        "Name": "Tamanho da faixa de iniciativa (%)",
+        "Hint": "Aumenta ou diminui a faixa de iniciativa (no topo) neste dispositivo. Com o ajuste automático de tamanho ativado, esta porcentagem é aplicada adicionalmente."
+      },
+      "scaleParty": {
+        "Name": "Tamanho do grupo (%)",
+        "Hint": "Aumenta ou diminui os retratos do grupo (na lateral) neste dispositivo. Com o ajuste automático de tamanho ativado, esta porcentagem é aplicada adicionalmente."
+      },
+      "scaleBar": {
+        "Name": "Tamanho da barra (%)",
+        "Hint": "Aumenta ou diminui a barra de ações (na parte inferior) neste dispositivo. Com o ajuste automático de tamanho ativado, esta porcentagem é aplicada adicionalmente."
+      },
+      "ScaleAuto": {
+        "Name": "Ajustar tamanho à janela",
+        "Hint": "A interface aumenta ou diminui conforme a janela do Foundry: tamanho normal em 1920 × 1080, menor abaixo disso e maior acima (de 60% a 200%)."
+      },
+      "FadeOpacity": {
+        "Name": "Opacidade sem o cursor sobre a interface (%)",
+        "Hint": "A barra, os retratos do grupo e a faixa de iniciativa ficam com esta opacidade quando o cursor não está sobre eles, voltando ao normal ao passar o mouse. A barra continua opaca durante o turno do seu personagem. 100%: nunca ficam transparentes. A velocidade e o atraso seguem as configurações de esmaecimento da interface do Foundry (Configurar interface)."
+      },
+      "EnemyHealth": {
+        "Name": "Pontos de Vida das criaturas visíveis aos jogadores",
+        "Hint": "Define quais informações de PV um jogador vê de uma criatura cuja ficha não pode abrir. O mestre e os proprietários sempre veem os PV exatos.",
+        "exact": "Exatos (o indicador acompanha os PV perdidos)",
+        "tiers": "Por faixa (ileso, ferido, ensanguentado, crítico)",
+        "none": "Nenhum (somente caído / morto)"
+      },
+      "frieze": {
+        "Name": "Faixa de iniciativa",
+        "Hint": "Mostra a ordem dos turnos no topo da tela durante o combate."
+      },
+      "friezeRound": {
+        "Name": "Faixa: número da rodada",
+        "Hint": "Exibe 'Rodada n' à esquerda da faixa de iniciativa."
+      },
+      "friezeInitiativeText": {
+        "Name": "Iniciativa sobre os tokens",
+        "Hint": "Quando o combate começa, cada token exibe brevemente seu valor de iniciativa."
+      },
+      "friezePrepToPlayers": {
+        "Name": "Faixa: mostrar a preparação aos jogadores",
+        "Hint": "Os jogadores veem a faixa assim que o combate é criado (para rolar iniciativa), e não apenas depois que ele começa."
+      },
+      "friezeEnemyInitiative": {
+        "Name": "Faixa: mostrar iniciativa das criaturas",
+        "Hint": "Os jogadores veem os valores de iniciativa das criaturas que não controlam."
+      },
+      "friezeAutoSelect": {
+        "Name": "Faixa: selecionar o combatente ativo",
+        "Hint": "A cada turno, o token do combatente ativo é selecionado e a câmera é centralizada nele. O mestre pode selecionar qualquer combatente; um jogador, apenas os seus."
+      },
+      "friezeHideDefeated": {
+        "Name": "Faixa: ocultar criaturas derrotadas",
+        "Hint": "Criaturas derrotadas desaparecem da faixa de iniciativa dos jogadores."
+      },
+      "party": {
+        "Name": "Retratos do grupo",
+        "Hint": "Mostra os personagens do grupo em uma coluna na lateral da tela."
+      },
+      "partyPosition": {
+        "Name": "Grupo: posição",
+        "Hint": "Onde posicionar a coluna de retratos.",
+        "left": "Esquerda",
+        "right": "Direita",
+        "hidden": "Oculta"
+      },
+      "partyPlacement": {
+        "Name": "Grupo: posição na lateral esquerda",
+        "Hint": "Automática: junto à borda da tela, a menos que isso cubra os controles da cena (nesse caso, fica ao lado deles).",
+        "auto": "Automática",
+        "edge": "Sempre junto à borda da tela",
+        "beside": "Sempre ao lado dos controles da cena"
+      },
+      "partyHideInCombat": {
+        "Name": "Grupo: ocultar durante o combate",
+        "Hint": "Oculta a coluna de retratos durante o combate (a faixa de iniciativa já mostra os combatentes)."
+      },
+      "partyMembers": {
+        "Name": "Grupo: quais personagens aparecem",
+        "Hint": "Exibe apenas personagens atribuídos a jogadores ou qualquer personagem pertencente a um jogador.",
+        "owned": "Qualquer personagem pertencente a um jogador",
+        "assigned": "Somente personagens atribuídos aos jogadores"
+      },
+      "partyConnectedOnly": {
+        "Name": "Grupo: apenas jogadores conectados",
+        "Hint": "Exibe apenas personagens cujos jogadores estão conectados."
+      },
+      "partyCompanions": {
+        "Name": "Grupo: companheiros e criaturas invocadas",
+        "Hint": "Mostra, em retratos pequenos abaixo de cada personagem, suas criaturas invocadas e outras criaturas da cena controladas pelo mesmo jogador."
+      },
+      "partyHealthExact": {
+        "Name": "Grupo: mostrar PV exatos entre jogadores",
+        "Hint": "Cada jogador vê os PV exatos de todos os integrantes do grupo, e não apenas os dos próprios personagens."
+      },
+      "bar": {
+        "Name": "Barra de ações",
+        "Hint": "Exibe uma barra de ações ao estilo BG3 na parte inferior da tela para o personagem selecionado."
+      },
+      "barHideHotbar": {
+        "Name": "Barra: recolher barra de macros",
+        "Hint": "Oculta a barra de macros do Foundry enquanto a barra de ações estiver visível."
+      },
+      "barGMHotbar": {
+        "Name": "Barra: manter macros visíveis para o mestre",
+        "Hint": "Na tela do mestre, a barra de macros do Foundry continua visível, com a barra de ações logo acima. Os jogadores seguem suas próprias configurações."
+      },
+      "barFullTooltips": {
+        "Name": "Barra: dicas detalhadas",
+        "Hint": "Sempre mostra a descrição completa ao passar o cursor sobre uma célula (caso contrário, mantenha Alt pressionado)."
+      },
+      "barLockPlayers": {
+        "Name": "Barra: bloquear para os jogadores",
+        "Hint": "Impede que os jogadores movam, adicionem ou removam células da barra."
+      },
+      "softPath": {
+        "Name": "Tabuleiro: trajeto suave",
+        "Hint": "As casas do trajeto de deslocamento aparecem como marcações com bordas suaves, em vez de preenchimentos sólidos. Mantém as mesmas cores (verde, amarelo e vermelho conforme o deslocamento)."
+      },
+      "rulerOutOfCombat": {
+        "Name": "Tabuleiro: mostrar trajeto fora de combate",
+        "Hint": "Mostra o trajeto e a régua quando um token se move, mesmo fora de combate. Desativado: aparecem apenas durante o combate. Não afeta a ferramenta Régua de Medição."
+      },
+      "smoothMovement": {
+        "Name": "Tabuleiro: movimento suave",
+        "Hint": "Os tokens aceleram ao iniciar o movimento e desaceleram ao chegar, ao longo de todo o trajeto, em vez de deslizarem a uma velocidade constante. Vale para todos os usuários."
+      },
+      "cameraFollow": {
+        "Name": "Tabuleiro: câmera acompanha meu token",
+        "Hint": "Quando um dos seus tokens se move, a câmera se centraliza nele suavemente. Para o mestre, isso vale para o token que ele próprio controla e movimenta."
+      }
+    },
+    "Theme": {
+      "Title": "Cores da interface",
+      "Menu": {
+        "Name": "Cores da interface",
+        "Label": "Editar cores",
+        "Hint": "Escolha as cores da barra de ações, dos retratos do grupo e da ordem de turnos: temas predefinidos, seus temas ou o tema da mesa. Salve, exporte e importe temas."
+      },
+      "Hint": "As alterações aparecem imediatamente; feche sem aplicar para desfazê-las.",
+      "FollowTable": "Tema da mesa (escolhido pelo mestre)",
+      "Builtin": "Predefinidos",
+      "Mine": "Meus temas",
+      "Table": "Temas da mesa",
+      "Advanced": "Avançado (todas as cores)",
+      "Opacity": "Opacidade",
+      "ResetColor": "Restaurar a cor do tema",
+      "Apply": "Aplicar",
+      "SaveAs": "Salvar como…",
+      "Save": "Salvar",
+      "Delete": "Excluir",
+      "Export": "Exportar",
+      "Import": "Importar",
+      "Reset": "Redefinir",
+      "SetTable": "Definir como tema da mesa",
+      "CopyOf": "{name} (cópia)",
+      "Applied": "Tema aplicado: {name}",
+      "Saved": "Tema salvo: {name}",
+      "DeleteConfirm": "Excluir o tema '{name}'?",
+      "Imported": "Tema importado: {name}",
+      "ImportInvalid": "Este arquivo não é um tema do DAS · Combat UI.",
+      "ImportRejected": "Algumas cores foram ignoradas (desconhecidas ou inválidas): {keys}",
+      "TableSet": "Tema da mesa: {name}",
+      "Token": {
+        "bg": "Fundo",
+        "panel-top": "Painel (superior)",
+        "panel-bottom": "Painel (inferior)",
+        "grid": "Fundo da barra de ações",
+        "gold": "Molduras e destaques",
+        "gold-dim": "Molduras (suaves)",
+        "well": "Espaços e reentrâncias",
+        "shade": "Sombras",
+        "glint": "Sobreposições luminosas",
+        "chip": "Marcadores de efeito",
+        "toggle": "Alternador do grupo",
+        "text": "Texto",
+        "text-strong": "Números sobre os ícones",
+        "icon": "Ícones pequenos",
+        "reason": "Texto de aviso",
+        "magic-text": "Texto de magia",
+        "action": "Ação",
+        "bonus": "Ação Bônus",
+        "reaction": "Reação",
+        "slot": "Espaços de magia",
+        "pact": "Espaços de pacto",
+        "cantrip": "Truques",
+        "movement": "Anel de deslocamento",
+        "hurt": "Indicador de dano",
+        "heal": "Brilho de cura",
+        "temp": "PV temporários",
+        "flash-damage": "Brilho de dano",
+        "hostile-bg": "Fundo dos retratos hostis",
+        "ward-edge": "Proteção (contorno)",
+        "ward-hi": "Proteção (clara)",
+        "ward-lo": "Proteção (escura)",
+        "ward-glow": "Proteção (brilho)",
+        "side-friendly": "Amigável",
+        "side-neutral": "Neutro",
+        "side-hostile": "Hostil",
+        "side-secret": "Secreto",
+        "active": "Turno atual",
+        "hand": "Mão levantada do jogador",
+        "button": "Botões",
+        "button-hover": "Botões (ao passar o cursor)",
+        "button-danger": "Botões (perigo)",
+        "separator": "Separadores",
+        "separator-dark": "Separadores (escuros)",
+        "tab-hi": "Abas (claras)",
+        "tab-lo": "Abas (escuras)",
+        "tab-default-hi": "Aba principal (clara)",
+        "tab-default-lo": "Aba principal (escura)",
+        "end-hi": "Encerrar turno (claro)",
+        "end-lo": "Encerrar turno (escuro)",
+        "rest-hi": "Descanso (claro)",
+        "rest-lo": "Descanso (escuro)",
+        "d20-hi": "Botão d20 (claro)",
+        "d20-lo": "Botão d20 (escuro)",
+        "concentration": "Concentração",
+        "magic": "Magia",
+        "flame": "Chama",
+        "lit-edge": "Fonte de luz acesa (contorno)",
+        "lit-glow": "Fonte de luz acesa (brilho)",
+        "light-bright": "Luz plena",
+        "light-dim": "Penumbra",
+        "light-dark": "Escuridão",
+        "gm-heal": "Mestre: curar",
+        "gm-kill": "Mestre: matar",
+        "text-on-image": "Texto sobre retratos"
+      },
+      "Group": {
+        "frames": "Molduras e fundos",
+        "text": "Texto",
+        "economy": "Economia de ações",
+        "health": "Pontos de Vida",
+        "sides": "Lados e turnos",
+        "buttons": "Botões, abas e separadores",
+        "states": "Condições e efeitos"
+      },
+      "Preset": {
+        "bg3": "BG3",
+        "gothic": "Névoa Gótica",
+        "parchment": "Pergaminho",
+        "parchment-dark": "Pergaminho Sombrio"
+      }
+    }
+  }
+}
