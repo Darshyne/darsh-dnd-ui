@@ -44,7 +44,7 @@ Under active development.
 
 ## Translations
 
-The module ships in English and French. To add a language, copy `module/lang/en.json` to
+The module ships in English, French and Brazilian Portuguese (pt-BR translation by Henrique, [@henriquebot](https://github.com/henriquebot)). To add a language, copy `module/lang/en.json` to
 `module/lang/<code>.json`, translate the values (keep the keys and the `{placeholders}` as they are), and add an
 entry to `languages` in `module/module.json`. Any key missing from a translation falls back to English.
 
