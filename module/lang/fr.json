@@ -416,6 +416,28 @@
         "parchment": "Parchemin",
         "parchment-dark": "Parchemin d'ombre"
       }
+    },
+    "SettingsWindow": {
+      "Title": "DAS · Combat UI — Réglages",
+      "Menu": {
+        "Name": "Réglages de Combat UI",
+        "Label": "Ouvrir les réglages",
+        "Hint": "Tous les réglages de l'interface, rangés par onglets : ceux de la table (MJ) et ceux de votre poste. Les couleurs de l'interface s'y modifient aussi."
+      },
+      "Tab": {
+        "appearance": "Apparence",
+        "bar": "Barre d'actions",
+        "frieze": "Frise d'initiative",
+        "party": "Groupe",
+        "board": "Plateau"
+      },
+      "Tool": {
+        "theme": {
+          "Name": "Couleurs de l'interface",
+          "Hint": "Choisir les couleurs de la Barre, du Groupe et de la Frise : thèmes livrés, les vôtres, ou celui de la table.",
+          "Button": "Modifier les couleurs"
+        }
+      }
     }
   }
 }

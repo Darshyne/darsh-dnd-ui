@@ -21,6 +21,7 @@ import { engineActive, engineReason } from "./adapter/engine.mjs";
 import { Portrait } from "./apps/portrait.mjs";
 import { PortraitPreview } from "./apps/preview.mjs";
 import { registerTheme, startTheme } from "./runtime/theme.mjs";
+import { registerSettingsWindow } from "./runtime/settings-window.mjs";
 import { ThemeEditor } from "./apps/theme-editor.mjs";
 import { currentTheme } from "./adapter/theme.mjs";
 
@@ -39,6 +40,7 @@ Hooks.once("init", () => {
   registerCanvasSettings(refreshRulers);
   registerCanvas();
   registerTheme();
+  registerSettingsWindow();   // la fenêtre de réglages DAS (moteur ≥ 0.241.0), déclarée au `setup`
 
   game.modules.get(MODULE_ID).api = {
     /** État vu par le module (le moteur est lu à la demande : il pose son api à son propre init). */

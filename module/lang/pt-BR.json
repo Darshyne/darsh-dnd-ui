@@ -416,6 +416,28 @@
         "parchment": "Pergaminho",
         "parchment-dark": "Pergaminho Sombrio"
       }
+    },
+    "SettingsWindow": {
+      "Title": "DAS · Combat UI — Ajustes",
+      "Menu": {
+        "Name": "Ajustes do Combat UI",
+        "Label": "Abrir ajustes",
+        "Hint": "Todos os ajustes da interface, organizados em abas: os da mesa (mestre) e os do seu computador. As cores da interface também são editadas por lá."
+      },
+      "Tab": {
+        "appearance": "Aparência",
+        "bar": "Barra de ações",
+        "frieze": "Faixa de iniciativa",
+        "party": "Grupo",
+        "board": "Tabuleiro"
+      },
+      "Tool": {
+        "theme": {
+          "Name": "Cores da interface",
+          "Hint": "Escolha as cores da Barra, do Grupo e da Faixa: temas incluídos, os seus ou o da mesa.",
+          "Button": "Editar cores"
+        }
+      }
     }
   }
 }

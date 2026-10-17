@@ -416,6 +416,28 @@
         "parchment": "Parchment",
         "parchment-dark": "Shadow Parchment"
       }
+    },
+    "SettingsWindow": {
+      "Title": "DAS · Combat UI — Settings",
+      "Menu": {
+        "Name": "Combat UI settings",
+        "Label": "Open settings",
+        "Hint": "Every interface setting, sorted into tabs: the table's (GM) and your own. The interface colours are edited there too."
+      },
+      "Tab": {
+        "appearance": "Appearance",
+        "bar": "Action bar",
+        "frieze": "Initiative strip",
+        "party": "Party",
+        "board": "Board"
+      },
+      "Tool": {
+        "theme": {
+          "Name": "Interface colours",
+          "Hint": "Choose the colours of the Bar, the Party and the Strip: built-in themes, your own, or the table's.",
+          "Button": "Edit colours"
+        }
+      }
     }
   }
 }
