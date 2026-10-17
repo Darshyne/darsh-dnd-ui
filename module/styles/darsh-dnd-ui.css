@@ -219,6 +219,9 @@
   font-size: calc(24px * var(--ddu-scale));
 }
 .ddu-portrait__temp { color: var(--ddu-temp); }   /* PV temporaires, à la suite des PV (0.17.1) */
+/* Mode paliers : le palier écrit (« Blessé ») à la place des chiffres, plus petit (0.23.2). */
+.ddu-portrait__hp--tier { font-size: calc(13px * var(--ddu-scale)); letter-spacing: 0.02em; }
+.ddu-portrait--round .ddu-portrait__hp--tier { font-size: calc(15px * var(--ddu-scale)); }
 .ddu-portrait--frieze .ddu-portrait__hp { display: none; }
 
 /* Égide arcanique : bulle bleue en haut à gauche, avec ses points (0.16.3). */

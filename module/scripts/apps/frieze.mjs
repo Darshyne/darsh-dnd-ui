@@ -13,7 +13,8 @@ import {
   toggleDefeated, rollInitiativeFor
 } from "../adapter/combat.mjs";
 import { budgetOf } from "../adapter/engine.mjs";
-import { iconEffectsOf } from "../adapter/actor.mjs";
+import { iconEffectsOf, healthOf, healthPolicyFor, isDead } from "../adapter/actor.mjs";
+import { veilFor } from "../core/health.mjs";
 import { loc, setting } from "../shared.mjs";
 
 /** États montrés en pastille sur le portrait, du plus important au moins important. */
@@ -196,6 +197,15 @@ export class Frieze {
         + `${budget.attacksLeft ? ` <span>${esc(loc("Budget.Attacks", { n: budget.attacksLeft }))}</span>` : ""}</span>`);
     }
     const actor = combatant.actor;
+    // Les PV comme le portrait les montre à ce spectateur (réglage « PV des créatures vus par les joueurs ») : la frise masque
+    // l'emplacement des chiffres du portrait, l'infobulle les donne — palier écrit en mode paliers.
+    const health = actor ? healthOf(actor) : null;
+    if ( health && (game.user.isGM || combatant.isOwner || !combatant.hidden) ) {
+      const view = veilFor(health, healthPolicyFor(actor, setting("enemyHealth")));
+      if ( isDead(actor) ) lines.push(esc(loc("Portrait.Tier.dead")));
+      else if ( view.numbers ) lines.push(esc(loc("Portrait.HP", { value: health.value, max: health.max })));
+      else if ( view.label ) lines.push(esc(loc(`Portrait.Tier.${view.tier}`)));
+    }
     if ( actor && (game.user.isGM || combatant.isOwner || !combatant.hidden) ) {
       const names = iconEffectsOf(actor).map(e => esc(e.name));
       if ( names.length ) lines.push(`<em>${names.join(", ")}</em>`);

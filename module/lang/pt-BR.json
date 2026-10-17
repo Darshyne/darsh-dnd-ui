@@ -154,7 +154,16 @@
       }
     },
     "Portrait": {
-      "Ward": "{name}: {value}/{max}"
+      "Ward": "{name}: {value}/{max}",
+      "Tier": {
+        "unhurt": "Ileso",
+        "hurt": "Ferido",
+        "bloodied": "Ensanguentado",
+        "critical": "Crítico",
+        "down": "Caído",
+        "dead": "Morto"
+      },
+      "HP": "PV {value}/{max}"
     },
     "Settings": {
       "PortraitImage": {
@@ -185,10 +194,10 @@
       },
       "EnemyHealth": {
         "Name": "Pontos de Vida das criaturas visíveis aos jogadores",
-        "Hint": "Define quais informações de PV um jogador vê de uma criatura cuja ficha não pode abrir. O mestre e os proprietários sempre veem os PV exatos.",
-        "exact": "Exatos (o indicador acompanha os PV perdidos)",
-        "tiers": "Por faixa (ileso, ferido, ensanguentado, crítico)",
-        "none": "Nenhum (somente caído / morto)"
+        "Hint": "Define o que um jogador vê dos PV de uma criatura cuja ficha não pode abrir, nos retratos do DAS (faixa de iniciativa, grupo, barra): no retrato e na dica da faixa de iniciativa. O mestre e os proprietários sempre veem os PV exatos. As barras de PV dos tokens do Foundry não dependem desta configuração (exibição das barras na configuração do token).",
+        "exact": "Exatos: o indicador acompanha os PV perdidos, PV em números",
+        "tiers": "Por faixa: indicador vermelho e estado escrito (ileso, ferido, ensanguentado, crítico), sem números",
+        "none": "Nenhum (somente \"Caído\" ou morto)"
       },
       "frieze": {
         "Name": "Faixa de iniciativa",

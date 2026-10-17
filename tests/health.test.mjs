@@ -44,10 +44,14 @@ describe("veilFor", () => {
     expect(v.tier).toBe("bloodied");
     expect(v.veil).toBe(TIER_VEIL.bloodied);
     expect(v.numbers).toBe(false);
+    expect(v.label).toBe(true);
+  });
+  it("exact : les chiffres, pas de palier écrit", () => {
+    expect(veilFor(h(6, 10), "exact").label).toBe(false);
   });
   it("aucun : rien tant que la créature tient debout", () => {
-    expect(veilFor(h(1, 10), "none")).toEqual({ tier: "unhurt", veil: 0, numbers: false });
-    expect(veilFor(h(0, 10), "none")).toEqual({ tier: "down", veil: 1, numbers: false });
+    expect(veilFor(h(1, 10), "none")).toEqual({ tier: "unhurt", veil: 0, numbers: false, label: false });
+    expect(veilFor(h(0, 10), "none")).toEqual({ tier: "down", veil: 1, numbers: false, label: true });
   });
 });
 

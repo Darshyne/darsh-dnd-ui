@@ -43,14 +43,17 @@ export function tierOf(health) {
  * Ce que le portrait montre.
  * @param {object} health   Retour de readHealth.
  * @param {"exact"|"tiers"|"none"} policy
- * @returns {{tier: string, veil: number, numbers: boolean}}
- *   `veil` ∈ [0, 1] : part du portrait couverte de rouge, depuis le bas.
+ * @returns {{tier: string, veil: number, numbers: boolean, label: boolean}}
+ *   `veil` ∈ [0, 1] : part du portrait couverte de rouge, depuis le bas. `label` : le palier s'écrit en toutes lettres (« Blessé »)
+ *   à la place des chiffres — en mode paliers, et à terre en mode « aucun » (retour de table du 2026-10-18 : le réglage nommait
+ *   des paliers que rien n'écrivait).
  */
 export function veilFor(health, policy = "exact") {
   const tier = tierOf(health);
-  if ( policy === "exact" ) return { tier, veil: clamp01(health.lost), numbers: true };
-  if ( policy === "tiers" ) return { tier, veil: TIER_VEIL[tier], numbers: false };
-  return { tier: tier === "down" ? "down" : "unhurt", veil: tier === "down" ? 1 : 0, numbers: false };
+  if ( policy === "exact" ) return { tier, veil: clamp01(health.lost), numbers: true, label: false };
+  if ( policy === "tiers" ) return { tier, veil: TIER_VEIL[tier], numbers: false, label: true };
+  const down = tier === "down";
+  return { tier: down ? "down" : "unhurt", veil: down ? 1 : 0, numbers: false, label: down };
 }
 
 /**

@@ -86,8 +86,15 @@ export class Portrait {
     el.style.setProperty("--ddu-veil", String(dead ? 1 : view.veil));
 
     const hp = el.querySelector(".ddu-portrait__hp");
-    hp.hidden = !(health && view.numbers);
-    if ( health && view.numbers ) {
+    // Mode paliers : le palier en toutes lettres à la place des chiffres (« Blessé », « À terre », « Mort »).
+    const label = health && !view.numbers && (view.label || dead) ? loc(`Portrait.Tier.${dead ? "dead" : view.tier}`) : null;
+    hp.hidden = !(health && (view.numbers || label));
+    hp.classList.toggle("ddu-portrait__hp--tier", !!label);
+    if ( label ) {
+      hp.textContent = label;
+      hp.classList.remove("ddu-portrait__hp--temp");
+    }
+    else if ( health && view.numbers ) {
       // PV temporaires en clair, à la suite (0.17.1) : l'infobulle d'avant ne s'ouvrait jamais (le chiffre ignore la souris).
       hp.textContent = `${health.value}/${health.max}`;
       if ( health.temp > 0 ) {

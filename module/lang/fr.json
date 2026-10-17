@@ -154,7 +154,16 @@
       }
     },
     "Portrait": {
-      "Ward": "{name} : {value}/{max}"
+      "Ward": "{name} : {value}/{max}",
+      "Tier": {
+        "unhurt": "Indemne",
+        "hurt": "Blessé",
+        "bloodied": "En sang",
+        "critical": "Critique",
+        "down": "À terre",
+        "dead": "Mort"
+      },
+      "HP": "PV {value}/{max}"
     },
     "Settings": {
       "PortraitImage": {
@@ -185,10 +194,10 @@
       },
       "EnemyHealth": {
         "Name": "PV des créatures vus par les joueurs",
-        "Hint": "Ce qu'un joueur voit des PV d'une créature dont il ne voit pas la fiche. Le MJ et les propriétaires voient toujours les PV exacts.",
-        "exact": "Exacts (voile au plus juste)",
-        "tiers": "Par paliers (indemne, blessé, en sang, critique)",
-        "none": "Aucun (seulement à terre / mort)"
+        "Hint": "Ce qu'un joueur voit des PV d'une créature dont il ne voit pas la fiche, sur les portraits DAS (frise, groupe, barre) : sur le portrait, et dans l'infobulle de la frise. Le MJ et les propriétaires voient toujours les PV exacts. Les barres de PV des tokens de Foundry ne dépendent pas de ce réglage (affichage des barres dans la configuration du token).",
+        "exact": "Exacts : voile au plus juste et PV en chiffres",
+        "tiers": "Par paliers : voile rouge et état écrit (indemne, blessé, en sang, critique), sans chiffres",
+        "none": "Aucun (seulement « À terre » ou mort)"
       },
       "frieze": {
         "Name": "Frise d'initiative",

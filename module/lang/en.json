@@ -154,7 +154,16 @@
       }
     },
     "Portrait": {
-      "Ward": "{name}: {value}/{max}"
+      "Ward": "{name}: {value}/{max}",
+      "Tier": {
+        "unhurt": "Unhurt",
+        "hurt": "Hurt",
+        "bloodied": "Bloodied",
+        "critical": "Critical",
+        "down": "Down",
+        "dead": "Dead"
+      },
+      "HP": "HP {value}/{max}"
     },
     "Settings": {
       "PortraitImage": {
@@ -185,10 +194,10 @@
       },
       "EnemyHealth": {
         "Name": "Creature Hit Points shown to players",
-        "Hint": "What a player sees of the HP of a creature whose sheet they cannot see. The GM and owners always see exact HP.",
-        "exact": "Exact (veil matches the HP lost)",
-        "tiers": "By tier (unhurt, hurt, Bloodied, critical)",
-        "none": "None (only down / dead)"
+        "Hint": "What a player sees of the HP of a creature whose sheet they cannot see, on DAS portraits (initiative strip, party, bar): on the portrait, and in the initiative strip's tooltip. The GM and owners always see exact HP. Foundry's own token HP bars do not depend on this setting (bar display in the token configuration).",
+        "exact": "Exact: veil matches the HP lost, HP in numbers",
+        "tiers": "By tier: red veil and written state (unhurt, hurt, Bloodied, critical), no numbers",
+        "none": "None (only \"Down\" or dead)"
       },
       "frieze": {
         "Name": "Initiative strip",
