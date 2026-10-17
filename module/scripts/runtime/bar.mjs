@@ -19,6 +19,11 @@ export function startBar() {
   bar.render();
 }
 
+
+/** Les champs qu'un pas de marche change (`_id` est toujours là). */
+const MOVE_KEYS = new Set(["_id", "x", "y", "elevation", "rotation", "level", "sort", "movementAction"]);
+const onlyMoved = changes => Object.keys(changes ?? {}).every(k => MOVE_KEYS.has(k));
+
 export function registerBar() {
   const redraw = () => bar?.scheduleRender();
   const mine = actor => !!bar?.actor && (actor?.id === bar.actor.id);
@@ -61,11 +66,17 @@ export function registerBar() {
   });
   // Éclairage recalculé par le cœur (lumière déplacée, obscurité de la scène, ténèbres magiques) : le témoin seul.
   route("lightingRefresh", "bar", () => bar?.refreshLight());
+  // Un simple pas de marche (position, orientation, niveau) : la Barre se redessine une seule fois, le token arrêté. Une marche au clic
+  // du moteur met le token à jour à chaque point de contrôle ; un redessin complet (35-45 ms pour un PJ, mesuré le 2026-10-17) par
+  // case figeait l'animation — saccadé sur The Forge, où chaque morceau attend en plus le serveur.
+  const redrawAfterMove = foundry.utils.debounce(redraw, 400);
   route("updateToken", "bar", (token, changes) => {
     // Transformation (Forme sauvage, métamorphose) : le token garde son id mais change d'acteur ; s'il est
     // contrôlé, la Barre doit suivre le nouvel acteur (aucun controlToken n'est émis).
     if ( ("actorId" in changes) && token.object?.controlled ) return redraw();
-    if ( mine(token.actor) ) redraw();
+    if ( !mine(token.actor) ) return;
+    if ( onlyMoved(changes) ) return redrawAfterMove();
+    redraw();
   });
 }
 
