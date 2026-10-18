@@ -12,7 +12,7 @@
  * Actions de base du moteur : items portant flags["dnd5e-combat"].basicAction (SPEC §4.1).
  */
 import { reasonsFor, upcastOptions } from "../core/cells.mjs";
-import { issuesOf, movableZoneOf, carriedLightOf } from "./engine.mjs";
+import { cellStateOf, movableZoneOf, carriedLightOf } from "./engine.mjs";
 
 const TIMED = ["action", "bonus", "reaction"];
 
@@ -259,7 +259,9 @@ export function cellView(actor, ref, ctx) {
   const activity = r.activity ?? item.system.activities?.contents?.[0] ?? null;
   const type = activity?.activation?.type ?? null;
   // 0.19.2 : le coût que le moteur fera payer (Observateur : Chercher par une action Bonus), sinon l'activation de la donnée.
-  const engineCost = activity ? game.modules.get("dnd5e-combat")?.api?.ui?.cost?.(activity) : null;
+  // 0.25.3 : avec les raisons, en un seul calcul du moteur (`cellStateOf`).
+  const engineState = cellStateOf(activity);
+  const engineCost = engineState.cost;
   const cost = TIMED.includes(engineCost) ? engineCost : TIMED.includes(type) ? type : (type ? "other" : null);
   const isSpell = item.type === "spell";
   const spellLevel = isSpell ? item.system.level : null;
@@ -314,7 +316,7 @@ export function cellView(actor, ref, ctx) {
     light: carriedLightOf(item)
   };
   view.reasons = reasonsFor({ ...view, slots: ctx.slots });
-  view.issues = issuesOf(activity) ?? [];
+  view.issues = engineState.issues ?? [];
   // Attaques multiples ouvertes par le moteur ce tour : ce qui reste à jouer, ce qui n'a plus rien.
   view.multi = ctx.multi?.left.has(item.uuid) ? "left" : ctx.multi?.spent.has(item.uuid) ? "spent" : null;
   view.upcast = view.canUpcast ? upcastOptions(ctx.slots, spellLevel) : [];

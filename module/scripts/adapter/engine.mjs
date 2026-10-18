@@ -91,6 +91,17 @@ export function issuesOf(activity) {
 }
 
 /**
+ * 0.25.3 : raisons et coût d'une case en un seul calcul du moteur (≥ 0.247.0, `api.ui.cell`, son §205) — ils passaient deux fois par
+ * le même calcul. Moteur plus ancien : les deux appels séparés. `{ issues: string[]|null, cost: string|null }`.
+ */
+export function cellStateOf(activity) {
+  if ( !activity ) return { issues: null, cost: null };
+  const both = read("cell", activity);
+  if ( both ) return { issues: both.issues ?? [], cost: both.cost ?? null };
+  return { issues: issuesOf(activity), cost: read("cost", activity) };
+}
+
+/**
  * Ce que le token en main (le seul contrôlé, à soi) peut faire de ce token : les entrées du menu contextuel du moteur
  * (clic droit sur le canevas) — suivre, se faire suivre, observer, et celles des modules voisins (« Échanger » de Darsh
  * Loot). Moteur ≥ 0.147.0 (`api.ui.tokenMenu`, son SPEC §41.4) ; vide sinon, ou sans token en main.
