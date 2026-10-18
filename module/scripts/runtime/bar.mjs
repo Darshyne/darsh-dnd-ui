@@ -36,20 +36,27 @@ export function registerBar() {
   const moving = doc => ["pending", "paused"].includes(doc?.movement?.state)
     || !!doc?.object?.animationContexts?.has?.(doc.object.movementAnimationName);
   const walking = () => (bar?.actor?.getActiveTokens?.(false, true) ?? []).some(moving);
+  // 0.25.2 : immobile, la Barre ne recalcule que ce qui dépend de la position (`refreshPosition` : raisons de grisé, anneau) — sauf si la
+  // fiche, un objet, un effet ou le combattant a changé pendant la marche : alors un rendu complet.
   let waiting = null;
-  const redrawWhenStill = () => {
+  let full = false;
+  const redrawWhenStill = ({ complete=false }={}) => {
+    full ||= complete;
     if ( waiting ) return;
     let still = 0;
     const check = () => {
       still = walking() ? 0 : still + 1;
       if ( still < 2 ) { waiting = setTimeout(check, 250); return; }
       waiting = null;
-      redraw();
+      const wasFull = full;
+      full = false;
+      if ( wasFull || !bar?.refreshPosition ) redraw();
+      else bar.refreshPosition();
     };
     waiting = setTimeout(check, 250);
   };
-  // Ce qui change pendant la marche (fiche, effets, budget) attend aussi la fin.
-  const redrawMine = () => (walking() ? redrawWhenStill() : redraw());
+  // Ce qui change pendant la marche (fiche, effets, budget) attend aussi la fin, et demande un rendu complet.
+  const redrawMine = () => (walking() ? redrawWhenStill({ complete: true }) : redraw());
 
   for ( const hook of [
     "controlToken", "canvasReady", "createCombat", "updateCombat", "deleteCombat", "combatStart",

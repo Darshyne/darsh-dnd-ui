@@ -25,7 +25,7 @@ import { layoutHost, readLayout, writeLayout } from "../adapter/forms.mjs";
 import { matcherFor, equipActive } from "../adapter/weapon-return.mjs";
 import { viewedCombat, nameFor } from "../adapter/combat.mjs";
 import { combatantOf, currentActor } from "../adapter/party.mjs";
-import { budgetOf, movementOf, multiattackOf, lightOf, carriedLightOf, toggleLight, sneakingOf, toggleSneak, climbOf, climbEntriesOf } from "../adapter/engine.mjs";
+import { budgetOf, movementOf, multiattackOf, lightOf, carriedLightOf, toggleLight, sneakingOf, toggleSneak, climbOf, climbEntriesOf, issuesOf } from "../adapter/engine.mjs";
 import { climbButtonShown, ringTooltip } from "../core/climb.mjs";
 import { MODULE_ID, loc, setting } from "../shared.mjs";
 
@@ -197,12 +197,42 @@ export class Bar {
     this.element.classList.toggle("ddu-bar--readonly", !this.canEdit);
     // Tour d'un personnage que l'on joue : la Barre ne s'estompe pas (demande de l'utilisateur, 2026-10-01).
     this.element.classList.toggle("ddu-bar--turn", ctx.myTurn && this.canEdit);
+    this.#views = new Map();
     this.element.replaceChildren(
       this.#left(ctx),
       this.#center(ctx),
       this.#rowControls(),
       this.#endButton(ctx)
     );
+  }
+
+  /** Les cases du dernier rendu : `conteneur:index` → { container, index, view } (0.25.2, `refreshPosition`). */
+  #views = new Map();
+
+  /**
+   * 0.25.2 : après un déplacement, seul ce qui dépend de la position est recalculé — les raisons de grisé des cases (le moteur, `issues` :
+   * entrer dans un Silence, une antimagie, un nuage qui interdit d'agir), l'anneau de déplacement et les boutons de « Fin du tour »
+   * (escalade, furtivité). Le coût des cases, le rituel, les emplacements et les utilisations ne bougent pas avec un pas : ils sont repris du
+   * dernier rendu. Une case n'est réécrite que si ses raisons ont changé. Le rendu complet coûtait ~45 ms avec trois rangées (dont ~1/3
+   * pour ces raisons), mesuré le 2026-10-18. Rendu complet si l'acteur montré a changé.
+   */
+  refreshPosition() {
+    const actor = setting("bar") ? this.#pickActor() : null;
+    if ( !actor || (actor !== this.actor) || !this.#views.size ) return this.render({ keepLayout: true });
+    const ctx = this.#context();
+    this.ctx = ctx;
+    for ( const [key, entry] of this.#views ) {
+      const activity = entry.view.primary;
+      if ( !activity ) continue;
+      const issues = issuesOf(activity) ?? [];
+      if ( JSON.stringify(issues) === JSON.stringify(entry.view.issues ?? []) ) continue;
+      const view = { ...entry.view, issues };
+      this.#views.set(key, { ...entry, view });
+      const el = this.element.querySelector(`.ddu-cell[data-container="${entry.container}"][data-index="${entry.index}"]`);
+      if ( el ) el.outerHTML = this.#cell(entry.container, entry.index, view);
+    }
+    this.element.classList.toggle("ddu-bar--turn", ctx.myTurn && this.canEdit);
+    this.element.querySelector(".ddu-bar__end")?.replaceWith(this.#endButton(ctx));
   }
 
   #left() {
@@ -440,6 +470,7 @@ export class Bar {
     for ( let i = 0; i < cols * rows; i++ ) {
       const ref = refs[i] ?? null;
       const view = ref ? cellView(this.actor, ref, ctx) : null;
+      if ( view ) this.#views.set(`${container}:${i}`, { container, index: i, view });
       html.push(this.#cell(container, i, view));
     }
     box.innerHTML = html.join("");
