@@ -1142,3 +1142,23 @@ body.ddu-hide-hotbar #hotbar { display: none; }
 }
 .ddu-sneak.ddu-on { background: var(--ddu-active); color: var(--ddu-gold); box-shadow: 0 0 10px var(--ddu-active); }
 .ddu-sneak[disabled] { filter: grayscale(0.7) brightness(0.7); cursor: default; }
+
+/* §46 : escalade du moteur (son §196), hors combat, autre coin du bouton Repos ; témoin du portrait en bas à gauche */
+.ddu-climb {
+  position: absolute; top: 0; left: 0; width: 32%; height: 32%; min-height: 0; padding: 0; margin: 0;
+  border-radius: 50%; border: 1px solid var(--ddu-gold); background: var(--ddu-rest-lo); color: var(--ddu-gold);
+  display: flex; align-items: center; justify-content: center; font-size: calc(13px * var(--ddu-scale)); cursor: pointer; z-index: 2;
+}
+.ddu-climb.ddu-on { background: var(--ddu-active); box-shadow: 0 0 10px var(--ddu-active); }
+.ddu-climb[disabled] { filter: grayscale(0.7) brightness(0.7); cursor: default; }
+.ddu-bar__climbmenu { flex-direction: column; }
+.ddu-portrait__climb {
+  position: absolute; bottom: 6%; left: 6%;
+  width: calc(20px * var(--ddu-scale)); height: calc(20px * var(--ddu-scale));
+  border: 1px solid var(--ddu-gold); border-radius: 50%; background: var(--ddu-rest-lo); color: var(--ddu-gold);
+  display: flex; align-items: center; justify-content: center; font-size: calc(11px * var(--ddu-scale));
+  box-shadow: 0 0 6px var(--ddu-shade); pointer-events: auto;
+}
+.ddu-portrait__climb[hidden] { display: none; }
+.ddu-portrait__climb[data-kind="ceiling"] i { transform: scaleY(-1); }
+.ddu-portrait--round .ddu-portrait__climb { bottom: 14%; left: 14%; }

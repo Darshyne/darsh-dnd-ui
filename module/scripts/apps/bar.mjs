@@ -25,7 +25,8 @@ import { layoutHost, readLayout, writeLayout } from "../adapter/forms.mjs";
 import { matcherFor, equipActive } from "../adapter/weapon-return.mjs";
 import { viewedCombat, nameFor } from "../adapter/combat.mjs";
 import { combatantOf, currentActor } from "../adapter/party.mjs";
-import { budgetOf, movementOf, multiattackOf, lightOf, carriedLightOf, toggleLight, sneakingOf, toggleSneak } from "../adapter/engine.mjs";
+import { budgetOf, movementOf, multiattackOf, lightOf, carriedLightOf, toggleLight, sneakingOf, toggleSneak, climbOf, climbEntriesOf } from "../adapter/engine.mjs";
+import { climbButtonShown, ringTooltip } from "../core/climb.mjs";
 import { MODULE_ID, loc, setting } from "../shared.mjs";
 
 const esc = s => foundry.utils.escapeHTML(String(s ?? ""));
@@ -525,7 +526,7 @@ export class Bar {
       const label = ctx.myTurn ? loc("Bar.EndTurn") : loc("Bar.TurnOf", { name: current ? nameFor(current) : "" });
       box.innerHTML = `${ring}<button type="button" class="ddu-end${ctx.myTurn ? "" : " ddu-end--waiting"}"
         data-action="endTurn" ${ctx.myTurn && this.canEdit ? "" : "disabled"}
-        data-tooltip="${esc(move ? loc("Bar.Movement", { left: round(move.left), allowed: round(move.allowed) }) : label)}">
+        data-tooltip="${esc(move ? this.#ringLabel(move) : label)}">
         <span>${esc(label)}</span></button>`;
     } else {
       // 0.23.0 : la Furtivité du moteur (son §183, §185), hors combat — se cacher ; caché, les cônes de vision des créatures vues s'affichent.
@@ -533,9 +534,14 @@ export class Bar {
       const sneaking = sneakingOf(token);
       const sneak = (sneaking === null) ? "" : `<button type="button" class="ddu-sneak${sneaking ? " ddu-on" : ""}" data-action="sneak"
         ${this.canEdit ? "" : "disabled"} data-tooltip="${esc(loc(sneaking ? "Bar.SneakOff" : "Bar.SneakOn"))}"><i class="fa-solid fa-user-ninja"></i></button>`;
+      // §46 : l'escalade du moteur (son §196) — « Grimper » ouvre les mêmes entrées que son menu (mur, plafond, descendre, lâcher).
+      const climbing = climbOf(token);
+      const climb = climbButtonShown(climbing) ? `<button type="button" class="ddu-climb${climbing.climbing ? " ddu-on" : ""}"
+        data-action="climb" ${this.canEdit ? "" : "disabled"} data-tooltip="${esc(loc(climbing.climbing ? "Bar.ClimbMenu" : "Bar.Climb"))}">
+        <i class="fa-solid ${climbing.onCeiling ? "fa-spider" : "fa-mountain"}"></i></button>` : "";
       box.innerHTML = `<button type="button" class="ddu-end ddu-end--rest" data-action="rest"
         ${this.canEdit ? "" : "disabled"} data-tooltip="${esc(loc("Bar.Rest"))}">
-        <i class="fa-solid fa-campground"></i><span>${esc(loc("Bar.Rest"))}</span></button>${sneak}`;
+        <i class="fa-solid fa-campground"></i><span>${esc(loc("Bar.Rest"))}</span></button>${sneak}${climb}`;
     }
     return box;
   }
@@ -544,6 +550,12 @@ export class Bar {
   #sceneToken() {
     const tokens = this.actor?.getActiveTokens?.(false, true)?.filter(t => t.parent === canvas?.scene) ?? [];
     return tokens.find(t => t.object?.controlled) ?? tokens[0] ?? null;
+  }
+
+  /** L'infobulle de l'anneau : restant / permis ; en escalade, le coût d'une case (§46). */
+  #ringLabel(move) {
+    const { key, data } = ringTooltip(move, canvas?.scene?.grid?.distance ?? 5);
+    return loc(key, data);
   }
 
   /** Déplacement restant ce tour (anneau), tel que le moteur le compte ; null sans vitesse, sans token ou sans moteur. */
@@ -611,6 +623,12 @@ export class Bar {
       }
       case "rest": return this.#openRestMenu(target);
       case "sneak": return toggleSneak(this.#sceneToken());
+      case "climb": return this.#openClimbMenu(target);
+      case "climbEntry": {
+        const entry = this.climbEntries?.[Number(target.dataset.index)];
+        this.#closePopup();
+        return entry?.run?.(event);
+      }
       case "shortRest": this.#closePopup(); return this.actor.shortRest();
       case "longRest": this.#closePopup(); return this.actor.longRest();
       case "switchWeapons": return this.#switchWeapons(Number(target.dataset.weaponSet));
@@ -1087,6 +1105,15 @@ export class Bar {
         `<span class="ddu-slot${i < s.value ? " ddu-slot--on" : ""}"></span>`).join("")}</span></button>`).join(""),
     "ddu-bar__upcast");
     this.popupRef = view.ref;
+  }
+
+  /** §46 : les entrées d'escalade du moteur, dans un tiroir au-dessus du bouton (la fenêtre « combien de cases » reste la sienne). */
+  #openClimbMenu(button) {
+    const entries = climbEntriesOf(this.#sceneToken());
+    this.climbEntries = entries;
+    if ( !entries.length ) return;
+    this.#openPopup(button, entries.map((e, index) => `<button type="button" data-action="climbEntry" data-index="${index}">
+        <i class="${esc(e.icon)}"></i> ${esc(e.label)}</button>`).join(""), "ddu-bar__climbmenu");
   }
 
   #openRestMenu(button) {

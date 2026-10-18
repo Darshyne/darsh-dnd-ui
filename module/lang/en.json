@@ -103,7 +103,10 @@
         "Out": "Out",
         "Left": " — {h} h {m} left",
         "Empty": "Empty — needs oil"
-      }
+      },
+      "MovementClimb": "Climbing: {left} / {allowed}; each square costs {cost}",
+      "Climb": "Climb: the wall, or the ceiling if there is one and you can",
+      "ClimbMenu": "Climbing: up, down, let go"
     },
     "Reason": {
       "NoUses": "No uses left",
@@ -438,6 +441,10 @@
           "Button": "Edit colours"
         }
       }
+    },
+    "Climb": {
+      "OnWall": "Climbing, {height} {units} above the ground",
+      "OnCeiling": "On the ceiling, {height} {units} above the ground"
     }
   }
 }

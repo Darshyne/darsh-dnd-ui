@@ -103,7 +103,10 @@
         "Out": "Éteinte",
         "Left": " — reste {h} h {m}",
         "Empty": "Vide — il faut de l'huile"
-      }
+      },
+      "MovementClimb": "Escalade : {left} / {allowed} ; chaque case coûte {cost}",
+      "Climb": "Grimper (escalade) : au mur, au plafond s'il y en a un et que vous le pouvez",
+      "ClimbMenu": "Escalade : monter, descendre, se laisser tomber"
     },
     "Reason": {
       "NoUses": "Plus d'utilisation",
@@ -438,6 +441,10 @@
           "Button": "Modifier les couleurs"
         }
       }
+    },
+    "Climb": {
+      "OnWall": "En escalade, à {height} {units} du sol",
+      "OnCeiling": "Au plafond, à {height} {units} du sol"
     }
   }
 }

@@ -8,7 +8,8 @@
  */
 import { veilFor, changeOf } from "../core/health.mjs";
 import { healthOf, deathSavesOf, isDead, portraitImage, healthPolicyFor, sideOf } from "../adapter/actor.mjs";
-import { wardsOf } from "../adapter/engine.mjs";
+import { wardsOf, climbOf } from "../adapter/engine.mjs";
+import { climbBadge } from "../core/climb.mjs";
 import { loc, setting } from "../shared.mjs";
 
 /** @type {Set<Portrait>} */
@@ -53,6 +54,7 @@ export class Portrait {
       <i class="ddu-portrait__skull fa-solid fa-skull"></i>
       <div class="ddu-portrait__hp"></div>
       <div class="ddu-portrait__ward" hidden></div>
+      <div class="ddu-portrait__climb" hidden></div>
       <div class="ddu-portrait__death"></div>`;
     // Le flash joué, sa classe s'en va : sinon le navigateur le rejoue chaque fois que le portrait est remis dans la page
     // (le Groupe se redessine à chaque déplacement en combat — clignotement vert ou rouge, 0.16.1).
@@ -116,6 +118,7 @@ export class Portrait {
       ward.classList.toggle("ddu-portrait__ward--empty", wards.every(w => w.value <= 0));
     }
 
+    this.#renderClimb(actor);
     this.#renderDeath(deathSavesOf(actor));
 
     if ( flash && health ) {
@@ -123,6 +126,21 @@ export class Portrait {
       if ( change ) this.#flash(change);
     }
     this.health = health;
+  }
+
+  /**
+   * §46 : au mur ou au plafond (l'escalade du moteur, son §196), un témoin en bas à gauche avec la hauteur au-dessus du sol. Le token
+   * du portrait, sinon celui de l'acteur sur la scène affichée (la Barre et le Groupe montrent un acteur).
+   */
+  #renderClimb(actor) {
+    const el = this.element.querySelector(".ddu-portrait__climb");
+    const token = this.token ?? actor.getActiveTokens?.(false, true)?.find(t => t.parent === canvas?.scene) ?? null;
+    const badge = climbBadge(token ? climbOf(token) : null);
+    el.hidden = !badge;
+    if ( !badge ) return;
+    el.dataset.kind = badge.kind;
+    el.innerHTML = `<i class="fa-solid ${badge.icon}"></i>`;
+    el.dataset.tooltip = loc(badge.key, { height: badge.height, units: badge.units });
   }
 
   #renderDeath(saves) {

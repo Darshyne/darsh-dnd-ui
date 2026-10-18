@@ -76,7 +76,9 @@ export function budgetOf(combatant) {
 export function movementOf(token) {
   const m = token ? read("movement", token) : null;
   if ( !m ) return null;
-  return { spent: m.spent, allowed: m.allowance, left: m.left, ratio: m.allowance > 0 ? Math.min(1, m.left / m.allowance) : 0 };
+  // Moteur ≥ 0.244 (son §196) : le mode de déplacement (`climb` au mur) et ce que coûte un pied dans ce mode (×2 sans vitesse d'escalade).
+  return { spent: m.spent, allowed: m.allowance, left: m.left, ratio: m.allowance > 0 ? Math.min(1, m.left / m.allowance) : 0,
+    mode: m.mode ?? null, multiplier: Number(m.multiplier) || 1 };
 }
 
 /**
@@ -133,6 +135,29 @@ export function sneakingOf(token) {
   if ( !engineActive() || !token ) return null;
   const api = game.modules.get(ENGINE_ID).api.sneak;
   return typeof api?.is === "function" ? api.is(token) : null;
+}
+
+/**
+ * L'escalade d'un token selon le moteur (≥ 0.244, son SPEC §196, `api.climb.state`) : au mur ou au plafond, hauteur au-dessus du sol,
+ * vitesse, et ce que son menu proposerait (grimper, courir sur le mur, plafond, descendre, lâcher). null si le moteur ne la publie pas.
+ */
+export function climbOf(token) {
+  if ( !engineActive() || !token ) return null;
+  const api = game.modules.get(ENGINE_ID).api.climb;
+  if ( typeof api?.state !== "function" ) return null;
+  try { return api.state(token) ?? null; } catch ( err ) { log.warn("engine: api.climb.state failed", err); return null; }
+}
+
+/**
+ * Les entrées d'escalade du menu du moteur pour ce token (`api.climb.entries` : `{ icon, label, run }`), les mêmes que son clic droit —
+ * « Grimper au mur », « Grimper au plafond », « Descendre le long du mur », « Se laisser tomber »… ; `run()` ouvre au besoin sa fenêtre
+ * « combien de cases ». Vide sans moteur qui la publie.
+ */
+export function climbEntriesOf(token) {
+  if ( !engineActive() || !token ) return [];
+  const api = game.modules.get(ENGINE_ID).api.climb;
+  if ( typeof api?.entries !== "function" ) return [];
+  try { return api.entries(token) ?? []; } catch ( err ) { log.warn("engine: api.climb.entries failed", err); return []; }
 }
 
 /** Se cacher (action Furtivité hors combat) ou ne plus l'être, par le moteur ; rend `{ hidden, reason? }`, ou null. */

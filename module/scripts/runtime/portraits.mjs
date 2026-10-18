@@ -15,6 +15,8 @@ export function registerPortraits() {
   route("updateToken", "portraits", (token, changes) => {
     // Un token non lié garde ses PV dans son delta : c'est une vraie variation de PV.
     if ( "delta" in changes ) Portrait.refreshFor(token.actor);
+    // §46 : la hauteur du grimpeur (témoin d'escalade) — le portrait d'un acteur (Barre, Groupe) n'a pas de token à lui.
+    else if ( ("elevation" in changes) || ("movementAction" in changes) || changes.flags?.["dnd5e-combat"] ) Portrait.refreshFor(token.actor, { flash: false });
     else Portrait.refreshToken(token);
   });
   // Les points d'une réserve (Égide arcanique) sont les utilisations de son item.
