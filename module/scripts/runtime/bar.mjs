@@ -21,12 +21,35 @@ export function startBar() {
 
 
 /** Les champs qu'un pas de marche change (`_id` est toujours là). */
-const MOVE_KEYS = new Set(["_id", "x", "y", "elevation", "rotation", "level", "sort", "movementAction"]);
+// 0.25.1 : `_movementHistory` (en combat, chaque pas porte l'historique du déplacement) et `_regions` (régions traversées) sont
+// des pas aussi — sans eux, chaque case d'une marche en combat redessinait toute la Barre (~55 ms avec trois rangées, mesuré le 2026-10-18).
+const MOVE_KEYS = new Set(["_id", "x", "y", "elevation", "rotation", "level", "sort", "movementAction", "_movementHistory", "_regions"]);
 const onlyMoved = changes => Object.keys(changes ?? {}).every(k => MOVE_KEYS.has(k));
 
 export function registerBar() {
   const redraw = () => bar?.scheduleRender();
   const mine = actor => !!bar?.actor && (actor?.id === bar.actor.id);
+  // 0.25.1 : tant que le token de la Barre marche, elle ne se redessine pas ; une seule fois, immobile depuis un demi-seconde. Une
+  // marche au clic du moteur enchaîne des déplacements du cœur ; sur The Forge chaque morceau attend le serveur, et l'ancien délai fixe
+  // (0,4 s) expirait en pleine marche — un redessin complet par morceau, l'animation figée. En marche : déplacement du cœur en attente ou
+  // en pause, ou animation de marche en cours (V14, documents/token.mjs `movement.state`, canvas/placeables/token.mjs `animationContexts`).
+  const moving = doc => ["pending", "paused"].includes(doc?.movement?.state)
+    || !!doc?.object?.animationContexts?.has?.(doc.object.movementAnimationName);
+  const walking = () => (bar?.actor?.getActiveTokens?.(false, true) ?? []).some(moving);
+  let waiting = null;
+  const redrawWhenStill = () => {
+    if ( waiting ) return;
+    let still = 0;
+    const check = () => {
+      still = walking() ? 0 : still + 1;
+      if ( still < 2 ) { waiting = setTimeout(check, 250); return; }
+      waiting = null;
+      redraw();
+    };
+    waiting = setTimeout(check, 250);
+  };
+  // Ce qui change pendant la marche (fiche, effets, budget) attend aussi la fin.
+  const redrawMine = () => (walking() ? redrawWhenStill() : redraw());
 
   for ( const hook of [
     "controlToken", "canvasReady", "createCombat", "updateCombat", "deleteCombat", "combatStart",
@@ -37,11 +60,11 @@ export function registerBar() {
     if ( user.isSelf && ("character" in changes) ) redraw();
   });
   route("updateActor", "bar", actor => {
-    if ( mine(actor) ) redraw();
+    if ( mine(actor) ) redrawMine();
   });
   for ( const hook of ["createItem", "updateItem", "deleteItem"] ) {
     route(hook, "bar", item => {
-      if ( mine(item.parent) ) redraw();
+      if ( mine(item.parent) ) redrawMine();
     });
   }
   // 0.19.0 : une arme d'un jeu qui quitte la fiche est notée ; ramassée, elle reprend sa place (équipée si son jeu est en main).
@@ -57,26 +80,25 @@ export function registerBar() {
   for ( const hook of ["createActiveEffect", "updateActiveEffect", "deleteActiveEffect"] ) {
     route(hook, "bar", effect => {
       const actor = effect.parent?.documentName === "Item" ? effect.parent.parent : effect.parent;
-      if ( mine(actor) ) redraw();
+      if ( mine(actor) ) redrawMine();
     });
   }
   // Budget du moteur (flags du combattant) et déplacement (historique du token) : pastilles et anneau.
   route("updateCombatant", "bar", combatant => {
-    if ( mine(combatant.actor) ) redraw();
+    if ( mine(combatant.actor) ) redrawMine();
   });
   // Éclairage recalculé par le cœur (lumière déplacée, obscurité de la scène, ténèbres magiques) : le témoin seul.
   route("lightingRefresh", "bar", () => bar?.refreshLight());
   // Un simple pas de marche (position, orientation, niveau) : la Barre se redessine une seule fois, le token arrêté. Une marche au clic
   // du moteur met le token à jour à chaque point de contrôle ; un redessin complet (35-45 ms pour un PJ, mesuré le 2026-10-17) par
   // case figeait l'animation — saccadé sur The Forge, où chaque morceau attend en plus le serveur.
-  const redrawAfterMove = foundry.utils.debounce(redraw, 400);
   route("updateToken", "bar", (token, changes) => {
     // Transformation (Forme sauvage, métamorphose) : le token garde son id mais change d'acteur ; s'il est
     // contrôlé, la Barre doit suivre le nouvel acteur (aucun controlToken n'est émis).
     if ( ("actorId" in changes) && token.object?.controlled ) return redraw();
     if ( !mine(token.actor) ) return;
-    if ( onlyMoved(changes) ) return redrawAfterMove();
-    redraw();
+    if ( onlyMoved(changes) ) return redrawWhenStill();
+    redrawMine();
   });
 }
 
