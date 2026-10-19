@@ -103,7 +103,10 @@
         "Out": "Apagada",
         "Left": " — restam {h} h {m} min",
         "Empty": "Vazia — precisa de óleo"
-      }
+      },
+      "MovementClimb": "Escalada: {left} / {allowed}; cada quadrado custa {cost}",
+      "Climb": "Escalar: a parede ou, se possível, o teto",
+      "ClimbMenu": "Escalada: subir, descer, soltar-se"
     },
     "Reason": {
       "NoUses": "Sem usos restantes",
@@ -438,6 +441,10 @@
           "Button": "Editar cores"
         }
       }
+    },
+    "Climb": {
+      "OnWall": "Escalando, a {height} {units} do chão",
+      "OnCeiling": "No teto, a {height} {units} do chão"
     }
   }
 }
