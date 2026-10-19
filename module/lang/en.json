@@ -106,7 +106,9 @@
       },
       "MovementClimb": "Climbing: {left} / {allowed}; each square costs {cost}",
       "Climb": "Climb: the wall, or the ceiling if there is one and you can",
-      "ClimbMenu": "Climbing: up, down, let go"
+      "ClimbMenu": "Climbing: up, down, let go",
+      "NonLethalOn": "Nonlethal attacks: a melee hit that would drop a creature to 0 HP leaves it at 1 HP, Unconscious (click to turn off)",
+      "NonLethalOff": "Lethal attacks (click for nonlethal attacks: knock out instead of kill)"
     },
     "Reason": {
       "NoUses": "No uses left",

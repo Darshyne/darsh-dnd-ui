@@ -25,7 +25,7 @@ import { layoutHost, readLayout, writeLayout } from "../adapter/forms.mjs";
 import { matcherFor, equipActive } from "../adapter/weapon-return.mjs";
 import { viewedCombat, nameFor } from "../adapter/combat.mjs";
 import { combatantOf, currentActor } from "../adapter/party.mjs";
-import { budgetOf, movementOf, multiattackOf, lightOf, carriedLightOf, toggleLight, sneakingOf, toggleSneak, climbOf, climbEntriesOf, issuesOf } from "../adapter/engine.mjs";
+import { budgetOf, movementOf, multiattackOf, lightOf, carriedLightOf, toggleLight, sneakingOf, toggleSneak, climbOf, climbEntriesOf, issuesOf, nonLethalOf, setNonLethalOf } from "../adapter/engine.mjs";
 import { climbButtonShown, ringTooltip } from "../core/climb.mjs";
 import { MODULE_ID, loc, setting } from "../shared.mjs";
 
@@ -358,7 +358,11 @@ export class Bar {
         ${item && this.canArrange ? 'draggable="true"' : ""} data-tooltip="${esc(tip)}">
         ${img ? `<img src="${esc(img)}" alt="" draggable="false">` : ""}${enchant.length ? '<span class="ddu-enchant"></span>' : ""}</div>`;
     };
-    box.innerHTML = `<div class="ddu-weapons__active">${slot(active, 0, true)}${slot(active, 1, true)}</div>`
+    // 0.25.5 : l'interrupteur des coups non létaux (moteur §210), au coin des armes en main — comme dans Baldur's Gate 3.
+    const nonLethal = nonLethalOf(this.actor);
+    const knock = (nonLethal === null) ? "" : `<button type="button" class="ddu-nonlethal${nonLethal ? " ddu-on" : ""}" data-action="nonLethal"
+      ${this.canEdit ? "" : "disabled"} data-tooltip="${esc(loc(nonLethal ? "Bar.NonLethalOn" : "Bar.NonLethalOff"))}"><i class="fa-solid fa-hand-fist"></i></button>`;
+    box.innerHTML = `<div class="ddu-weapons__active">${slot(active, 0, true)}${slot(active, 1, true)}${knock}</div>`
       + [0, 1].map(s => `<div class="ddu-weapons__set${s === active ? " ddu-weapons__set--active" : ""}"
           data-action="switchWeapons" data-weapon-set="${s}" data-tooltip="${esc(loc("Bar.WeaponSet", { n: s + 1 }))}">
           ${slot(s, 0, false)}${slot(s, 1, false)}</div>`).join("");
@@ -654,6 +658,11 @@ export class Bar {
       }
       case "rest": return this.#openRestMenu(target);
       case "sneak": return toggleSneak(this.#sceneToken());
+      case "nonLethal": {
+        if ( !this.canEdit ) return;
+        await setNonLethalOf(this.actor, !nonLethalOf(this.actor));
+        return this.render({ keepLayout: true });
+      }
       case "climb": return this.#openClimbMenu(target);
       case "climbEntry": {
         const entry = this.climbEntries?.[Number(target.dataset.index)];

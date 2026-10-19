@@ -106,7 +106,9 @@
       },
       "MovementClimb": "Escalade : {left} / {allowed} ; chaque case coûte {cost}",
       "Climb": "Grimper (escalade) : au mur, au plafond s'il y en a un et que vous le pouvez",
-      "ClimbMenu": "Escalade : monter, descendre, se laisser tomber"
+      "ClimbMenu": "Escalade : monter, descendre, se laisser tomber",
+      "NonLethalOn": "Coups non létaux : un coup de mêlée qui ferait tomber à 0 PV laisse à 1 PV, Inconscient (cliquer pour couper)",
+      "NonLethalOff": "Coups létaux (cliquer pour des coups non létaux : assommer au lieu de tuer)"
     },
     "Reason": {
       "NoUses": "Plus d'utilisation",

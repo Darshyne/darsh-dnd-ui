@@ -142,6 +142,22 @@ export function multiattackOf(actor) {
 /**
  * Le token est-il caché (Furtivité du moteur ≥ 0.239.0, son SPEC §183, §185) : true / false, ou null si le moteur ne le publie pas.
  */
+/**
+ * 0.25.5 : les coups non létaux de l'acteur (moteur ≥ 0.251.0, `api.nonLethal`, son §210) — vrai / faux, ou null sans le moteur ni l'API.
+ */
+export function nonLethalOf(actor) {
+  if ( !engineActive() || !actor ) return null;
+  const api = game.modules.get(ENGINE_ID).api.nonLethal;
+  return typeof api?.get === "function" ? api.get(actor) : null;
+}
+
+/** Active ou coupe les coups non létaux de l'acteur ; rend la nouvelle valeur, ou null sans l'API. */
+export function setNonLethalOf(actor, on) {
+  if ( !engineActive() || !actor ) return null;
+  const api = game.modules.get(ENGINE_ID).api.nonLethal;
+  return typeof api?.set === "function" ? api.set(actor, on) : null;
+}
+
 export function sneakingOf(token) {
   if ( !engineActive() || !token ) return null;
   const api = game.modules.get(ENGINE_ID).api.sneak;
