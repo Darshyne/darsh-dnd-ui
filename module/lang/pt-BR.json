@@ -106,7 +106,9 @@
       },
       "MovementClimb": "Escalada: {left} / {allowed}; cada quadrado custa {cost}",
       "Climb": "Escalar: a parede ou, se possível, o teto",
-      "ClimbMenu": "Escalada: subir, descer, soltar-se"
+      "ClimbMenu": "Escalada: subir, descer, soltar-se",
+      "NonLethalOn": "Ataques não letais: um golpe corpo a corpo que reduziria uma criatura a 0 PV a deixa com 1 PV, Inconsciente (clique para desativar)",
+      "NonLethalOff": "Ataques letais (clique para ativar ataques não letais: nocautear em vez de matar)"
     },
     "Reason": {
       "NoUses": "Sem usos restantes",
