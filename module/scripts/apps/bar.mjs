@@ -697,11 +697,15 @@ export class Bar {
     this.render({ keepLayout: true });
   }
 
-  /** Clic sur une case : sort surchargeable → tiroir des niveaux (BG3 P8), sinon utilisation directe. */
+  /**
+   * Clic sur une case : sort surchargeable → tiroir des niveaux (BG3 P8), sinon utilisation directe. §50 : un sort qui a encore une
+   * incantation gratuite se lance par dnd5e (`item.use`), où le moteur la choisit ; Maj + clic garde le plus petit emplacement.
+   */
   #onCellClick(cell, event) {
     const ref = cell.dataset.ref;
     const view = cellView(this.actor, ref, this.ctx);
     if ( !view ) return;
+    if ( view.freeCast && !event.shiftKey ) return this.#useCell(ref, event);
     if ( view.canUpcast && view.upcast.length > 1 && !event.shiftKey ) return this.#openUpcast(cell, view);
     return this.#useCell(ref, event, view.canUpcast ? view.upcast[0]?.key : null);
   }
@@ -810,7 +814,7 @@ export class Bar {
     const level = Number(cell.dataset.level);
     if ( level > 0 ) {
       const view = cellView(this.actor, cell.dataset.ref, this.ctx);
-      const slot = view?.upcast?.[0]?.key;
+      const slot = view?.freeCast ? null : view?.upcast?.[0]?.key;   // §50 : l'incantation gratuite ne prend pas d'emplacement
       if ( slot ) this.element.querySelector(`.ddu-filter[data-slot="${slot}"]`)?.classList.add("ddu-filter--preview");
     }
   }

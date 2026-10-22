@@ -305,6 +305,9 @@ export function cellView(actor, ref, ctx) {
     name: r.activity ? `${item.name} : ${r.activity.name}` : item.name,
     img: r.activity?.img || item.img,
     cost, spellLevel, needsSlot, uses, quantity, unprepared, moves,
+    // §50 : une incantation gratuite reste (Fidèle destrier : Appel de destrier 1/repos long) — le clic passe par le choix d'activité
+    // de dnd5e, où le moteur la prend (son §230), au lieu du tiroir des niveaux qui dépense un emplacement.
+    freeCast: leveled && !running && !r.activity && acts.some(freeCast),
     canUpcast: !ritualCast && castsWithSlot && !!item.system.canScale,
     ritualCast,
     concentration: !!(item.system.properties?.has?.("concentration") || activity?.duration?.concentration),
