@@ -8,6 +8,7 @@
  * document n'est écrit, le moteur de combat (qui lit `_source`) n'en voit rien.
  */
 import { setting } from "../shared.mjs";
+import { pathStyleOf, DOT_SIZE } from "../core/path-style.mjs";
 import { segmentPlan } from "../core/motion.mjs";
 import { settled, smoothDamp2D, viewAhead } from "../core/camera.mjs";
 
@@ -17,6 +18,7 @@ import { settled, smoothDamp2D, viewAhead } from "../core/camera.mjs";
 
 const TEXTURE_SIZE = 128;
 let softTexture = null;
+let dotTexture = null;
 
 /**
  * Pastille blanche aux bords fondus, teintée ensuite par la couleur de la case (vert / jaune / rouge
@@ -38,11 +40,30 @@ function cellTexture() {
 }
 
 /**
+ * §49 : un petit rond blanc au centre de la case, d'un tiers de sa hauteur (`DOT_SIZE`), le bord à peine adouci. Teinté comme la
+ * pastille ; la texture couvre la case entière, transparente hors du rond.
+ */
+function dotCellTexture() {
+  if ( dotTexture?.valid ) return dotTexture;
+  const c = document.createElement("canvas");
+  c.width = c.height = TEXTURE_SIZE;
+  const ctx = c.getContext("2d");
+  ctx.filter = "blur(1px)";
+  ctx.fillStyle = "#ffffff";
+  ctx.beginPath();
+  ctx.arc(TEXTURE_SIZE / 2, TEXTURE_SIZE / 2, (TEXTURE_SIZE * DOT_SIZE) / 2, 0, 2 * Math.PI);
+  ctx.fill();
+  dotTexture = PIXI.Texture.from(c);
+  return dotTexture;
+}
+
+/**
  * Habille le style de case que rend la règle du système (couleur selon la vitesse, dnd5e
- * module/canvas/ruler.mjs:74) : même couleur, pastille fondue à la place de l'aplat.
+ * module/canvas/ruler.mjs:74) : même couleur, pastille fondue (`soft`) ou petit rond (`dots`, §49) à la place de l'aplat (`flat`).
  */
 function soften(style, offset) {
-  if ( !setting("softPath") || !(style.alpha > 0) || (style.texture && (style.texture !== PIXI.Texture.WHITE)) ) {
+  const kind = pathStyleOf(setting("softPath"));
+  if ( (kind === "flat") || !(style.alpha > 0) || (style.texture && (style.texture !== PIXI.Texture.WHITE)) ) {
     return style;
   }
   const vertices = canvas.grid.getVertices(offset);
@@ -59,8 +80,9 @@ function soften(style, offset) {
   const s = TEXTURE_SIZE;
   return {
     ...style,
-    alpha: style.alpha * 0.85,
-    texture: cellTexture(),
+    // Un petit rond se voit moins qu'une case pleine : plus opaque.
+    alpha: (kind === "dots") ? Math.min(1, style.alpha * 1.6) : style.alpha * 0.85,
+    texture: (kind === "dots") ? dotCellTexture() : cellTexture(),
     matrix: new PIXI.Matrix((maxX - minX) / s, 0, 0, (maxY - minY) / s, minX, minY)
   };
 }

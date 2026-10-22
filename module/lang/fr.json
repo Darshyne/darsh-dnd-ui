@@ -300,8 +300,11 @@
         "Hint": "Les joueurs ne peuvent plus déplacer, ajouter ni retirer de cases."
       },
       "softPath": {
-        "Name": "Plateau : chemin adouci",
-        "Hint": "Les cases du chemin de déplacement sont des pastilles aux bords fondus au lieu d'aplats de couleur. Mêmes couleurs (vert, jaune, rouge selon la vitesse)."
+        "Name": "Plateau : tracé du chemin",
+        "Hint": "Les cases du chemin de déplacement : aplats de couleur (dnd5e), pastilles aux bords fondus, ou petits ronds d'un tiers de case. Mêmes couleurs (vert, jaune, rouge selon la vitesse).",
+        "flat": "Aplats",
+        "soft": "Pastilles fondues",
+        "dots": "Petits ronds"
       },
       "rulerOutOfCombat": {
         "Name": "Plateau : chemin hors combat",

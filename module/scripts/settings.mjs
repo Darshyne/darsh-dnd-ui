@@ -5,6 +5,7 @@
 import { MODULE_ID, SCALE_KEYS } from "./shared.mjs";
 import { POLICIES } from "./core/health.mjs";
 import { GM_SELECT_MODES } from "./core/select.mjs";
+import { PATH_STYLES } from "./core/path-style.mjs";
 import { Portrait } from "./apps/portrait.mjs";
 
 const refreshAll = () => Portrait.refreshFor(null, { flash: false });
@@ -153,7 +154,9 @@ export function registerCanvasSettings(rulers) {
     name: `DDU.Settings.${key}.Name`, hint: `DDU.Settings.${key}.Hint`,
     scope, config: true, type: Boolean, default: def, ...extra
   });
-  reg("softPath", "client", true, { onChange: rulers });
+  // §49 : aplats / pastilles fondues / petits ronds — une case à cocher avant la 0.27.0 (relue par `pathStyleOf`).
+  reg("softPath", "client", "soft", { onChange: rulers, type: String,
+    choices: Object.fromEntries(PATH_STYLES.map(k => [k, `DDU.Settings.softPath.${k}`])) });
   reg("rulerOutOfCombat", "client", false, { onChange: rulers });
   reg("smoothMovement", "world", true);
   reg("cameraFollow", "client", true);

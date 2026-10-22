@@ -300,8 +300,11 @@
         "Hint": "Players can no longer move, add or remove cells."
       },
       "softPath": {
-        "Name": "Board: soft path",
-        "Hint": "Movement path cells are drawn as soft-edged pads instead of flat colour fills. Same colours (green, yellow, red by speed)."
+        "Name": "Board: path style",
+        "Hint": "The cells of the movement path: flat colour (dnd5e), soft-edged pads, or small dots a third of a square wide. Same colours (green, yellow, red by speed).",
+        "flat": "Flat",
+        "soft": "Soft pads",
+        "dots": "Small dots"
       },
       "rulerOutOfCombat": {
         "Name": "Board: path out of combat",
