@@ -225,8 +225,15 @@
         "Hint": "Les joueurs voient la valeur d'initiative des créatures qu'ils ne possèdent pas."
       },
       "friezeAutoSelect": {
-        "Name": "Frise : sélectionner le combattant actif",
-        "Hint": "À chaque tour, le token dont c'est le tour est sélectionné et la vue recentrée sur lui. Le MJ sélectionne n'importe quel combattant ; un joueur, seulement les siens."
+        "Name": "Frise : sélectionner son combattant actif",
+        "Hint": "À chaque tour d'un de vos combattants, son token est sélectionné et la vue recentrée sur lui. Pour les joueurs : le MJ a son propre réglage (présélection du MJ)."
+      },
+      "friezeAutoSelectGM": {
+        "Name": "Frise : présélection du MJ",
+        "Hint": "Chez le MJ, à chaque tour : sélectionner le token dont c'est le tour et recentrer la vue sur lui — jamais, seulement les PNJ (combattants sans joueur propriétaire), ou tous.",
+        "none": "Aucun",
+        "npc": "PNJ uniquement",
+        "all": "Tous"
       },
       "friezeHideDefeated": {
         "Name": "Frise : retirer les vaincus",

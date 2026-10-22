@@ -225,8 +225,15 @@
         "Hint": "Players see the initiative value of creatures they do not own."
       },
       "friezeAutoSelect": {
-        "Name": "Strip: select the active combatant",
-        "Hint": "Each turn, the token whose turn it is gets selected and the view centred on it. The GM selects any combatant; a player, only their own."
+        "Name": "Strip: select your active combatant",
+        "Hint": "On each turn of one of your combatants, its token gets selected and the view centred on it. For players: the GM has a setting of their own (GM preselection)."
+      },
+      "friezeAutoSelectGM": {
+        "Name": "Strip: GM preselection",
+        "Hint": "On the GM's screen, each turn: select the token whose turn it is and centre the view on it — never, NPCs only (combatants with no player owner), or all.",
+        "none": "None",
+        "npc": "NPCs only",
+        "all": "All"
       },
       "friezeHideDefeated": {
         "Name": "Strip: remove the defeated",

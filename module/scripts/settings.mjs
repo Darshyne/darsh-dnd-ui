@@ -4,6 +4,7 @@
  */
 import { MODULE_ID, SCALE_KEYS } from "./shared.mjs";
 import { POLICIES } from "./core/health.mjs";
+import { GM_SELECT_MODES } from "./core/select.mjs";
 import { Portrait } from "./apps/portrait.mjs";
 
 const refreshAll = () => Portrait.refreshFor(null, { flash: false });
@@ -92,6 +93,9 @@ export function registerFriezeSettings(redraw) {
   client("friezeRound", true);
   client("friezeInitiativeText", true);
   client("friezeAutoSelect", false, { onChange: undefined });
+  // §48 : le MJ choisit à part — aucun, PNJ seulement, tous (réglage de monde : la fenêtre ne le montre qu'au MJ).
+  world("friezeAutoSelectGM", "none", { type: String, onChange: undefined,
+    choices: Object.fromEntries(GM_SELECT_MODES.map(m => [m, `DDU.Settings.friezeAutoSelectGM.${m}`])) });
   world("friezePrepToPlayers", true);
   world("friezeEnemyInitiative", true);
   world("friezeHideDefeated", false);
