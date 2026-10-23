@@ -106,7 +106,9 @@
       },
       "MovementClimb": "Escalada: {left} / {allowed}; cada quadrado custa {cost}",
       "Climb": "Escalar: a parede ou, se possível, o teto",
-      "ClimbMenu": "Escalada: subir, descer, soltar-se"
+      "ClimbMenu": "Escalada: subir, descer, soltar-se",
+      "NonLethalOn": "Ataques não letais: um golpe corpo a corpo que reduziria uma criatura a 0 PV a deixa com 1 PV, Inconsciente (clique para desativar)",
+      "NonLethalOff": "Ataques letais (clique para ativar ataques não letais: nocautear em vez de matar)"
     },
     "Reason": {
       "NoUses": "Sem usos restantes",
@@ -226,6 +228,13 @@
         "Name": "Faixa: selecionar o combatente ativo",
         "Hint": "A cada turno, o token do combatente ativo é selecionado e a câmera é centralizada nele. O mestre pode selecionar qualquer combatente; um jogador, apenas os seus."
       },
+      "friezeAutoSelectGM": {
+        "Name": "Faixa: pré-seleção do mestre",
+        "Hint": "Na tela do mestre, a cada turno: seleciona o token do combatente ativo e centraliza a câmera nele — nunca, somente PNJs (combatentes sem jogador como proprietário) ou todos.",
+        "none": "Nenhuma",
+        "npc": "Somente PNJs",
+        "all": "Todos"
+      },
       "friezeHideDefeated": {
         "Name": "Faixa: ocultar criaturas derrotadas",
         "Hint": "Criaturas derrotadas desaparecem da faixa de iniciativa dos jogadores."
@@ -292,7 +301,10 @@
       },
       "softPath": {
         "Name": "Tabuleiro: trajeto suave",
-        "Hint": "As casas do trajeto de deslocamento aparecem como marcações com bordas suaves, em vez de preenchimentos sólidos. Mantém as mesmas cores (verde, amarelo e vermelho conforme o deslocamento)."
+        "Hint": "As casas do trajeto de deslocamento aparecem como marcações com bordas suaves, em vez de preenchimentos sólidos. Mantém as mesmas cores (verde, amarelo e vermelho conforme o deslocamento).",
+        "flat": "Preenchimento sólido",
+        "soft": "Marcações suaves",
+        "dots": "Pontos pequenos"
       },
       "rulerOutOfCombat": {
         "Name": "Tabuleiro: mostrar trajeto fora de combate",
