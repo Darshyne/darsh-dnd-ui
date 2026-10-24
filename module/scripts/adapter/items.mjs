@@ -349,12 +349,14 @@ export function weaponsOf(actor) {
 }
 
 /**
- * Passer d'un jeu d'armes à l'autre : équipe les objets du jeu choisi, déséquipe ceux de l'autre jeu
+ * Passer d'un jeu d'armes à l'autre : équipe les objets du jeu choisi, déséquipe ceux des autres jeux
  * (seulement eux : le reste de l'équipement n'est pas touché). Une seule mise à jour groupée.
+ * §52 : N jeux ; `released` — des références sorties du jeu actif (retirées, remplacées) : déséquipées aussi.
  */
-export async function equipWeaponSet(actor, sets, active) {
-  const want = new Set(sets[active].filter(Boolean).map(r => r.split(".")[1]));
-  const other = new Set(sets[1 - active].filter(Boolean).map(r => r.split(".")[1]));
+export async function equipWeaponSet(actor, sets, active, { released=[] }={}) {
+  const idOf = r => r.split(".")[1];
+  const want = new Set((sets[active] ?? []).filter(Boolean).map(idOf));
+  const other = new Set([...sets.flatMap((set, s) => ((s === active) ? [] : set)), ...released].filter(Boolean).map(idOf));
   const updates = [];
   for ( const id of new Set([...want, ...other]) ) {
     const item = actor.items.get(id);
@@ -363,4 +365,20 @@ export async function equipWeaponSet(actor, sets, active) {
     if ( item.system.equipped !== equipped ) updates.push({ _id: id, "system.equipped": equipped });
   }
   if ( updates.length ) await actor.updateEmbeddedDocuments("Item", updates);
+}
+
+/** §52 : une arme à deux mains (propriété « two » de dnd5e) — elle prend les deux mains d'un jeu. */
+export function isTwoHanded(item) {
+  return (item?.type === "weapon") && (item.system.properties?.has?.("two") === true);
+}
+
+/**
+ * §52 : ce qu'on peut mettre dans un jeu d'armes, pour la fenêtre de configuration : les armes (sans l'attaque à mains nues ni les
+ * actions de base que le moteur pose) et les boucliers ; `extra(item)` en ajoute d'autres (une source de lumière portée). Par nom.
+ */
+export function weaponSetCandidates(actor, extra=() => false) {
+  return (actor?.items?.contents ?? Array.from(actor?.items ?? []))
+    .filter(i => ((i.type === "weapon") && (i.system.identifier !== "unarmed-strike") && !i.getFlag?.("dnd5e-combat", "basicAction"))
+      || ((i.type === "equipment") && (i.system.type?.value === "shield")) || extra(i))
+    .sort((a, b) => a.name.localeCompare(b.name));
 }

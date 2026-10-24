@@ -110,7 +110,12 @@
       "Climb": "Grimper (escalade) : au mur, au plafond s'il y en a un et que vous le pouvez",
       "ClimbMenu": "Escalade : monter, descendre, se laisser tomber",
       "NonLethalOn": "Coups non létaux : un coup de mêlée qui ferait tomber à 0 PV laisse à 1 PV, Inconscient (cliquer pour couper)",
-      "NonLethalOff": "Coups létaux (cliquer pour des coups non létaux : assommer au lieu de tuer)"
+      "NonLethalOff": "Coups létaux (cliquer pour des coups non létaux : assommer au lieu de tuer)",
+      "TwoHandedOff": "Main secondaire prise par {name} (à deux mains)",
+      "OffHandBlocked": "{name} se manie à deux mains : la main secondaire reste libre.",
+      "PrevWeapons": "Jeu d'armes précédent",
+      "NextWeapons": "Jeu d'armes suivant",
+      "WeaponConfig": "Configurer les jeux d'armes"
     },
     "Reason": {
       "NoUses": "Plus d'utilisation",
@@ -123,8 +128,8 @@
       "CustomSlotHint": "Utilise la case correspondante de l'onglet Personnalisé. Une case vide laisse la touche à la barre de macros.",
       "PinTooltip": "Barre : épingler l'infobulle",
       "PinTooltipHint": "Épingle l'infobulle détaillée de la case survolée (hors de la Barre, la touche garde son rôle : cibler).",
-      "SwapWeapons": "Barre : changer de jeu d'armes",
-      "SwapWeaponsHint": "Passe à l'autre jeu d'armes (pendant une mesure, la touche pose un point de passage).",
+      "SwapWeapons": "Barre : jeu d'armes suivant",
+      "SwapWeaponsHint": "Passe au jeu d'armes suivant (pendant une mesure, la touche pose un point de passage).",
       "ToggleBar": "Barre : masquer / afficher",
       "ToggleBarHint": "Masque la barre d'actions (un petit onglet reste pour la rappeler) ou la réaffiche. Les touches chiffrées utilisent toujours les cases Personnalisé pendant qu'elle est masquée.",
       "BasicHint": "Utilise cette action de base du moteur de combat pour le personnage de la Barre.",
@@ -137,7 +142,9 @@
         "help": "Action : Aider",
         "ready": "Action : Se tenir prêt",
         "escape": "Action : S'échapper"
-      }
+      },
+      "PrevWeapons": "Barre : jeu d'armes précédent",
+      "PrevWeaponsHint": "Passe au jeu d'armes précédent."
     },
     "D20": {
       "Checks": "Caractéristiques",
@@ -321,6 +328,10 @@
       "cameraFollow": {
         "Name": "Plateau : la caméra suit mon token",
         "Hint": "Quand un de vos tokens se déplace, la vue se recentre sur lui en douceur. Pour le MJ : le token qu'il contrôle et déplace lui-même."
+      },
+      "weaponSets": {
+        "Name": "Jeux d'armes",
+        "Hint": "Combien de jeux d'armes cet ordinateur fait défiler (flèches à côté des jeux, touches jeu suivant / précédent). Chaque jeu a une main principale (à gauche) et une main secondaire (à droite)."
       }
     },
     "Theme": {
@@ -461,6 +472,20 @@
     "Climb": {
       "OnWall": "En escalade, à {height} {units} du sol",
       "OnCeiling": "Au plafond, à {height} {units} du sol"
+    },
+    "WeaponSets": {
+      "Title": "Jeux d'armes : {name}",
+      "Count": "Jeux d'armes sur cet ordinateur",
+      "Set": "Jeu",
+      "Main": "Main principale",
+      "Off": "Main secondaire",
+      "Held": "En main",
+      "Hold": "Prendre",
+      "Clear": "Vider",
+      "Hint": "L'emplacement de gauche est la main principale, celui de droite la main secondaire. Le jeu en main est équipé, les autres non. Une arme à deux mains prend les deux mains.",
+      "Locked": "La Barre est verrouillée : les emplacements ne se modifient pas.",
+      "Pool": "Glisser une arme sur un emplacement ; lâcher un emplacement ici le vide.",
+      "None": "Aucune arme, aucun bouclier ni source de lumière."
     }
   }
 }

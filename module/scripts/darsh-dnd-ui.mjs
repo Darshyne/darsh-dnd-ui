@@ -114,6 +114,96 @@ Hooks.once("init", () => {
       style.textContent = text;
       document.head.append(style);
       return { injected: text.length };
+    },
+    /**
+     * §52 : les jeux d'armes de la Barre de `tokenId` (pris en main), après un geste éventuel joué comme à la souris par des
+     * évènements de glisser-déposer sur les vrais éléments : `drop: { itemId, set, hand, from: "sheet"|"grid" }` (depuis une fiche, ou
+     * depuis une case de la grille), `remove: { set, hand }` (glissé hors de la Barre), `cycle: ±1` (flèches). Rend les emplacements
+     * dessinés (grands, colonne des petits jeux), la disposition et les armes équipées.
+     */
+    async weapons({ tokenId, drop=null, remove=null, cycle=0, sets=null, config=null }) {
+      const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
+      // Le réglage client `weaponSets` de ce client (rendu dans `setsBefore` pour être remis).
+      const setsBefore = game.settings.get(MODULE_ID, "weaponSets");
+      if ( (sets !== null) && (sets !== setsBefore) ) { await game.settings.set(MODULE_ID, "weaponSets", sets); await pause(300); }
+      const token = canvas.tokens.get(tokenId);
+      if ( !token ) throw new Error(`token ${tokenId} not drawn`);
+      if ( !token.controlled || (canvas.tokens.controlled.length !== 1) ) { token.control({ releaseOthers: true }); await pause(400); }
+      const bar = getBar();
+      const el = bar?.element;
+      if ( !el || el.hidden ) throw new Error("bar hidden");
+      const slotEl = (set, hand) => el.querySelector(`.ddu-weapon--big[data-weapon-set="${set}"][data-weapon-hand="${hand}"]`)
+        ?? el.querySelector(`.ddu-weapon[data-weapon-set="${set}"][data-weapon-hand="${hand}"]`);
+      const fire = (target, type, dataTransfer, extra={}) => target.dispatchEvent(new DragEvent(type, { bubbles: true, cancelable: true, dataTransfer, ...extra }));
+      if ( drop ) {
+        const target = slotEl(drop.set, drop.hand);
+        if ( !target ) throw new Error(`no slot ${drop.set}/${drop.hand} on screen`);
+        const dt = new DataTransfer();
+        if ( drop.from === "grid" ) {
+          const cell = el.querySelector(`.ddu-cell[data-ref^="Item.${drop.itemId}"]`);
+          if ( !cell ) throw new Error(`no grid cell for item ${drop.itemId}`);
+          fire(cell, "dragstart", dt);
+          fire(target, "dragover", dt);
+          fire(target, "drop", dt);
+          fire(cell, "dragend", dt);
+        } else {
+          dt.setData("text/plain", JSON.stringify({ type: "Item", uuid: token.actor.items.get(drop.itemId)?.uuid }));
+          fire(target, "dragover", dt);
+          fire(target, "drop", dt);
+        }
+      }
+      if ( remove ) {
+        const source = slotEl(remove.set, remove.hand);
+        const dt = new DataTransfer();
+        fire(source, "dragstart", dt);
+        fire(source, "dragend", dt, { clientX: 1, clientY: 1 });
+      }
+      if ( cycle ) bar.cycleWeapons(cycle);
+      // §52 : la fenêtre de l'engrenage — `{ set, hand, itemId }` glisse l'objet de la réserve sur l'emplacement (itemId null : glisse
+      // l'emplacement sur la réserve, qui le vide), `{ hold: set }` prend un jeu.
+      let window = null;
+      if ( config ) {
+        el.querySelector('[data-action="weaponConfig"]')?.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
+        await pause(800);
+        const app = foundry.applications.instances.get("ddu-weapon-sets");
+        if ( !app?.element ) throw new Error("weapon sets window not open");
+        const root = app.element;
+        if ( config.hold !== undefined ) root.querySelector(`button[data-action="hold"][data-set="${config.hold}"]`)?.click();
+        else {
+          const tile = root.querySelector(`.ddu-weapon-sets__slot[data-set="${config.set}"][data-hand="${config.hand}"]`);
+          const source = config.itemId ? root.querySelector(`.ddu-weapon-sets__item[data-item="${config.itemId}"]`) : tile;
+          const target = config.itemId ? tile : root.querySelector("[data-part=pool]");
+          if ( !source || !target ) throw new Error(`window: no ${source ? "target" : "source"} for ${JSON.stringify(config)}`);
+          const dt = new DataTransfer();
+          fire(source, "dragstart", dt);
+          fire(target, "dragover", dt);
+          fire(target, "drop", dt);
+          fire(source, "dragend", dt);
+        }
+        await pause(1500);
+        const rows = [...root.querySelectorAll(".ddu-weapon-sets__row")];
+        window = {
+          rows: rows.map(r => [...r.querySelectorAll(".ddu-weapon-sets__slot")].map(t => ({ img: t.querySelector("img")?.getAttribute("src") ?? null,
+            blocked: t.classList.contains("ddu-blocked") }))),
+          held: rows.findIndex(r => r.classList.contains("ddu-active")),
+          pool: root.querySelectorAll(".ddu-weapon-sets__item").length
+        };
+        await app.close();
+      }
+      if ( drop || remove || cycle ) await pause(1500);
+      const slot = s => s && { set: Number(s.dataset.weaponSet), hand: Number(s.dataset.weaponHand),
+        classes: [...s.classList].filter(c => c.startsWith("ddu-weapon--")), tip: s.dataset.tooltip, action: s.dataset.action ?? null };
+      return {
+        setsBefore, window,
+        big: [...el.querySelectorAll(".ddu-weapons__active .ddu-weapon")].map(slot),
+        column: Object.fromEntries(["next", "prev"].map(r => {
+          const s = el.querySelector(`.ddu-weapons__set--${r}`);
+          return [r, (s?.dataset.weaponSet === undefined) ? null : Number(s.dataset.weaponSet)];
+        })),
+        arrows: el.querySelectorAll(".ddu-weapons__arrow").length,
+        weapons: bar.layout.weapons,
+        equipped: token.actor.items.filter(i => i.type === "weapon").map(i => ({ id: i.id, name: i.name, equipped: !!i.system.equipped }))
+      };
     }
   };
 });

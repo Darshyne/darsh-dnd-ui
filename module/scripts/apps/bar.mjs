@@ -13,12 +13,12 @@ import { D20Panel } from "./d20.mjs";
 import { shortTooltip, fullTooltip } from "./tooltip.mjs";
 import {
   CONTAINERS, TABS, tabContainer, isMove, normalize, columnsOf, place, remove, move, populate, populateTab, retab, cleanup, withdrawRefs, VERSION,
-  resize, setRows, setWeapon, setActiveWeapons, seedWeapons, restoreLost
+  resize, setRows, setWeapon, setActiveWeapons, seedWeapons, restoreLost, placeWeapon, cycleWeaponSet, weaponColumn, activeWeaponRefs
 } from "../core/layout.mjs";
 import { roman, matchesFilter } from "../core/cells.mjs";
 import {
   refOf, resolveRef, validRefs, inactiveRefs, autoEntries, tabRefs, classLabel, slotsOf, hasCantrips, classResources,
-  cellView, weaponsOf, equipWeaponSet, enchantmentsOf, tabOf, offhandMode
+  cellView, weaponsOf, equipWeaponSet, enchantmentsOf, tabOf, offhandMode, isTwoHanded
 } from "../adapter/items.mjs";
 import { iconEffectsOf } from "../adapter/actor.mjs";
 import { layoutHost, readLayout, writeLayout } from "../adapter/forms.mjs";
@@ -27,12 +27,16 @@ import { viewedCombat, nameFor } from "../adapter/combat.mjs";
 import { combatantOf, currentActor } from "../adapter/party.mjs";
 import { budgetOf, movementOf, multiattackOf, lightOf, carriedLightOf, toggleLight, sneakingOf, toggleSneak, climbOf, climbEntriesOf, issuesOf, nonLethalOf, setNonLethalOf } from "../adapter/engine.mjs";
 import { climbButtonShown, ringTooltip } from "../core/climb.mjs";
+import { WeaponSetsConfig } from "./weapon-sets.mjs";
 import { MODULE_ID, loc, setting } from "../shared.mjs";
 
 const esc = s => foundry.utils.escapeHTML(String(s ?? ""));
 
 /** Touches des 12 premières cases de l'onglet Personnalisé (BG3 : 1 – 0, -, =). */
 export const CUSTOM_KEYS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "="];
+
+/** §52 : durée de l'animation de rotation des jeux d'armes (la même qu'en CSS, `ddu-weapons-spin`). */
+const WEAPON_SPIN_MS = 280;
 
 export class Bar {
   constructor() {
@@ -215,6 +219,9 @@ export class Bar {
       this.#rowControls(),
       this.#endButton(ctx)
     );
+    // §53 : le cercle Repos / Fin du tour se centre sur la hauteur de la grille, qui dépend des rangées affichées (CSS, `.ddu-bar__end`).
+    this.element.style.setProperty("--ddu-grid-rows", String(this.gridRows ?? this.layout.rows));
+    WeaponSetsConfig.refresh(this);   // §52 : la fenêtre des jeux d'armes suit la Barre
   }
 
   /** §51 : repliée, seul ce bouton reste à la place de la Barre (la déplier). Dépliée, il est en tête de `#rowControls`. */
@@ -370,20 +377,33 @@ export class Bar {
 
   #weapons() {
     const { sets, active } = this.layout.weapons;
+    const count = this.#weaponSetCount();
     const box = document.createElement("div");
-    box.className = "ddu-bar__weapons ddu-frame ddu-frame--weapons";
+    box.className = "ddu-bar__weapons";
+    // §52 : l'animation de rotation d'un changement de jeu ; un nouveau dessin pendant qu'elle se joue (l'équipement qui suit) la reprend
+    // où elle en était (délai négatif) au lieu de la couper.
+    const spin = this.weaponSpin;
+    const elapsed = spin ? Date.now() - spin.at : Infinity;
+    if ( elapsed < WEAPON_SPIN_MS ) {
+      box.classList.add(`ddu-weapons--spin-${spin.dir}`);
+      box.style.setProperty("--ddu-spin-delay", `-${elapsed}ms`);
+    } else this.weaponSpin = null;
+    // §52 : derrière une arme à deux mains, la main secondaire est grisée et ne reçoit rien.
     const slot = (set, hand, big) => {
-      const ref = sets[set][hand];
-      const r = resolveRef(this.actor, ref);
-      const item = r?.item;
-      const twoHanded = !item && hand === 1 && resolveRef(this.actor, sets[set][0])?.item?.system.properties?.has?.("two");
-      const ghost = twoHanded ? resolveRef(this.actor, sets[set][0]).item : null;
+      const ref = sets[set]?.[hand] ?? null;
+      const item = resolveRef(this.actor, ref)?.item;
+      const mainItem = resolveRef(this.actor, sets[set]?.[0])?.item;
+      const blocked = !item && (hand === 1) && isTwoHanded(mainItem);
+      const ghost = blocked ? mainItem : null;
       const img = item?.img ?? ghost?.img;
       const enchant = enchantmentsOf(item);
       const tip = item ? (enchant.length ? `${item.name} — ${loc("Bar.Enchanted", { names: enchant.join(", ") })}` : item.name)
+        : blocked ? loc("Bar.TwoHandedOff", { name: mainItem.name })
         : loc(hand ? "Bar.OffHand" : "Bar.MainHand");
-      return `<div class="ddu-weapon ${big ? "ddu-weapon--big" : "ddu-weapon--small"}${ghost ? " ddu-weapon--ghost" : ""}"
-        data-weapon-set="${set}" data-weapon-hand="${hand}" ${big ? 'data-action="useWeapon"' : ""}
+      const classes = ["ddu-weapon", big ? "ddu-weapon--big" : "ddu-weapon--small", ghost ? "ddu-weapon--ghost" : "",
+        blocked ? "ddu-weapon--blocked" : ""].filter(Boolean).join(" ");
+      return `<div class="${classes}"
+        data-weapon-set="${set}" data-weapon-hand="${hand}" ${big && !blocked ? 'data-action="useWeapon"' : ""}
         ${item && this.canArrange ? 'draggable="true"' : ""} data-tooltip="${esc(tip)}">
         ${img ? `<img src="${esc(img)}" alt="" draggable="false">` : ""}${enchant.length ? '<span class="ddu-enchant"></span>' : ""}</div>`;
     };
@@ -391,10 +411,23 @@ export class Bar {
     const nonLethal = nonLethalOf(this.actor);
     const knock = (nonLethal === null) ? "" : `<button type="button" class="ddu-nonlethal${nonLethal ? " ddu-on" : ""}" data-action="nonLethal"
       ${this.canEdit ? "" : "disabled"} data-tooltip="${esc(loc(nonLethal ? "Bar.NonLethalOn" : "Bar.NonLethalOff"))}"><i class="fa-solid fa-hand-fist"></i></button>`;
-    box.innerHTML = `<div class="ddu-weapons__active">${slot(active, 0, true)}${slot(active, 1, true)}${knock}</div>`
-      + [0, 1].map(s => `<div class="ddu-weapons__set${s === active ? " ddu-weapons__set--active" : ""}"
+    // §52 (maquette de l'utilisateur, 2026-10-24) : le jeu actif, ce sont les grands emplacements ; le jeu suivant en petit au-dessus, le
+    // précédent en petit en dessous (à deux jeux, rien en dessous) ; les flèches à droite font défiler : ▲ amène le jeu du dessus, ▼ celui
+    // du dessous. Pas de cadre autour de l'ensemble.
+    const column = weaponColumn(active, count);
+    const small = (s, role) => (s === null) ? `<div class="ddu-weapons__set ddu-weapons__set--${role} ddu-weapons__set--empty"></div>`
+      : `<div class="ddu-weapons__set ddu-weapons__set--${role}"
           data-action="switchWeapons" data-weapon-set="${s}" data-tooltip="${esc(loc("Bar.WeaponSet", { n: s + 1 }))}">
-          ${slot(s, 0, false)}${slot(s, 1, false)}</div>`).join("");
+          ${slot(s, 0, false)}${slot(s, 1, false)}</div>`;
+    const arrow = (action, icon, key) => `<button type="button" class="ddu-weapons__arrow" data-action="${action}"
+      ${this.canEdit ? "" : "disabled"} data-tooltip="${esc(loc(key))}"><i class="fa-solid ${icon}"></i></button>`;
+    box.innerHTML = `<div class="ddu-weapons__slots">${small(column.next, "next")}`
+      + `<div class="ddu-weapons__active ddu-frame ddu-frame--weapons">${slot(active, 0, true)}${slot(active, 1, true)}${knock}</div>`
+      + `${small(column.prev, "prev")}</div>`
+      + `<div class="ddu-weapons__arrows">${arrow("nextWeapons", "fa-caret-up", "Bar.NextWeapons")}`
+      + `${arrow("prevWeapons", "fa-caret-down", "Bar.PrevWeapons")}`
+      + `<button type="button" class="ddu-weapons__config" data-action="weaponConfig"
+          data-tooltip="${esc(loc("Bar.WeaponConfig"))}"><i class="fa-solid fa-gear"></i></button></div>`;
     return box;
   }
 
@@ -459,6 +492,7 @@ export class Bar {
     const grid = document.createElement("div");
     grid.className = "ddu-bar__grid";
     grid.style.setProperty("--ddu-rows", String(this.layout.rows));
+    this.gridRows = this.layout.rows;
     if ( this.tab === "default" ) {
       CONTAINERS.forEach((c, i) => {
         if ( i > 0 ) {
@@ -481,6 +515,7 @@ export class Bar {
       while ( last >= 0 && !refs[last] ) last--;
       const rows = Math.max(this.layout.rows, Math.ceil((last + 2) / cols));
       grid.style.setProperty("--ddu-rows", String(Math.min(rows, 4)));
+      this.gridRows = Math.min(rows, 4);
       grid.classList.toggle("ddu-bar__grid--scroll", rows > 4);
       grid.append(this.#container(key, refs, cols, ctx, rows));
     }
@@ -705,6 +740,9 @@ export class Bar {
       case "shortRest": this.#closePopup(); return this.actor.shortRest();
       case "longRest": this.#closePopup(); return this.actor.longRest();
       case "switchWeapons": return this.#switchWeapons(Number(target.dataset.weaponSet));
+      case "prevWeapons": return this.cycleWeapons(-1);
+      case "nextWeapons": return this.cycleWeapons(1);
+      case "weaponConfig": return this.openWeaponConfig();
       case "useWeapon": {
         const { sets, active } = this.layout.weapons;
         const ref = sets[active][Number(target.dataset.weaponHand)];
@@ -822,7 +860,7 @@ export class Bar {
         onClick: (_e, t) => {
           if ( this.locked ) return;
           if ( t.classList.contains("ddu-weapon") ) {
-            return this.#update(setWeapon(this.layout, Number(t.dataset.weaponSet), Number(t.dataset.weaponHand), null));
+            return this.#updateWeapons(setWeapon(this.layout, Number(t.dataset.weaponSet), Number(t.dataset.weaponHand), null));
           }
           this.#update(remove(this.layout, t.dataset.container, Number(t.dataset.index)));
         }
@@ -920,9 +958,72 @@ export class Bar {
 
   /** Raccourci : passer à l'autre jeu d'armes. */
   swapWeapons() {
+    return this.cycleWeapons(1);
+  }
+
+  /** §52 : le jeu d'armes suivant (`delta` 1) ou précédent (-1) dans la rotation de ce client, en boucle. */
+  cycleWeapons(delta) {
     if ( !this.actor || this.element.hidden || !this.canEdit ) return false;
-    this.#switchWeapons(1 - this.layout.weapons.active);
+    this.#switchWeapons(cycleWeaponSet(this.layout.weapons.active, delta, this.#weaponSetCount()));
     return true;
+  }
+
+  /** §52 : jeux d'armes de ce client (réglage `weaponSets`), et au moins jusqu'au jeu actif (choisi sur un client qui en montre plus). */
+  #weaponSetCount() {
+    return Math.max(Number(setting("weaponSets")) || 2, 2, this.layout.weapons.active + 1);
+  }
+
+  /** §52 : nombre de jeux d'armes montrés par ce client (pour la fenêtre de configuration). */
+  get weaponSetCount() {
+    return this.layout ? this.#weaponSetCount() : 2;
+  }
+
+  /** §52 : la fenêtre de configuration de tous les jeux d'armes de l'acteur montré. */
+  openWeaponConfig() {
+    if ( !this.actor ) return null;
+    return new WeaponSetsConfig(this).render({ force: true });
+  }
+
+  /** §52 : poser un objet (`Item.<id>`) dans un emplacement, ou le vider (null) — mêmes règles que le glisser-déposer. */
+  async setWeaponSlot(set, hand, ref) {
+    if ( !this.canArrange ) return;
+    if ( ref ) return this.#placeWeapon(set, hand, ref);
+    return this.#updateWeapons(setWeapon(this.layout, set, hand, null));
+  }
+
+  /** §52 : prendre en main un jeu d'armes. */
+  selectWeaponSet(set) {
+    return this.#switchWeapons(set);
+  }
+
+  /** §52 : une arme prend-elle les deux mains (référence) ? */
+  #twoHanded = ref => isTwoHanded(resolveRef(this.actor, ref)?.item);
+
+  /**
+   * §52 : une nouvelle disposition des armes — écrite, puis les objets du jeu actif équipés, ceux des autres jeux et ceux qui sortent
+   * du jeu actif (retirés, remplacés) déséquipés.
+   */
+  async #updateWeapons(layout) {
+    if ( !this.canEdit || (layout === this.layout) ) return;
+    const before = activeWeaponRefs(this.layout);
+    this.#update(layout);
+    const after = activeWeaponRefs(layout);
+    await equipWeaponSet(this.actor, layout.weapons.sets, layout.weapons.active, { released: before.filter(r => !after.includes(r)) });
+  }
+
+  /**
+   * §52 : poser un objet de l'acteur dans un emplacement d'arme — la main principale d'abord, une arme à deux mains prend les deux ;
+   * refusé derrière une arme à deux mains.
+   */
+  #placeWeapon(set, hand, ref) {
+    const item = resolveRef(this.actor, ref)?.item;
+    const itemRef = item ? `Item.${item.id}` : ref;
+    const { layout, hand: used } = placeWeapon(this.layout, set, hand, itemRef, this.#twoHanded);
+    if ( used === null ) {
+      const main = resolveRef(this.actor, this.layout.weapons.sets[set]?.[0])?.item;
+      return ui.notifications.info(loc("Bar.OffHandBlocked", { name: main?.name ?? "" }));
+    }
+    return this.#updateWeapons(layout);
   }
 
   /**
@@ -991,8 +1092,14 @@ export class Bar {
   async #switchWeapons(set) {
     if ( !this.canEdit ) return;
     const layout = setActiveWeapons(this.layout, set);
-    this.#update(layout);
-    await equipWeaponSet(this.actor, layout.weapons.sets, layout.weapons.active);
+    const from = this.layout.weapons.active;
+    if ( layout.weapons.active === from ) return;
+    // §52 : la rotation se voit — le jeu du dessus (suivant) descend au milieu, celui du dessous (précédent) y monte.
+    const count = this.#weaponSetCount();
+    const dir = (cycleWeaponSet(from, 1, count) === layout.weapons.active) ? "next"
+      : (cycleWeaponSet(from, -1, count) === layout.weapons.active) ? "prev" : "jump";
+    this.weaponSpin = { dir, at: Date.now() };
+    await this.#updateWeapons(layout);
   }
 
   /* -------------------------------------------- */
@@ -1086,7 +1193,7 @@ export class Bar {
     const drag = this.drag;
     if ( drag ) {
       this.drag = null;
-      if ( target.kind === "weapon" ) return this.#update(setWeapon(this.layout, target.set, target.hand, drag.ref));
+      if ( target.kind === "weapon" ) return this.#placeWeapon(target.set, target.hand, drag.ref);
       // Dans la vue par défaut et dans un même conteneur : on déplace (ou on échange) ; d'un onglet vers ailleurs :
       // on copie, l'icône reste dans son onglet (core/layout.mjs#isMove).
       if ( drag.kind === "cell" && isMove(drag.container, target.container) ) {
@@ -1108,7 +1215,7 @@ export class Bar {
       return ui.notifications.warn(loc("Bar.NotOwnedItem"));
     }
     const ref = refOf(doc);
-    if ( target.kind === "weapon" ) return this.#update(setWeapon(this.layout, target.set, target.hand, `Item.${item.id}`));
+    if ( target.kind === "weapon" ) return this.#placeWeapon(target.set, target.hand, `Item.${item.id}`);
     this.#update(place(this.layout, target.container, target.index, ref));
   }
 
@@ -1120,7 +1227,7 @@ export class Bar {
     if ( !drag || this.dropped || !this.canEdit ) return;
     const inside = document.elementFromPoint(event.clientX, event.clientY)?.closest?.("#ddu-bar");
     if ( inside || this.locked ) return;
-    if ( drag.kind === "weapon" ) return this.#update(setWeapon(this.layout, drag.set, drag.hand, null));
+    if ( drag.kind === "weapon" ) return this.#updateWeapons(setWeapon(this.layout, drag.set, drag.hand, null));
     this.#update(remove(this.layout, drag.container, drag.index));
   }
 

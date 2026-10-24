@@ -110,7 +110,12 @@
       "Climb": "Climb: the wall, or the ceiling if there is one and you can",
       "ClimbMenu": "Climbing: up, down, let go",
       "NonLethalOn": "Nonlethal attacks: a melee hit that would drop a creature to 0 HP leaves it at 1 HP, Unconscious (click to turn off)",
-      "NonLethalOff": "Lethal attacks (click for nonlethal attacks: knock out instead of kill)"
+      "NonLethalOff": "Lethal attacks (click for nonlethal attacks: knock out instead of kill)",
+      "TwoHandedOff": "Off hand taken by {name} (two-handed)",
+      "OffHandBlocked": "{name} is two-handed: the off hand stays free.",
+      "PrevWeapons": "Previous weapon set",
+      "NextWeapons": "Next weapon set",
+      "WeaponConfig": "Configure weapon sets"
     },
     "Reason": {
       "NoUses": "No uses left",
@@ -123,8 +128,8 @@
       "CustomSlotHint": "Uses the matching cell of the Custom tab. An empty cell leaves the key to the macro bar.",
       "PinTooltip": "Bar: pin tooltip",
       "PinTooltipHint": "Pins the detailed tooltip of the hovered cell (outside the bar, the key keeps its usual role: target).",
-      "SwapWeapons": "Bar: swap weapon sets",
-      "SwapWeaponsHint": "Switches to the other weapon set (while measuring, the key adds a waypoint).",
+      "SwapWeapons": "Bar: next weapon set",
+      "SwapWeaponsHint": "Switches to the next weapon set (while measuring, the key adds a waypoint).",
       "ToggleBar": "Bar: hide / show",
       "ToggleBarHint": "Hides the action bar (a small tab stays to bring it back) or shows it again. Number keys still use the Custom cells while it is hidden.",
       "BasicHint": "Takes this basic action of the combat engine for the character shown in the bar.",
@@ -137,7 +142,9 @@
         "help": "Action: Help",
         "ready": "Action: Ready",
         "escape": "Action: Escape"
-      }
+      },
+      "PrevWeapons": "Bar: previous weapon set",
+      "PrevWeaponsHint": "Switches to the previous weapon set."
     },
     "D20": {
       "Checks": "Ability Checks",
@@ -321,6 +328,10 @@
       "cameraFollow": {
         "Name": "Board: camera follows my token",
         "Hint": "When one of your tokens moves, the view smoothly recentres on it. For the GM: the token they control and move themselves."
+      },
+      "weaponSets": {
+        "Name": "Weapon sets",
+        "Hint": "How many weapon sets this computer cycles through (arrows next to the sets, next/previous set keys). Each set has a main hand (left) and an off hand (right)."
       }
     },
     "Theme": {
@@ -461,6 +472,20 @@
     "Climb": {
       "OnWall": "Climbing, {height} {units} above the ground",
       "OnCeiling": "On the ceiling, {height} {units} above the ground"
+    },
+    "WeaponSets": {
+      "Title": "Weapon sets: {name}",
+      "Count": "Weapon sets on this computer",
+      "Set": "Set",
+      "Main": "Main hand",
+      "Off": "Off hand",
+      "Held": "In hand",
+      "Hold": "Hold",
+      "Clear": "Clear",
+      "Hint": "The left slot is the main hand, the right slot the off hand. The set in hand is equipped, the others are not. A two-handed weapon takes both hands.",
+      "Locked": "The Bar is locked: slots can't be changed.",
+      "Pool": "Drag a weapon onto a slot; drop a slot here to empty it.",
+      "None": "No weapon, shield or light source."
     }
   }
 }

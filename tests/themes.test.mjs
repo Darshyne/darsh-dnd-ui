@@ -36,7 +36,7 @@ describe("le CSS : toutes les couleurs passent par un thème", () => {
   });
   it("chaque variable de couleur utilisée existe", () => {
     for ( const [, name] of css.matchAll(/var\(--ddu-([a-z0-9-]+)/g) ) {
-      if ( NOT_COLORS.has(name) || ["veil", "player", "rows", "cols", "fade-duration", "fade-delay"].includes(name) ) continue;
+      if ( NOT_COLORS.has(name) || ["veil", "player", "rows", "cols", "fade-duration", "fade-delay", "spin-delay", "grid-rows", "grid-height"].includes(name) ) continue;
       expect(TOKEN_KEYS, `var(--ddu-${name})`).toContain(name);
     }
   });

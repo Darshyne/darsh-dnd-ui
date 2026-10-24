@@ -108,7 +108,12 @@
       },
       "MovementClimb": "Escalada: {left} / {allowed}; cada quadrado custa {cost}",
       "Climb": "Escalar: a parede ou, se possível, o teto",
-      "ClimbMenu": "Escalada: subir, descer, soltar-se"
+      "ClimbMenu": "Escalada: subir, descer, soltar-se",
+      "TwoHandedOff": "Mão secundária ocupada por {name} (duas mãos)",
+      "OffHandBlocked": "{name} é de duas mãos: a mão secundária fica livre.",
+      "PrevWeapons": "Conjunto de armas anterior",
+      "NextWeapons": "Próximo conjunto de armas",
+      "WeaponConfig": "Configurar conjuntos de armas"
     },
     "Reason": {
       "NoUses": "Sem usos restantes",
@@ -135,7 +140,9 @@
         "help": "Ação: Ajudar",
         "ready": "Ação: Preparar",
         "escape": "Ação: Escapar"
-      }
+      },
+      "PrevWeapons": "Barra: conjunto de armas anterior",
+      "PrevWeaponsHint": "Passa para o conjunto de armas anterior."
     },
     "D20": {
       "Checks": "Testes de Atributo",
@@ -309,6 +316,10 @@
       "cameraFollow": {
         "Name": "Tabuleiro: câmera acompanha meu token",
         "Hint": "Quando um dos seus tokens se move, a câmera se centraliza nele suavemente. Para o mestre, isso vale para o token que ele próprio controla e movimenta."
+      },
+      "weaponSets": {
+        "Name": "Conjuntos de armas",
+        "Hint": "Quantos conjuntos de armas este computador percorre (setas ao lado dos conjuntos, teclas próximo / anterior). Cada conjunto tem uma mão principal (à esquerda) e uma mão secundária (à direita)."
       }
     },
     "Theme": {
@@ -449,6 +460,20 @@
     "Climb": {
       "OnWall": "Escalando, a {height} {units} do chão",
       "OnCeiling": "No teto, a {height} {units} do chão"
+    },
+    "WeaponSets": {
+      "Title": "Conjuntos de armas: {name}",
+      "Count": "Conjuntos de armas neste computador",
+      "Set": "Conjunto",
+      "Main": "Mão principal",
+      "Off": "Mão secundária",
+      "Held": "Em mãos",
+      "Hold": "Empunhar",
+      "Clear": "Esvaziar",
+      "Hint": "O espaço da esquerda é a mão principal, o da direita a mão secundária. O conjunto em mãos fica equipado, os outros não. Uma arma de duas mãos ocupa as duas mãos.",
+      "Locked": "A Barra está travada: os espaços não podem ser alterados.",
+      "Pool": "Arraste uma arma para um espaço; solte um espaço aqui para esvaziá-lo.",
+      "None": "Nenhuma arma, escudo ou fonte de luz."
     }
   }
 }

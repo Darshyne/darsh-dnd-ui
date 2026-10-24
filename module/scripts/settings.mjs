@@ -177,6 +177,11 @@ export function registerBarSettings(redraw, hotbar) {
   reg("barGMHotbar", "world", false, { onChange: hotbar });
   reg("barFullTooltips", "client", false);
   reg("barLockPlayers", "world", false);
+  // §52 : jeux d'armes en rotation sur ce client (flèches et raccourcis), de 2 à 6.
+  game.settings.register(MODULE_ID, "weaponSets", {
+    name: "DDU.Settings.weaponSets.Name", hint: "DDU.Settings.weaponSets.Hint",
+    scope: "client", config: true, type: Number, range: { min: 2, max: 6, step: 1 }, default: 2, onChange: redraw
+  });
   // §51 : repliée par sa languette (ou le raccourci) — seul l'onglet reste. Réglage client, comme `partyCollapsed`.
   game.settings.register(MODULE_ID, "barCollapsed", {
     scope: "client", config: false, type: Boolean, default: false, onChange: redraw

@@ -7,7 +7,7 @@ export const TABS = Object.freeze([
   { id: "appearance", icon: "fa-solid fa-palette",
     keys: ["portraitImage", "scaleBar", "scaleFrieze", "scaleParty", "scaleAuto", "fadeOpacity", "enemyHealth"],
     tools: [{ id: "theme", icon: "fa-solid fa-palette", everyone: true }] },
-  { id: "bar", icon: "fa-solid fa-table-cells", keys: ["bar", "barHideHotbar", "barGMHotbar", "barFullTooltips", "barLockPlayers"] },
+  { id: "bar", icon: "fa-solid fa-table-cells", keys: ["bar", "barHideHotbar", "barGMHotbar", "barFullTooltips", "barLockPlayers", "weaponSets"] },
   { id: "frieze", icon: "fa-solid fa-list-ol",
     keys: ["frieze", "friezeRound", "friezeInitiativeText", "friezeAutoSelect", "friezeAutoSelectGM", "friezePrepToPlayers", "friezeEnemyInitiative", "friezeHideDefeated"] },
   { id: "party", icon: "fa-solid fa-users",

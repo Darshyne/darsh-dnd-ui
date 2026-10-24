@@ -45,6 +45,22 @@ export function emptyLayout() {
   };
 }
 
+/** §52 : jeux d'armes gardés au plus dans une disposition (le réglage de chaque client en montre de 2 à ce nombre). */
+export const MAX_WEAPON_SETS = 6;
+
+/** Les jeux d'armes d'une disposition lue : 2 au moins, MAX_WEAPON_SETS au plus, chacun (main principale, main secondaire). */
+function normalizeWeapons(raw) {
+  const count = clamp(Array.isArray(raw?.sets) ? raw.sets.length : 0, 2, MAX_WEAPON_SETS);
+  const active = Number.isInteger(raw?.active) && (raw.active >= 0) && (raw.active < count) ? raw.active : 0;
+  return {
+    active,
+    sets: Array.from({ length: count }, (_, s) => [0, 1].map(h => raw?.sets?.[s]?.[h] ?? null)),
+    lost: (Array.isArray(raw?.lost) ? raw.lost : [])
+      .filter(l => l && (typeof l.ref === "string") && Number.isInteger(l.set) && (l.set >= 0) && (l.set < count) && [0, 1].includes(l.hand))
+      .map(l => ({ ...l }))
+  };
+}
+
 /** Complète une disposition lue (ancienne, partielle ou absente). */
 export function normalize(raw) {
   const base = emptyLayout();
@@ -54,12 +70,7 @@ export function normalize(raw) {
     ...raw,
     widths: { ...base.widths, ...(raw.widths ?? {}) },
     cells: { ...base.cells, ...(raw.cells ?? {}) },
-    weapons: {
-      active: raw.weapons?.active === 1 ? 1 : 0,
-      sets: [0, 1].map(s => [0, 1].map(h => raw.weapons?.sets?.[s]?.[h] ?? null)),
-      lost: (Array.isArray(raw.weapons?.lost) ? raw.weapons.lost : [])
-        .filter(l => l && (typeof l.ref === "string") && [0, 1].includes(l.set) && [0, 1].includes(l.hand)).map(l => ({ ...l }))
-    },
+    weapons: normalizeWeapons(raw.weapons),
     v: Number(raw.v) || 1,
     known: Array.isArray(raw.known) ? [...raw.known] : [],
     tabKnown: Object.fromEntries(TABS.map(t => {
@@ -311,20 +322,70 @@ export function setRows(layout, rows) {
   return { ...clone(layout), rows: n };
 }
 
-/** Jeux d'armes : 2 jeux × (main principale, main secondaire). */
+/** Jeux d'armes : N jeux × (main principale, main secondaire). */
 export function setWeapon(layout, set, hand, ref) {
-  const out = clone(layout);
+  const out = withWeaponSets(layout, set + 1);
   // Une même arme n'est que dans une main d'un jeu à la fois.
   for ( const s of out.weapons.sets ) for ( let h = 0; h < 2; h++ ) if ( ref && s[h] === ref ) s[h] = null;
   out.weapons.sets[set][hand] = ref;
   return out;
 }
 
-export function setActiveWeapons(layout, set) {
+/** §52 : une copie de la disposition avec au moins `count` jeux d'armes (MAX_WEAPON_SETS au plus). */
+export function withWeaponSets(layout, count) {
   const out = clone(layout);
-  out.weapons.active = set === 1 ? 1 : 0;
+  while ( out.weapons.sets.length < Math.min(count, MAX_WEAPON_SETS) ) out.weapons.sets.push([null, null]);
   return out;
 }
+
+export function setActiveWeapons(layout, set) {
+  const n = clamp(set, 0, MAX_WEAPON_SETS - 1);
+  const out = withWeaponSets(layout, n + 1);
+  out.weapons.active = n;
+  return out;
+}
+
+/**
+ * §52 : le jeu d'armes voisin dans la rotation de ce client (`count` jeux montrés), en boucle. Un jeu actif au-delà (choisi sur un
+ * client qui en montre plus) compte comme le dernier.
+ */
+export function cycleWeaponSet(active, delta, count) {
+  const n = Math.max(1, count);
+  const a = Math.min(Math.max(active, 0), n - 1);
+  return (((a + delta) % n) + n) % n;
+}
+
+/**
+ * §52 : la colonne des petits jeux sous les grands emplacements (demande de l'utilisateur, 2026-10-24) — le jeu suivant au-dessus, le
+ * jeu actif au milieu, le précédent en dessous ; avec deux jeux, l'autre au-dessus et rien en dessous.
+ * @returns {{next: number|null, current: number, prev: number|null}}
+ */
+export function weaponColumn(active, count) {
+  const n = Math.max(1, count);
+  const current = Math.min(Math.max(active, 0), n - 1);
+  const next = (n > 1) ? cycleWeaponSet(current, 1, n) : null;
+  const prev = (n > 2) ? cycleWeaponSet(current, -1, n) : null;
+  return { next, current: active, prev };
+}
+
+/**
+ * §52 : poser une arme dans un jeu, comme le demande l'utilisateur (2026-10-24) — la main principale (à gauche) d'abord : lâchée
+ * sur la main secondaire alors que la principale est vide, elle va à gauche ; une arme à deux mains prend la main principale et
+ * vide la secondaire ; la main secondaire derrière une arme à deux mains est refusée (`hand: null`, disposition inchangée).
+ * @param {(ref: string) => boolean} twoHanded
+ * @returns {{layout: object, hand: 0|1|null}}
+ */
+export function placeWeapon(layout, set, hand, ref, twoHanded=() => false) {
+  const current = layout.weapons.sets[set] ?? [null, null];
+  const main = (current[0] === ref) ? null : current[0];
+  let h = hand;
+  if ( twoHanded(ref) || !main ) h = 0;
+  else if ( (h === 1) && twoHanded(main) ) return { layout, hand: null };
+  const out = setWeapon(layout, set, h, ref);
+  if ( (h === 0) && twoHanded(ref) ) out.weapons.sets[set][1] = null;
+  return { layout: out, hand: h };
+}
+
 
 /**
  * Premier remplissage des jeux d'armes : armes équipées dans le jeu 1, première arme à distance restante

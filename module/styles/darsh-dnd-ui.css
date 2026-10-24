@@ -652,7 +652,7 @@ body.ddu-hide-hotbar #hotbar { display: none; }
 .ddu-bar__tabs, .ddu-bar__rows, .ddu-bar__end, .ddu-bar__popup, .ddu-d20 {
   pointer-events: auto;
 }
-.ddu-bar__grid, .ddu-bar__weapons { background: var(--ddu-grid); }
+.ddu-bar__grid { background: var(--ddu-grid); }
 .ddu-bar[hidden] { display: none; }
 .ddu-bar button { line-height: 1; }
 
@@ -752,16 +752,12 @@ body.ddu-hide-hotbar #hotbar { display: none; }
 .ddu-bar__gm--kill { bottom: -2px; right: -6px; color: var(--ddu-gm-kill); }
 .ddu-bar__gm:hover { background: var(--ddu-button-hover); box-shadow: 0 0 6px var(--ddu-gold); }
 
-.ddu-bar__weapons {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 4px;
-  padding: 4px;
-  border: 1px solid var(--ddu-gold-dim);
-  border-radius: 6px;
-  background: color-mix(in srgb, var(--ddu-well) 35%, transparent);
+/* §52 : pas de cadre autour de l'ensemble — les grands emplacements (jeu actif) ont le leur, les petits jeux et les flèches aussi */
+.ddu-bar__weapons { display: flex; align-items: center; gap: calc(6px * var(--ddu-scale)); margin-right: calc(-4px * var(--ddu-scale)); background: none; }
+.ddu-weapons__active {
+  display: flex; gap: 4px; position: relative; padding: 4px;
+  border: 1px solid var(--ddu-gold-dim); border-radius: 6px; background: color-mix(in srgb, var(--ddu-well) 35%, transparent);
 }
-.ddu-weapons__active { display: flex; gap: 4px; position: relative; }
 /* 0.25.5 : coups non létaux (moteur §210), au coin des armes en main */
 .ddu-nonlethal {
   position: absolute; top: -6px; right: -6px; width: calc(20px * var(--ddu-scale)); height: calc(20px * var(--ddu-scale)); min-height: 0;
@@ -771,14 +767,10 @@ body.ddu-hide-hotbar #hotbar { display: none; }
 .ddu-nonlethal.ddu-on { border-color: var(--ddu-gold); background: var(--ddu-active); color: var(--ddu-gold); box-shadow: 0 0 8px var(--ddu-active); }
 .ddu-nonlethal[disabled] { filter: grayscale(0.7) brightness(0.7); cursor: default; }
 .ddu-weapons__set {
-  display: flex;
-  gap: 4px;
-  padding: 2px;
-  border: 1px solid transparent;
-  border-radius: 4px;
-  cursor: pointer;
+  display: flex; gap: 3px; padding: 3px; border: 1px solid color-mix(in srgb, var(--ddu-gold-dim) 50%, transparent); border-radius: 4px;
+  background: color-mix(in srgb, var(--ddu-well) 45%, transparent); cursor: pointer;
 }
-.ddu-weapons__set--active { border-color: var(--ddu-active); box-shadow: 0 0 4px var(--ddu-active); }
+.ddu-weapons__set:hover { border-color: var(--ddu-gold); box-shadow: 0 0 4px var(--ddu-active); }
 .ddu-weapon {
   position: relative;
   border: 1px solid var(--ddu-gold-dim);
@@ -787,21 +779,92 @@ body.ddu-hide-hotbar #hotbar { display: none; }
 }
 .ddu-weapon img { width: 100%; height: 100%; border: none; object-fit: cover; }
 .ddu-weapon--big { width: calc(56px * var(--ddu-scale)); height: calc(72px * var(--ddu-scale)); cursor: pointer; }
-.ddu-weapon--small { width: calc(26px * var(--ddu-scale)); height: calc(20px * var(--ddu-scale)); }
+.ddu-weapon--small { width: calc(24px * var(--ddu-scale)); height: calc(24px * var(--ddu-scale)); }   /* §52 : carrés */
 .ddu-weapon--ghost img { opacity: 0.35; }
+/* §52 : main secondaire prise par une arme à deux mains (grisée, ne reçoit rien) ; main principale vide = mains nues */
+.ddu-weapon--blocked { filter: grayscale(1) brightness(0.6); cursor: not-allowed; border-style: dashed; }
+.ddu-weapons__slots { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.ddu-weapons__set--empty { visibility: hidden; height: calc(24px * var(--ddu-scale) + 8px); cursor: default; }
+/* §52 : la fenêtre de configuration des jeux d'armes */
+.ddu-weapon-sets { display: flex; flex-direction: column; gap: 8px; padding: 8px; }
+.ddu-weapon-sets__count { display: flex; align-items: center; gap: 8px; }
+.ddu-weapon-sets__count select { width: auto; }
+.ddu-weapon-sets__hint { font-size: 0.85em; opacity: 0.8; margin: 0; }
+.ddu-weapons__arrows {
+  display: flex; flex-direction: column; gap: calc(8px * var(--ddu-scale)); padding: 4px;
+  border: 1px solid var(--ddu-gold-dim); border-radius: 6px; background: color-mix(in srgb, var(--ddu-well) 35%, transparent);
+}
+.ddu-weapons__arrow {
+  width: calc(26px * var(--ddu-scale)); height: calc(26px * var(--ddu-scale)); min-height: 0; padding: 0; margin: 0;
+  border: 1px solid var(--ddu-gold-dim); border-radius: 4px; background: color-mix(in srgb, var(--ddu-well) 55%, transparent);
+  color: var(--ddu-gold); font-size: calc(20px * var(--ddu-scale)); line-height: 1; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+.ddu-weapons__arrow:hover { border-color: var(--ddu-gold); box-shadow: 0 0 6px var(--ddu-active); }
+.ddu-weapons__arrow[disabled] { opacity: 0.4; cursor: default; }
+.ddu-weapons__config {
+  align-self: center; width: calc(18px * var(--ddu-scale)); height: calc(18px * var(--ddu-scale)); min-height: 0; padding: 0; margin: 0;
+  border: none; background: none; color: var(--ddu-gold-dim); font-size: calc(12px * var(--ddu-scale)); line-height: 1; cursor: pointer;
+}
+.ddu-weapons__config:hover { color: var(--ddu-gold); text-shadow: 0 0 4px var(--ddu-active); }
+/* §52 : rotation des jeux, en carrousel — « suivant » : les grands emplacements arrivent d'en haut en grandissant, l'ancien jeu actif
+   descend en rapetissant à la place du précédent, un nouveau jeu paraît en haut ; « précédent » à l'envers. Transform et opacité
+   seulement (pas de mise en page recalculée) ; `--ddu-spin-delay` reprend l'animation après un nouveau dessin. */
+.ddu-weapons--spin-next :is(.ddu-weapons__active, .ddu-weapons__set),
+.ddu-weapons--spin-prev :is(.ddu-weapons__active, .ddu-weapons__set),
+.ddu-weapons--spin-jump .ddu-weapons__active {
+  animation: 280ms cubic-bezier(0.2, 0.8, 0.3, 1) var(--ddu-spin-delay, 0ms) both;
+}
+.ddu-weapons--spin-next .ddu-weapons__active { animation-name: ddu-spin-active-from-above; }
+.ddu-weapons--spin-next .ddu-weapons__set--prev { animation-name: ddu-spin-small-from-active-above; }
+.ddu-weapons--spin-next .ddu-weapons__set--next { animation-name: ddu-spin-small-enter-above; }
+.ddu-weapons--spin-prev .ddu-weapons__active { animation-name: ddu-spin-active-from-below; }
+.ddu-weapons--spin-prev .ddu-weapons__set--next { animation-name: ddu-spin-small-from-active-below; }
+.ddu-weapons--spin-prev .ddu-weapons__set--prev { animation-name: ddu-spin-small-enter-below; }
+.ddu-weapons--spin-jump .ddu-weapons__active { animation-name: ddu-spin-jump; }
+@keyframes ddu-spin-active-from-above { from { transform: perspective(300px) translateY(-62%) rotateX(-40deg) scale(0.42); opacity: 0.4; } }
+@keyframes ddu-spin-active-from-below { from { transform: perspective(300px) translateY(62%) rotateX(40deg) scale(0.42); opacity: 0.4; } }
+@keyframes ddu-spin-small-from-active-above { from { transform: translateY(-150%) scale(2.2); opacity: 0.3; } }
+@keyframes ddu-spin-small-from-active-below { from { transform: translateY(150%) scale(2.2); opacity: 0.3; } }
+@keyframes ddu-spin-small-enter-above { from { transform: translateY(-70%) scale(0.6); opacity: 0; } }
+@keyframes ddu-spin-small-enter-below { from { transform: translateY(70%) scale(0.6); opacity: 0; } }
+@keyframes ddu-spin-jump { from { transform: scale(0.85); opacity: 0.3; } }
+@media (prefers-reduced-motion: reduce) {
+  .ddu-bar__weapons :is(.ddu-weapons__active, .ddu-weapons__set) { animation: none !important; }
+}
+/* §52 : la fenêtre de configuration — icônes et glisser-déposer */
+.ddu-weapon-sets__rows { display: flex; flex-direction: column; gap: 4px; }
+.ddu-weapon-sets__row { display: flex; align-items: center; gap: 8px; padding: 4px 6px; border-radius: 4px; }
+.ddu-weapon-sets__row.ddu-active { background: color-mix(in srgb, var(--ddu-active) 18%, transparent); }
+.ddu-weapon-sets__set { width: 4.5em; font-weight: bold; white-space: nowrap; }
+.ddu-weapon-sets__hands { display: flex; gap: 4px; }
+.ddu-weapon-sets__slot, .ddu-weapon-sets__item {
+  width: 40px; height: 40px; border: 1px solid var(--ddu-gold-dim); border-radius: 4px;
+  background: color-mix(in srgb, var(--ddu-well) 55%, transparent);
+}
+.ddu-weapon-sets__slot img, .ddu-weapon-sets__item img { width: 100%; height: 100%; border: none; object-fit: cover; pointer-events: none; }
+.ddu-weapon-sets__slot[draggable], .ddu-weapon-sets__item[draggable] { cursor: grab; }
+.ddu-weapon-sets__slot.ddu-ghost img { opacity: 0.35; }
+.ddu-weapon-sets__slot.ddu-blocked { filter: grayscale(1) brightness(0.6); border-style: dashed; }
+.ddu-weapon-sets__item.ddu-placed { opacity: 0.45; }
+.ddu-weapon-sets__slot.ddu-drop, .ddu-weapon-sets__pool.ddu-drop { box-shadow: 0 0 0 2px var(--ddu-active); }
+.ddu-weapon-sets__held { width: 5em; text-align: center; }
+.ddu-weapon-sets__row button { width: auto; margin: 0; padding: 2px 8px; line-height: 1.4; white-space: nowrap; }
+.ddu-weapon-sets__row button[data-action=hold] { width: 5em; }
+.ddu-weapon-sets__pool { display: flex; flex-direction: column; gap: 4px; padding: 6px; border: 1px dashed var(--ddu-gold-dim); border-radius: 4px; }
+.ddu-weapon-sets__pool-label { font-size: 0.85em; opacity: 0.8; }
+.ddu-weapon-sets__items { display: flex; flex-wrap: wrap; gap: 4px; }
 .ddu-weapon.ddu-drop, .ddu-cell.ddu-drop { box-shadow: 0 0 0 2px var(--ddu-active); }
 
 /* Centre : filtres + effets au-dessus, grille, onglets en dessous */
 .ddu-bar__center { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0; }
 .ddu-bar__top { position: relative; display: flex; justify-content: center; width: 100%; min-height: calc(36px * var(--ddu-scale)); }
+/* §53 : sans cadre ni fond (demande de l'utilisateur, 2026-10-24) — les pastilles flottent au-dessus de la grille */
 .ddu-bar__filters {
   display: flex;
   align-items: center;
   gap: 4px;
   padding: 3px 8px;
-  border: 1px solid var(--ddu-gold-dim);
-  border-radius: 8px;
-  background: color-mix(in srgb, var(--ddu-well) 50%, transparent);
 }
 .ddu-filter {
   display: flex;
@@ -1007,11 +1070,17 @@ body.ddu-hide-hotbar #hotbar { display: none; }
 .ddu-bar__rows button.ddu-on { color: var(--ddu-gold); border-color: var(--ddu-gold); }
 
 /* Fin du tour / repos, avec l'anneau de déplacement */
+/* §53 : un peu plus petit que le portrait (80 %), et plus près de la grille (demande de l'utilisateur, 2026-10-24) — Repos comme Fin du tour */
 .ddu-bar__end {
   position: relative;
   flex: none;
-  width: var(--ddu-portrait-round);
-  height: var(--ddu-portrait-round);
+  width: calc(var(--ddu-portrait-round) * 0.8);
+  height: calc(var(--ddu-portrait-round) * 0.8);
+  margin-left: calc(-6px * var(--ddu-scale));
+  /* §53 : centré sur la hauteur de la grille — sous elle, les onglets (28 px) et l'écart de la colonne (4 px) ; la grille fait N cases
+     de --ddu-cell, 3 px entre elles, 4 px de marge intérieure et 1 px de bord de chaque côté. */
+  --ddu-grid-height: calc(var(--ddu-grid-rows, 2) * var(--ddu-cell) + (var(--ddu-grid-rows, 2) - 1) * 3px + 10px);
+  margin-bottom: calc(28px * var(--ddu-scale) + 4px + (var(--ddu-grid-height) - var(--ddu-portrait-round) * 0.8) / 2);
 }
 .ddu-ring { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); pointer-events: none; }
 .ddu-ring circle { fill: none; stroke-width: 5; }
@@ -1034,13 +1103,13 @@ body.ddu-hide-hotbar #hotbar { display: none; }
   background: radial-gradient(circle at 50% 40%, var(--ddu-end-hi), var(--ddu-end-lo) 70%);
   color: var(--ddu-text);
   font-family: var(--ddu-font-title);
-  font-size: calc(20px * var(--ddu-scale));
+  font-size: calc(17px * var(--ddu-scale));
   text-shadow: 0 1px 3px var(--ddu-shade);
 }
 .ddu-end:hover:not([disabled]) { box-shadow: 0 0 14px var(--ddu-active); }
 .ddu-end--waiting, .ddu-end[disabled] { filter: grayscale(0.7) brightness(0.7); cursor: default; }
-.ddu-end--rest { background: radial-gradient(circle at 50% 40%, var(--ddu-rest-hi), var(--ddu-rest-lo) 70%); font-size: calc(16px * var(--ddu-scale)); }
-.ddu-end--rest i { font-size: calc(30px * var(--ddu-scale)); color: var(--ddu-gold); }
+.ddu-end--rest { background: radial-gradient(circle at 50% 40%, var(--ddu-rest-hi), var(--ddu-rest-lo) 70%); font-size: calc(13px * var(--ddu-scale)); }
+.ddu-end--rest i { font-size: calc(24px * var(--ddu-scale)); color: var(--ddu-gold); }
 
 /* Tiroirs (surcharge, repos) */
 .ddu-bar__popup {
@@ -1161,7 +1230,7 @@ body.ddu-hide-hotbar #hotbar { display: none; }
 .ddu-sneak {
   position: absolute; top: 0; right: 0; width: 32%; height: 32%; min-height: 0; padding: 0; margin: 0;
   border-radius: 50%; border: 1px solid var(--ddu-gold); background: var(--ddu-rest-lo); color: var(--ddu-gold);
-  display: flex; align-items: center; justify-content: center; font-size: calc(14px * var(--ddu-scale)); cursor: pointer; z-index: 2;
+  display: flex; align-items: center; justify-content: center; font-size: calc(12px * var(--ddu-scale)); cursor: pointer; z-index: 2;
 }
 .ddu-sneak.ddu-on { background: var(--ddu-active); color: var(--ddu-gold); box-shadow: 0 0 10px var(--ddu-active); }
 .ddu-sneak[disabled] { filter: grayscale(0.7) brightness(0.7); cursor: default; }
@@ -1170,7 +1239,7 @@ body.ddu-hide-hotbar #hotbar { display: none; }
 .ddu-climb {
   position: absolute; top: 0; left: 0; width: 32%; height: 32%; min-height: 0; padding: 0; margin: 0;
   border-radius: 50%; border: 1px solid var(--ddu-gold); background: var(--ddu-rest-lo); color: var(--ddu-gold);
-  display: flex; align-items: center; justify-content: center; font-size: calc(13px * var(--ddu-scale)); cursor: pointer; z-index: 2;
+  display: flex; align-items: center; justify-content: center; font-size: calc(11px * var(--ddu-scale)); cursor: pointer; z-index: 2;
 }
 .ddu-climb.ddu-on { background: var(--ddu-active); box-shadow: 0 0 10px var(--ddu-active); }
 .ddu-climb[disabled] { filter: grayscale(0.7) brightness(0.7); cursor: default; }
