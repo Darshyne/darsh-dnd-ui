@@ -5,7 +5,7 @@
 /** Le plan : chaque onglet, ses réglages (clés de ce module) et ses outils. */
 export const TABS = Object.freeze([
   { id: "appearance", icon: "fa-solid fa-palette",
-    keys: ["portraitImage", "scaleBar", "scaleFrieze", "scaleParty", "scaleAuto", "fadeOpacity", "enemyHealth"],
+    keys: ["portraitImage", "scaleBar", "scaleFrieze", "scaleParty", "scaleAuto", "fadeOpacity", "enemyHealth", "rollWindow"],
     tools: [{ id: "theme", icon: "fa-solid fa-palette", everyone: true }] },
   { id: "bar", icon: "fa-solid fa-table-cells", keys: ["bar", "barHideHotbar", "barGMHotbar", "barFullTooltips", "barLockPlayers", "weaponSets"] },
   { id: "frieze", icon: "fa-solid fa-list-ol",

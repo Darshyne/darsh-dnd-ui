@@ -332,6 +332,10 @@
       "weaponSets": {
         "Name": "Jeux d'armes",
         "Hint": "Combien de jeux d'armes cet ordinateur fait défiler (flèches à côté des jeux, touches jeu suivant / précédent). Chaque jeu a une main principale (à gauche) et une main secondaire (à droite)."
+      },
+      "rollWindow": {
+        "Name": "Fenêtre de jet à la BG3",
+        "Hint": "Quand le MJ demande un jet, il s'ouvre dans une fenêtre à la manière de Baldur's Gate 3 (DD, d20 à cliquer, bonus en tuiles, aides). Décoché : la fenêtre de jet de dnd5e."
       }
     },
     "Theme": {
@@ -429,7 +433,18 @@
         "light-dark": "Obscurité",
         "gm-heal": "MJ : soigner",
         "gm-kill": "MJ : tuer",
-        "text-on-image": "Texte sur les portraits"
+        "text-on-image": "Texte sur les portraits",
+        "roll-veil": "Voile de fond",
+        "roll-panel-hi": "Médaillon (centre)",
+        "roll-panel-lo": "Médaillon (bord)",
+        "roll-die": "d20 (faces)",
+        "roll-die-face": "d20 (face avant)",
+        "roll-die-edge": "d20 (arêtes)",
+        "roll-die-text": "d20 (chiffre)",
+        "roll-tile-hi": "Tuile (haut)",
+        "roll-tile-lo": "Tuile (bas)",
+        "roll-success": "Réussite, Avantage",
+        "roll-failure": "Échec, Désavantage"
       },
       "Group": {
         "frames": "Cadres et fonds",
@@ -438,7 +453,8 @@
         "health": "Santé",
         "sides": "Camps et tour",
         "buttons": "Boutons, onglets, séparateurs",
-        "states": "États et effets"
+        "states": "États et effets",
+        "roll": "Fenêtre de jet"
       },
       "Preset": {
         "bg3": "BG3",
@@ -486,6 +502,57 @@
       "Locked": "La Barre est verrouillée : les emplacements ne se modifient pas.",
       "Pool": "Glisser une arme sur un emplacement ; lâcher un emplacement ici le vide.",
       "None": "Aucune arme, aucun bouclier ni source de lumière."
+    },
+    "Roll": {
+      "DC": "Degré de difficulté",
+      "Click": "Cliquer sur les dés pour les lancer",
+      "Waiting": "En attente de l'aide…",
+      "Rolling": "Lancer en cours…",
+      "Advantage": "Avantage",
+      "Disadvantage": "Désavantage",
+      "Total": "Bonus total",
+      "Cancel": "Annuler",
+      "Success": "Réussite",
+      "Failure": "Échec",
+      "CheckOf": "Test de {ability}",
+      "Check": "Test de caractéristique",
+      "Save": "Jet de sauvegarde",
+      "Proficiency": "Maîtrise : {name}",
+      "GMModifier": "Modificateur du MJ",
+      "Aid": {
+        "Guidance": "Assistance de {name}",
+        "Inspiration": "Inspiration de {name}",
+        "Help": "Soutien de {name}"
+      },
+      "AidHint": {
+        "guidance": "Demander à ce personnage de lancer Assistance sur vous : +1d4 à ce test.",
+        "inspiration": "Demander l'Inspiration bardique : son dé s'ajoute si le test est raté.",
+        "help": "Demander le Soutien : le test a l'Avantage."
+      },
+      "AidState": {
+        "pending": "Demande envoyée…",
+        "granted": "Accordée",
+        "refused": "Refusée",
+        "taken": "Une aide de ce genre est déjà demandée pour ce jet"
+      },
+      "Source": {
+        "gm": "demandé par le MJ",
+        "help": "Soutien",
+        "system": "état, don ou sort",
+        "forced": "forcé"
+      },
+      "Force": {
+        "advantage": "Forcer l'Avantage",
+        "disadvantage": "Forcer le Désavantage"
+      },
+      "ForceHint": {
+        "advantage": "Lancer avec l'Avantage, quoi que disent le MJ et la fiche. Un second clic annule.",
+        "disadvantage": "Lancer avec le Désavantage, quoi que disent le MJ et la fiche. Un second clic annule."
+      },
+      "Inspired": "Inspiration de {name}",
+      "Reserve": "si échec",
+      "ReserveHint": "Déjà reçue : après un échec, le jeu propose d'ajouter ce dé.",
+      "Close": "Fermer"
     }
   }
 }

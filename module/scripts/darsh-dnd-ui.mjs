@@ -22,6 +22,7 @@ import { Portrait } from "./apps/portrait.mjs";
 import { PortraitPreview } from "./apps/preview.mjs";
 import { registerTheme, startTheme } from "./runtime/theme.mjs";
 import { registerSettingsWindow } from "./runtime/settings-window.mjs";
+import { registerRollWindow } from "./runtime/roll-window.mjs";
 import { ThemeEditor } from "./apps/theme-editor.mjs";
 import { currentTheme } from "./adapter/theme.mjs";
 
@@ -40,6 +41,7 @@ Hooks.once("init", () => {
   registerCanvasSettings(refreshRulers);
   registerCanvas();
   registerTheme();
+  registerRollWindow();   // §54 : la fenêtre de jet à la BG3 quand le MJ demande un jet (moteur ≥ 0.262.0)
   registerSettingsWindow();   // la fenêtre de réglages DAS (moteur ≥ 0.241.0), déclarée au `setup`
 
   game.modules.get(MODULE_ID).api = {

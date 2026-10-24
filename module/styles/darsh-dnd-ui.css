@@ -1254,3 +1254,140 @@ body.ddu-hide-hotbar #hotbar { display: none; }
 .ddu-portrait__climb[hidden] { display: none; }
 .ddu-portrait__climb[data-kind="ceiling"] i { transform: scaleY(-1); }
 .ddu-portrait--round .ddu-portrait__climb { bottom: 14%; left: 14%; }
+
+/* ---------- §54 : fenêtre de jet à la manière de BG3 (jets demandés par le MJ) ----------
+ * Dessinée en CSS par défaut ; les images du cadre (gabarit : docs/gabarit-cadre-jet.md) la remplacent emplacement par emplacement
+ * quand elles sont dans assets/roll/ (attribut data-skin de la racine, posé par apps/roll-window.mjs). */
+:root {
+  --ddu-roll-veil: rgba(4, 3, 6, 0.9);
+  --ddu-roll-panel-hi: #2b3149;
+  --ddu-roll-panel-lo: #0b0d15;
+  --ddu-roll-die: #4a5170;
+  --ddu-roll-die-face: #b9bfd6;
+  --ddu-roll-die-edge: #f4f1ff;
+  --ddu-roll-die-text: #1b1d2b;
+  --ddu-roll-tile-hi: #1d1a2a;
+  --ddu-roll-tile-lo: #0e0c16;
+  --ddu-roll-success: #5fd38a;
+  --ddu-roll-failure: #e0715f;
+}
+.ddu-roll {
+  position: fixed; inset: 0; z-index: var(--z-index-window, 100); display: flex; align-items: center; justify-content: center;
+  background: radial-gradient(ellipse at 50% 45%, color-mix(in srgb, var(--ddu-roll-veil) 78%, transparent) 0%, var(--ddu-roll-veil) 60%);
+  color: var(--ddu-text); font-family: "Signika", "Modesto Condensed", Georgia, serif;
+  animation: ddu-roll-in 220ms ease-out;
+}
+.ddu-roll.closing { animation: ddu-roll-out 240ms ease-in forwards; }
+@keyframes ddu-roll-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes ddu-roll-out { to { opacity: 0; } }
+.ddu-roll__stage { display: flex; flex-direction: column; align-items: center; gap: 6px; max-width: min(96vw, 980px); text-align: center; }
+.ddu-roll__label { font-style: italic; font-size: 18px; margin: 0 0 4px; opacity: 0.9; }
+.ddu-roll__title { font-size: 34px; margin: 0; border: none; color: var(--ddu-text); font-weight: normal; letter-spacing: 0.5px; }
+.ddu-roll__subtitle { margin: 0 0 10px; color: var(--ddu-gold); font-size: 16px; }
+
+/* Médaillon : 360 × 420 (le gabarit du PSD a les mêmes proportions, en double résolution). */
+/* Pas de cadre dessiné autour des dés (retour de l'utilisateur, 2026-10-24 : « on a juste besoin des dés au milieu ») : la zone garde les cotes
+   du gabarit (360 × 420) ; une image `medallion.webp` du thème, si elle existe, l'habille. */
+.ddu-roll__medallion {
+  position: relative; width: 360px; height: 420px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+  padding-top: 46px; box-sizing: border-box;
+}
+.ddu-roll[data-skin~="medallion"] .ddu-roll__medallion {
+  background: url("../assets/roll/medallion.webp") center / 100% 100% no-repeat; border: none; border-radius: 0; box-shadow: none;
+}
+.ddu-roll__dc { display: flex; flex-direction: column; align-items: center; height: 84px; }
+.ddu-roll__dc small { text-transform: uppercase; font-size: 12px; letter-spacing: 1px; max-width: 120px; line-height: 1.1; }
+.ddu-roll__dc b { font-size: 40px; font-weight: normal; line-height: 1.1; }
+.ddu-roll__dice { align-self: stretch; display: flex; justify-content: center; align-items: center; gap: 4px; height: 170px; cursor: pointer; }
+/* Le d20 tourne pendant le lancer (Dice So Nice roule, ou un instant sans lui), puis s'arrête sur le chiffre sorti. */
+.ddu-roll__dice.rolling .ddu-roll__d20 { animation: ddu-roll-spin 650ms linear infinite; }
+@keyframes ddu-roll-spin { from { transform: rotate(0); } to { transform: rotate(360deg); } }
+.ddu-roll__d20 { width: 140px; height: 140px; filter: drop-shadow(0 6px 12px color-mix(in srgb, var(--ddu-shade) 70%, transparent)); transition: transform 160ms, opacity 200ms; }
+.ddu-roll__dice .ddu-roll__d20:nth-child(2):nth-last-child(1), .ddu-roll__dice .ddu-roll__d20:nth-child(1):nth-last-child(2) { width: 120px; height: 120px; }
+.ddu-roll[data-phase="ready"] .ddu-roll__dice:hover .ddu-roll__d20 { transform: scale(1.06); }
+.ddu-roll__d20 .face { fill: var(--ddu-roll-die); stroke: var(--ddu-roll-die-edge); stroke-width: 1.5; }
+.ddu-roll__d20 .inner { fill: var(--ddu-roll-die-face); stroke: var(--ddu-roll-die-edge); stroke-width: 1.5; }
+.ddu-roll__d20 .edges line { stroke: var(--ddu-roll-die-edge); stroke-width: 1.2; opacity: 0.8; }
+.ddu-roll__d20 text { font-size: 22px; text-anchor: middle; fill: var(--ddu-roll-die-text); font-weight: bold; font-family: inherit; }
+.ddu-roll__d20.dropped { opacity: 0.35; }
+.ddu-roll__d20.kept .inner { fill: var(--ddu-glint); }
+.ddu-roll__d20 text.ddu-roll__count { transform-box: fill-box; transform-origin: center; }
+/* Image du thème (emplacement d20) : la face du dé, la valeur par-dessus. */
+.ddu-roll__d20--image { position: relative; display: inline-flex; align-items: center; justify-content: center; }
+.ddu-roll__d20--image img { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
+.ddu-roll__d20--image > span { position: relative; font-size: 26px; font-weight: bold; color: var(--ddu-roll-die-text); display: inline-block; }
+.ddu-roll__banner {
+  margin: 6px 0 0; min-width: 300px; height: 40px; padding: 0 16px; display: flex; align-items: center; justify-content: center; gap: 10px;
+  background: color-mix(in srgb, var(--ddu-shade) 55%, transparent); border: 1px solid var(--ddu-gold-dim); border-radius: 4px; color: var(--ddu-text);
+  font-family: inherit; font-size: 16px; cursor: pointer; box-shadow: none;
+}
+.ddu-roll[data-skin~="banner"] .ddu-roll__banner { background: url("../assets/roll/banner.webp") center / 100% 100% no-repeat; border: none; }
+.ddu-roll__banner:hover:not(:disabled) { color: var(--ddu-gold); }
+.ddu-roll__banner:disabled { cursor: default; opacity: 0.7; }
+.ddu-roll__banner.ddu-roll__result { visibility: hidden; }   /* au résultat, la place reste pour le bandeau Réussite / Échec */
+.ddu-roll__mode { position: absolute; bottom: 12px; margin: 0; font-size: 15px; display: flex; align-items: baseline; gap: 6px; }
+.ddu-roll__mode small { font-size: 11px; opacity: 0.8; }
+.ddu-roll__mode.adv { color: var(--ddu-roll-success); }
+.ddu-roll__mode.dis { color: var(--ddu-roll-failure); }
+
+/* Tuiles : 110 × 120. */
+.ddu-roll__tiles { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-top: 12px; }
+.ddu-roll__tile {
+  width: 110px; height: 120px; box-sizing: border-box; padding: 6px 4px; display: flex; flex-direction: column; align-items: center; gap: 2px;
+  background: linear-gradient(180deg, var(--ddu-roll-tile-hi), var(--ddu-roll-tile-lo)); border: 1px solid var(--ddu-gold-dim); border-radius: 10px 10px 4px 4px; color: var(--ddu-text);
+  font-family: inherit; line-height: 1.1;
+}
+.ddu-roll[data-skin~="tile"] .ddu-roll__tile { background: url("../assets/roll/tile.webp") center / 100% 100% no-repeat; border: none; }
+.ddu-roll__tile .value { font-size: 18px; font-weight: normal; height: 22px; display: flex; align-items: center; gap: 4px; }
+.ddu-roll__tile .value .adv { color: var(--ddu-roll-success); font-size: 13px; }
+.ddu-roll__tile .art { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; font-size: 30px; color: var(--ddu-gold); }
+.ddu-roll__tile .art img { width: 48px; height: 48px; border: none; border-radius: 6px; object-fit: cover; }
+.ddu-roll__tile .label { font-size: 12px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.ddu-roll__aid { cursor: pointer; opacity: 0.75; }
+.ddu-roll__aid:hover:not(:disabled) { opacity: 1; border-color: var(--ddu-gold); }
+.ddu-roll__aid[data-status="pending"] { opacity: 1; animation: ddu-roll-pulse 900ms ease-in-out infinite alternate; }
+@keyframes ddu-roll-pulse { to { box-shadow: 0 0 14px var(--ddu-gold); } }
+.ddu-roll__aid[data-status="granted"] { opacity: 1; border-color: var(--ddu-roll-success); color: var(--ddu-roll-success); }
+.ddu-roll[data-skin~="tile-active"] .ddu-roll__aid[data-status="granted"] { background-image: url("../assets/roll/tile-active.webp"); }
+.ddu-roll__aid[data-status="refused"] { opacity: 0.35; text-decoration: line-through; }
+.ddu-roll__total { margin: 10px 0 0; padding: 4px 40px; border-top: 1px solid var(--ddu-gold-dim); border-bottom: 1px solid var(--ddu-gold-dim); font-size: 17px; }
+.ddu-roll__clock { margin: 4px 0 0; opacity: 0.7; font-size: 14px; }
+.ddu-roll__cancel {
+  margin-top: 26px; width: 230px; height: 44px; background: color-mix(in srgb, var(--ddu-shade) 60%, transparent); border: 1px solid var(--ddu-gold-dim); border-radius: 22px;
+  color: var(--ddu-text); font-family: inherit; font-size: 16px; cursor: pointer;
+}
+.ddu-roll[data-skin~="button"] .ddu-roll__cancel { background: url("../assets/roll/button.webp") center / 100% 100% no-repeat; border: none; border-radius: 0; }
+.ddu-roll__cancel:hover { color: var(--ddu-gold); }
+
+/* Le décompte façon BG3 : la tuile qui s'ajoute s'allume, le chiffre du d20 grossit un instant, puis le bandeau du résultat. */
+.ddu-roll__tile.applied { border-color: var(--ddu-gold); box-shadow: 0 0 14px var(--ddu-gold); transform: translateY(-4px);
+  transition: transform 160ms, box-shadow 160ms; }
+.ddu-roll__count.bump { animation: ddu-roll-bump 320ms ease-out; }
+@keyframes ddu-roll-bump { 40% { transform: scale(1.6); color: var(--ddu-gold); fill: var(--ddu-gold); } }
+.ddu-roll__ribbon {
+  position: absolute; left: -60px; right: -60px; top: 296px; margin: 0; padding: 8px 0; text-align: center; font-size: 38px; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--ddu-text-strong); text-shadow: 0 2px 8px var(--ddu-shade);
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--ddu-roll-success) 55%, transparent) 30%,
+    color-mix(in srgb, var(--ddu-roll-success) 55%, transparent) 70%, transparent);
+  animation: ddu-roll-ribbon 380ms ease-out;
+}
+.ddu-roll__ribbon.failure { background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--ddu-roll-failure) 55%, transparent) 30%,
+  color-mix(in srgb, var(--ddu-roll-failure) 55%, transparent) 70%, transparent); }
+@keyframes ddu-roll-ribbon { from { opacity: 0; transform: scaleX(0.3); } to { opacity: 1; transform: scaleX(1); } }
+.ddu-roll__aid[data-status="taken"] { opacity: 0.3; }
+
+/* Forcer l'Avantage ou le Désavantage (un second clic rend la main au MJ et au système). */
+.ddu-roll__forces { display: flex; gap: 10px; margin-top: 8px; }
+.ddu-roll__force {
+  width: auto; min-width: 170px; height: 30px; padding: 0 12px; font-family: inherit; font-size: 13px; cursor: pointer; opacity: 0.75;
+  background: color-mix(in srgb, var(--ddu-shade) 55%, transparent); color: var(--ddu-text); border: 1px solid var(--ddu-gold-dim); border-radius: 15px;
+}
+.ddu-roll__force:hover { opacity: 1; }
+.ddu-roll__force.advantage i { color: var(--ddu-roll-success); }
+.ddu-roll__force.disadvantage i { color: var(--ddu-roll-failure); }
+.ddu-roll__force.on { opacity: 1; border-color: var(--ddu-gold); box-shadow: 0 0 10px var(--ddu-gold); }
+
+/* Un dé en réserve (Inspiration bardique déjà reçue) : il ne s'ajoute qu'après un échec, si le joueur le veut. */
+.ddu-roll__tile.reserve { opacity: 0.8; border-style: dashed; }
+.ddu-roll__tile.reserve.applied { opacity: 1; border-style: solid; }
+.ddu-roll__reserve { font-size: 10px; opacity: 0.75; font-style: italic; }

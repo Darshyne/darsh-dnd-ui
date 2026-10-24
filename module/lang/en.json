@@ -332,6 +332,10 @@
       "weaponSets": {
         "Name": "Weapon sets",
         "Hint": "How many weapon sets this computer cycles through (arrows next to the sets, next/previous set keys). Each set has a main hand (left) and an off hand (right)."
+      },
+      "rollWindow": {
+        "Name": "BG3-style roll window",
+        "Hint": "When the GM requests a roll, it opens in a Baldur's Gate 3-style window (DC, clickable d20, bonuses as tiles, aids). Unchecked: dnd5e's roll window."
       }
     },
     "Theme": {
@@ -429,7 +433,18 @@
         "light-dark": "Darkness",
         "gm-heal": "GM: heal",
         "gm-kill": "GM: kill",
-        "text-on-image": "Text on portraits"
+        "text-on-image": "Text on portraits",
+        "roll-veil": "Backdrop veil",
+        "roll-panel-hi": "Medallion (centre)",
+        "roll-panel-lo": "Medallion (edge)",
+        "roll-die": "d20 (faces)",
+        "roll-die-face": "d20 (front face)",
+        "roll-die-edge": "d20 (edges)",
+        "roll-die-text": "d20 (number)",
+        "roll-tile-hi": "Tile (top)",
+        "roll-tile-lo": "Tile (bottom)",
+        "roll-success": "Success, Advantage",
+        "roll-failure": "Failure, Disadvantage"
       },
       "Group": {
         "frames": "Frames and backgrounds",
@@ -438,7 +453,8 @@
         "health": "Health",
         "sides": "Sides and turn",
         "buttons": "Buttons, tabs, separators",
-        "states": "States and effects"
+        "states": "States and effects",
+        "roll": "Roll window"
       },
       "Preset": {
         "bg3": "BG3",
@@ -486,6 +502,57 @@
       "Locked": "The Bar is locked: slots can't be changed.",
       "Pool": "Drag a weapon onto a slot; drop a slot here to empty it.",
       "None": "No weapon, shield or light source."
+    },
+    "Roll": {
+      "DC": "Difficulty class",
+      "Click": "Click the dice to roll",
+      "Waiting": "Waiting for the aid…",
+      "Rolling": "Rolling…",
+      "Advantage": "Advantage",
+      "Disadvantage": "Disadvantage",
+      "Total": "Total bonus",
+      "Cancel": "Cancel",
+      "Success": "Success",
+      "Failure": "Failure",
+      "CheckOf": "{ability} Check",
+      "Check": "Ability Check",
+      "Save": "Saving Throw",
+      "Proficiency": "Proficiency: {name}",
+      "GMModifier": "GM modifier",
+      "Aid": {
+        "Guidance": "Guidance from {name}",
+        "Inspiration": "Inspiration from {name}",
+        "Help": "Help from {name}"
+      },
+      "AidHint": {
+        "guidance": "Ask this character to cast Guidance on you: +1d4 to this check.",
+        "inspiration": "Ask for Bardic Inspiration: its die is added if the check fails.",
+        "help": "Ask for Help: the check has Advantage."
+      },
+      "AidState": {
+        "pending": "Request sent…",
+        "granted": "Granted",
+        "refused": "Refused",
+        "taken": "An aid of this kind is already requested for this roll"
+      },
+      "Source": {
+        "gm": "requested by the GM",
+        "help": "Help",
+        "system": "condition, feat or spell",
+        "forced": "forced"
+      },
+      "Force": {
+        "advantage": "Force Advantage",
+        "disadvantage": "Force Disadvantage"
+      },
+      "ForceHint": {
+        "advantage": "Roll with Advantage, whatever the GM and the sheet say. Click again to cancel.",
+        "disadvantage": "Roll with Disadvantage, whatever the GM and the sheet say. Click again to cancel."
+      },
+      "Inspired": "Inspiration from {name}",
+      "Reserve": "if failed",
+      "ReserveHint": "Already received: after a failure, you are offered to add this die.",
+      "Close": "Close"
     }
   }
 }

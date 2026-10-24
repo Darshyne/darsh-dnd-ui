@@ -15,6 +15,10 @@ const refreshAll = () => Portrait.refreshFor(null, { flash: false });
  * @param {Function} refade    Recalculer l'opacité hors survol (%).
  */
 export function registerSettings(rescale, refade) {
+  // §54 : la fenêtre de jet à la BG3 quand le MJ demande un jet (runtime/roll-window.mjs) ; coupée, celle de dnd5e.
+  game.settings.register(MODULE_ID, "rollWindow", {
+    name: "DDU.Settings.rollWindow.Name", hint: "DDU.Settings.rollWindow.Hint", scope: "client", config: true, type: Boolean, default: true
+  });
   game.settings.register(MODULE_ID, "portraitImage", {
     name: "DDU.Settings.PortraitImage.Name",
     hint: "DDU.Settings.PortraitImage.Hint",

@@ -193,3 +193,36 @@ export async function toggleSneak(token) {
   const api = game.modules.get(ENGINE_ID).api.sneak;
   return typeof api?.toggle === "function" ? api.toggle(token) : null;
 }
+
+/**
+ * §54 (issue #6) : les jets demandés par le MJ (moteur ≥ 0.262.0, son SPEC §242). Le moteur ouvre la demande chez le joueur par le
+ * hook `dnd5e-combat.groupRollPrompt` : une interface la prend en remplissant `prompt.result` (la promesse de son issue) ; sans
+ * preneur, il ouvre la fenêtre de jet de dnd5e. Le point des résultats passe par `dnd5e-combat.groupRoll`.
+ */
+export const GROUP_ROLL_PROMPT_HOOK = `${ENGINE_ID}.groupRollPrompt`;
+export const GROUP_ROLL_HOOK = `${ENGINE_ID}.groupRoll`;
+
+/** L'Avantage / le Désavantage que le système donnera à ce jet (`api.rolls.mode`), relu quand un effet change ; null sans moteur assez récent. */
+export function rollMode(actor, request) {
+  const fn = engineActive() ? game.modules.get(ENGINE_ID).api.rolls?.mode : null;
+  if ( typeof fn !== "function" ) return null;
+  try { return fn(actor, request); }
+  catch ( err ) {
+    log.warn("engine: api.rolls.mode failed", err);
+    return null;
+  }
+}
+
+/** Le message est-il le jet d'une demande du MJ (flags du moteur, §242) ? */
+export const isGroupRollResult = message => !!message?.getFlag?.(ENGINE_ID, "groupRollResult");
+
+/** Les tuiles de bonus d'un acteur pour une demande (`api.rolls.breakdown`), relues après une aide ; null sans moteur assez récent. */
+export function rollBreakdown(actor, request) {
+  const fn = engineActive() ? game.modules.get(ENGINE_ID).api.rolls?.breakdown : null;
+  if ( typeof fn !== "function" ) return null;
+  try { return fn(actor, request); }
+  catch ( err ) {
+    log.warn("engine: api.rolls.breakdown failed", err);
+    return null;
+  }
+}

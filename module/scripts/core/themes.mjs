@@ -9,7 +9,7 @@
  */
 
 /** Les groupes de l'éditeur, dans l'ordre. */
-export const GROUPS = Object.freeze(["frames", "text", "economy", "health", "sides", "buttons", "states"]);
+export const GROUPS = Object.freeze(["frames", "text", "economy", "health", "sides", "buttons", "states", "roll"]);
 
 /**
  * Les couleurs du HUD : clé (`--ddu-<clé>`), groupe, valeur par défaut (celle du CSS : `tests/themes.test.mjs` le vérifie),
@@ -86,7 +86,19 @@ export const TOKENS = Object.freeze([
   { key: "light-dim", group: "states", default: "#c8b98a" },
   { key: "light-dark", group: "states", default: "#7f95c9" },
   { key: "gm-heal", group: "states", default: "#6fd27a" },
-  { key: "gm-kill", group: "states", default: "#e05050" }
+  { key: "gm-kill", group: "states", default: "#e05050" },
+  // §54 : la fenêtre de jet à la BG3 (jets demandés par le MJ)
+  { key: "roll-veil", group: "roll", default: "rgba(4, 3, 6, 0.9)", main: true },
+  { key: "roll-panel-hi", group: "roll", default: "#2b3149", main: true },
+  { key: "roll-panel-lo", group: "roll", default: "#0b0d15" },
+  { key: "roll-die", group: "roll", default: "#4a5170", main: true },
+  { key: "roll-die-face", group: "roll", default: "#b9bfd6" },
+  { key: "roll-die-edge", group: "roll", default: "#f4f1ff" },
+  { key: "roll-die-text", group: "roll", default: "#1b1d2b" },
+  { key: "roll-tile-hi", group: "roll", default: "#1d1a2a" },
+  { key: "roll-tile-lo", group: "roll", default: "#0e0c16" },
+  { key: "roll-success", group: "roll", default: "#5fd38a", main: true },
+  { key: "roll-failure", group: "roll", default: "#e0715f", main: true }
 ]);
 
 export const TOKEN_KEYS = Object.freeze(TOKENS.map(t => t.key));
