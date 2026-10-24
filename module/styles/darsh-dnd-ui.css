@@ -656,6 +656,21 @@ body.ddu-hide-hotbar #hotbar { display: none; }
 .ddu-bar[hidden] { display: none; }
 .ddu-bar button { line-height: 1; }
 
+/* Barre repliée (§51) : seul ce bouton reste à sa place ; dépliée, le bouton de repli est en tête de .ddu-bar__rows. */
+.ddu-bar__collapse {
+  pointer-events: auto;
+  width: calc(56px * var(--ddu-scale));
+  height: calc(18px * var(--ddu-scale));
+  padding: 0;
+  border: 1px solid var(--ddu-gold-dim);
+  border-radius: 6px;
+  background: var(--ddu-toggle);
+  color: var(--ddu-gold);
+  font-size: calc(10px * var(--ddu-scale));
+  cursor: pointer;
+}
+.ddu-bar__collapse:hover { color: var(--ddu-text); border-color: var(--ddu-gold); box-shadow: 0 0 6px var(--ddu-gold); }
+
 /* Gauche : d20, portrait, armes */
 .ddu-bar__left { display: flex; align-items: flex-end; gap: calc(8px * var(--ddu-scale)); }
 .ddu-bar__d20 {

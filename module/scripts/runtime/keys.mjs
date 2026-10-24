@@ -54,6 +54,14 @@ export function registerKeys(getBar) {
     }
   });
 
+  // §51 : replier / déplier la Barre. Aucune touche par défaut, comme les actions de base.
+  game.keybindings.register(MODULE_ID, "toggleBar", {
+    name: "DDU.Keys.ToggleBar",
+    hint: "DDU.Keys.ToggleBarHint",
+    editable: [],
+    onDown: () => !!getBar()?.toggleCollapsed()
+  });
+
   for ( const action of BASIC_ACTIONS ) {
     game.keybindings.register(MODULE_ID, `basic.${action}`, {
       name: `DDU.Keys.Basic.${action}`,

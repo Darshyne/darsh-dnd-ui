@@ -68,6 +68,8 @@
       },
       "AddRow": "Add a row",
       "RemoveRow": "Remove a row",
+      "Collapse": "Hide the action bar",
+      "Expand": "Show the action bar",
       "EndTurn": "End Turn",
       "TurnOf": "{name}'s turn",
       "Movement": "Movement: {left} / {allowed}",
@@ -123,6 +125,8 @@
       "PinTooltipHint": "Pins the detailed tooltip of the hovered cell (outside the bar, the key keeps its usual role: target).",
       "SwapWeapons": "Bar: swap weapon sets",
       "SwapWeaponsHint": "Switches to the other weapon set (while measuring, the key adds a waypoint).",
+      "ToggleBar": "Bar: hide / show",
+      "ToggleBarHint": "Hides the action bar (a small tab stays to bring it back) or shows it again. Number keys still use the Custom cells while it is hidden.",
       "BasicHint": "Takes this basic action of the combat engine for the character shown in the bar.",
       "Basic": {
         "dash": "Action: Dash",

@@ -190,13 +190,24 @@ export class Bar {
     const ctx = this.#context();
     this.ctx = ctx;
 
+    // §51 : repliée, seul le bouton pour la déplier reste. L'acteur et la disposition restent chargés : les touches 1 – 0 et la manette
+    // (`pages()`, `use()`) continuent de servir. Repliée, `#views` est vide : `refreshPosition` repasse par ici.
+    const collapsed = !!setting("barCollapsed");
+    this.element.classList.toggle("ddu-bar--collapsed", collapsed);
+    // Tour d'un personnage que l'on joue : la Barre ne s'estompe pas (demande de l'utilisateur, 2026-10-01).
+    this.element.classList.toggle("ddu-bar--turn", ctx.myTurn && this.canEdit);
+    if ( collapsed ) {
+      this.d20.close();
+      this.#views = new Map();
+      this.element.replaceChildren(this.#collapseToggle());
+      return;
+    }
+
     this.portrait ??= new Portrait({ actor, shape: "round", policy: "exact" });
     this.portrait.refresh({ flash: false });
 
     this.element.classList.toggle("ddu-bar--locked", this.locked);
     this.element.classList.toggle("ddu-bar--readonly", !this.canEdit);
-    // Tour d'un personnage que l'on joue : la Barre ne s'estompe pas (demande de l'utilisateur, 2026-10-01).
-    this.element.classList.toggle("ddu-bar--turn", ctx.myTurn && this.canEdit);
     this.#views = new Map();
     this.element.replaceChildren(
       this.#left(ctx),
@@ -204,6 +215,24 @@ export class Bar {
       this.#rowControls(),
       this.#endButton(ctx)
     );
+  }
+
+  /** §51 : repliée, seul ce bouton reste à la place de la Barre (la déplier). Dépliée, il est en tête de `#rowControls`. */
+  #collapseToggle() {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "ddu-bar__collapse";
+    button.dataset.action = "collapse";
+    button.dataset.tooltip = loc("Bar.Expand");
+    button.innerHTML = `<i class="fa-solid fa-chevron-up"></i>`;
+    return button;
+  }
+
+  /** §51 : replier ou déplier la Barre (réglage client). @returns {boolean} false si aucune Barre n'est affichée. */
+  toggleCollapsed() {
+    if ( !this.actor || this.element.hidden ) return false;
+    game.settings.set(MODULE_ID, "barCollapsed", !setting("barCollapsed"));
+    return true;
   }
 
   /** Les cases du dernier rendu : `conteneur:index` → { container, index, view } (0.25.2, `refreshPosition`). */
@@ -537,7 +566,10 @@ export class Bar {
     const box = document.createElement("div");
     box.className = "ddu-bar__rows";
     const hidden = this.canEdit ? "" : " hidden";
-    box.innerHTML = `<button type="button" data-action="lock" class="${this.layout.locked ? "ddu-on" : ""}"${hidden}
+    // §51 : replier la Barre — toujours là, même en lecture seule (c'est un réglage de ce client, pas la disposition).
+    box.innerHTML = `<button type="button" data-action="collapse" data-tooltip="${esc(loc("Bar.Collapse"))}">
+        <i class="fa-solid fa-chevron-down"></i></button>
+      <button type="button" data-action="lock" class="${this.layout.locked ? "ddu-on" : ""}"${hidden}
         data-tooltip="${esc(loc(this.layout.locked ? "Bar.Unlock" : "Bar.Lock"))}">
         <i class="fa-solid ${this.layout.locked ? "fa-lock" : "fa-lock-open"}"></i></button>
       <button type="button" data-action="addRow"${hidden} data-tooltip="${esc(loc("Bar.AddRow"))}"><i class="fa-solid fa-plus"></i></button>
@@ -640,6 +672,7 @@ export class Bar {
     switch ( action ) {
       case "d20": return this.d20.toggle(target);
       case "portrait": return this.actor.sheet.render(true);
+      case "collapse": return this.toggleCollapsed();
       case "gmHeal": return this.#setHP(true);
       case "gmKill": return this.#setHP(false);
       case "endConcentration": return this.canEdit && this.actor.endConcentration();

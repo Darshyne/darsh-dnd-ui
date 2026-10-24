@@ -68,6 +68,8 @@
       },
       "AddRow": "Ajouter une rangée",
       "RemoveRow": "Retirer une rangée",
+      "Collapse": "Masquer la barre d'actions",
+      "Expand": "Afficher la barre d'actions",
       "EndTurn": "Fin du tour",
       "TurnOf": "Tour de {name}",
       "Movement": "Déplacement : {left} / {allowed}",
@@ -123,6 +125,8 @@
       "PinTooltipHint": "Épingle l'infobulle détaillée de la case survolée (hors de la Barre, la touche garde son rôle : cibler).",
       "SwapWeapons": "Barre : changer de jeu d'armes",
       "SwapWeaponsHint": "Passe à l'autre jeu d'armes (pendant une mesure, la touche pose un point de passage).",
+      "ToggleBar": "Barre : masquer / afficher",
+      "ToggleBarHint": "Masque la barre d'actions (un petit onglet reste pour la rappeler) ou la réaffiche. Les touches chiffrées utilisent toujours les cases Personnalisé pendant qu'elle est masquée.",
       "BasicHint": "Utilise cette action de base du moteur de combat pour le personnage de la Barre.",
       "Basic": {
         "dash": "Action : Foncer",

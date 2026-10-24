@@ -68,6 +68,8 @@
       },
       "AddRow": "Adicionar linha",
       "RemoveRow": "Remover linha",
+      "Collapse": "Ocultar a barra de ações",
+      "Expand": "Mostrar a barra de ações",
       "EndTurn": "Encerrar turno",
       "TurnOf": "Turno de {name}",
       "Movement": "Deslocamento: {left} / {allowed}",
@@ -121,6 +123,8 @@
       "PinTooltipHint": "Fixa a dica detalhada da célula sob o cursor (fora da barra, a tecla mantém sua função normal de selecionar alvos).",
       "SwapWeapons": "Barra: alternar conjuntos de armas",
       "SwapWeaponsHint": "Alterna para o outro conjunto de armas (durante uma medição, a tecla adiciona um ponto intermediário).",
+      "ToggleBar": "Barra: ocultar / mostrar",
+      "ToggleBarHint": "Oculta a barra de ações (uma pequena aba permanece para trazê-la de volta) ou a mostra novamente. As teclas numéricas continuam usando as células Personalizadas enquanto ela está oculta.",
       "BasicHint": "Executa esta ação básica do mecanismo de combate para o personagem exibido na barra.",
       "Basic": {
         "dash": "Ação: Disparada",

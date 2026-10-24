@@ -177,4 +177,8 @@ export function registerBarSettings(redraw, hotbar) {
   reg("barGMHotbar", "world", false, { onChange: hotbar });
   reg("barFullTooltips", "client", false);
   reg("barLockPlayers", "world", false);
+  // §51 : repliée par sa languette (ou le raccourci) — seul l'onglet reste. Réglage client, comme `partyCollapsed`.
+  game.settings.register(MODULE_ID, "barCollapsed", {
+    scope: "client", config: false, type: Boolean, default: false, onChange: redraw
+  });
 }
