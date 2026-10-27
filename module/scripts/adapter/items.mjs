@@ -83,9 +83,20 @@ function spendsUses(activity) {
   return (activity?.consumption?.targets ?? []).some(t => (t.type === "itemUses") && t.target && (t.target !== own));
 }
 
+/**
+ * Un acteur piège : type de créature personnalisé « Trap » (les pièges du DMG 2024), ou le token d'un objet du moteur. Ses activités
+ * n'ont pas de type d'activation (« Trigger Trap ») mais le MJ les lance à la main : elles vont dans la Barre, pas dans les Passifs.
+ */
+const TRAP_TYPE = /^(traps?|pièges?)$/i;
+function trapActor(actor) {
+  const type = actor?.system?.details?.type;
+  if ( (type?.value === "custom") && TRAP_TYPE.test(String(type.custom ?? "").trim()) ) return true;
+  return !!actor?.token?.getFlag?.("dnd5e-combat", "object");
+}
+
 function isActiveActivity(activity) {
   const type = activity?.activation?.type;
-  if ( !type || (type === "none") ) return spendsUses(activity);
+  if ( !type || (type === "none") ) return spendsUses(activity) || trapActor(activity?.actor);
   if ( type === "special" ) return true;
   return !CONFIG.DND5E.activityActivationTypes[type]?.passive;
 }
