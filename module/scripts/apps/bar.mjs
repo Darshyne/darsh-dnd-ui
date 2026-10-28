@@ -25,7 +25,7 @@ import { layoutHost, readLayout, writeLayout } from "../adapter/forms.mjs";
 import { matcherFor, equipActive } from "../adapter/weapon-return.mjs";
 import { viewedCombat, nameFor } from "../adapter/combat.mjs";
 import { combatantOf, currentActor } from "../adapter/party.mjs";
-import { budgetOf, movementOf, multiattackOf, lightOf, carriedLightOf, toggleLight, sneakingOf, toggleSneak, climbOf, climbEntriesOf, issuesOf, nonLethalOf, setNonLethalOf } from "../adapter/engine.mjs";
+import { budgetOf, movementOf, multiattackOf, lightOf, carriedLightOf, toggleLight, sneakingOf, toggleSneak, climbOf, climbEntriesOf, issuesOf, nonLethalOf, setNonLethalOf, ammoOf, setAmmoOf } from "../adapter/engine.mjs";
 import { climbButtonShown, ringTooltip } from "../core/climb.mjs";
 import { WeaponSetsConfig } from "./weapon-sets.mjs";
 import { MODULE_ID, loc, setting } from "../shared.mjs";
@@ -405,7 +405,7 @@ export class Bar {
       return `<div class="${classes}"
         data-weapon-set="${set}" data-weapon-hand="${hand}" ${big && !blocked ? 'data-action="useWeapon"' : ""}
         ${item && this.canArrange ? 'draggable="true"' : ""} data-tooltip="${esc(tip)}">
-        ${img ? `<img src="${esc(img)}" alt="" draggable="false">` : ""}${enchant.length ? '<span class="ddu-enchant"></span>' : ""}</div>`;
+        ${img ? `<img src="${esc(img)}" alt="" draggable="false">` : ""}${enchant.length ? '<span class="ddu-enchant"></span>' : ""}${big ? this.#ammoBadge(item, hand) : ""}</div>`;
     };
     // 0.25.5 : l'interrupteur des coups non létaux (moteur §210), au coin des armes en main — comme dans Baldur's Gate 3.
     const nonLethal = nonLethalOf(this.actor);
@@ -429,6 +429,42 @@ export class Bar {
       + `<button type="button" class="ddu-weapons__config" data-action="weaponConfig"
           data-tooltip="${esc(loc("Bar.WeaponConfig"))}"><i class="fa-solid fa-gear"></i></button></div>`;
     return box;
+  }
+
+  /**
+   * §56 (issue #7) : la pastille ronde de munition, au coin d'une arme qui en tire (arc, arbalète, fronde) — l'icône et le reste de la
+   * munition que le moteur tirera, grisée à 0 ; un clic choisit parmi celles que la créature porte, une munition glissée de la fiche s'y
+   * dépose. Rien sans moteur qui publie `api.ammo`.
+   */
+  #ammoBadge(item, hand) {
+    const ammo = item ? ammoOf(item) : null;
+    if ( !ammo ) return "";
+    const current = ammo.options.find(o => o.id === ammo.current) ?? null;
+    const quantity = current?.quantity ?? 0;
+    const tip = current ? loc("Bar.Ammo", { name: current.name, quantity }) : loc("Bar.AmmoNone");
+    return `<button type="button" class="ddu-ammo${quantity ? "" : " ddu-ammo--empty"}" data-action="ammo" data-weapon-hand="${hand}"
+      draggable="false" ${this.canEdit ? "" : "disabled"} data-tooltip="${esc(tip)}">
+      ${current?.img ? `<img src="${esc(current.img)}" alt="" draggable="false">` : '<i class="fa-solid fa-bullseye"></i>'}
+      <span class="ddu-ammo__qty">${quantity}</span></button>`;
+  }
+
+  /** L'arme du jeu actif tenue dans cette main. */
+  #weaponInHand(hand) {
+    const { sets, active } = this.layout.weapons;
+    return resolveRef(this.actor, sets[active]?.[Number(hand)])?.item ?? null;
+  }
+
+  /** §56 : le tiroir des munitions de l'arme, au-dessus de sa pastille. */
+  #openAmmoMenu(button) {
+    const item = this.#weaponInHand(button.dataset.weaponHand);
+    const ammo = item ? ammoOf(item) : null;
+    if ( !ammo ) return;
+    if ( !ammo.options.length ) return ui.notifications.warn(loc("Bar.AmmoNone"));
+    this.#openPopup(button, ammo.options.map(o => `<button type="button" data-action="ammoPick" data-ammo-id="${esc(o.id)}"
+        class="${o.id === ammo.current ? "ddu-on" : ""}" ${o.quantity > 0 ? "" : "disabled"}>
+        ${o.img ? `<img src="${esc(o.img)}" alt="" draggable="false">` : ""}<span>${esc(o.name)}</span>
+        <span class="ddu-ammo__count">× ${o.quantity}</span></button>`).join(""), "ddu-bar__ammomenu");
+    this.popupRef = button.dataset.weaponHand;
   }
 
   #center(ctx) {
@@ -732,6 +768,17 @@ export class Bar {
         return this.render({ keepLayout: true });
       }
       case "climb": return this.#openClimbMenu(target);
+      case "ammo": {
+        event.stopPropagation();
+        if ( this.canEdit ) this.#openAmmoMenu(target);
+        return;
+      }
+      case "ammoPick": {
+        const item = this.#weaponInHand(this.popupRef);
+        this.#closePopup();
+        if ( item ) await setAmmoOf(item, target.dataset.ammoId);
+        return;
+      }
       case "climbEntry": {
         const entry = this.climbEntries?.[Number(target.dataset.index)];
         this.#closePopup();
@@ -750,8 +797,10 @@ export class Bar {
         // 0.20.3 : la main secondaire — l'attaque de l'arme Légère tenue dans l'autre main (mode « offhand » de dnd5e : sans le
         // modificateur positif aux dégâts ; le moteur la fait payer de l'action Bonus). Une arme qui n'a pas ce mode part normalement.
         const offhand = (Number(target.dataset.weaponHand) === 1) ? offhandMode(item) : null;
-        if ( offhand ) return item.use({ event, "dnd5e-combat": { attackMode: offhand } });
-        return item?.use({ event });
+        // §56 : la munition de la pastille part avec l'attaque — le moteur ne rouvre pas sa fenêtre de choix.
+        const ammunition = item ? (ammoOf(item)?.current ?? null) : null;
+        const engine = { ...(offhand ? { attackMode: offhand } : {}), ...(ammunition ? { ammunition } : {}) };
+        return item?.use({ event, ...(foundry.utils.isEmpty(engine) ? {} : { "dnd5e-combat": engine }) });
       }
       case "upcast": return this.#useCell(this.popupRef, event, target.dataset.slot);
     }
@@ -1159,6 +1208,8 @@ export class Bar {
   }
 
   #dropTarget(event) {
+    const ammo = event.target.closest?.(".ddu-ammo");
+    if ( ammo ) return { kind: "ammo", el: ammo, hand: Number(ammo.dataset.weaponHand) };
     const cell = event.target.closest?.(".ddu-cell");
     if ( cell ) return { kind: "cell", el: cell, container: cell.dataset.container, index: Number(cell.dataset.index) };
     const weapon = event.target.closest?.(".ddu-weapon");
@@ -1169,9 +1220,8 @@ export class Bar {
   }
 
   #onDragOver(event) {
-    if ( !this.canArrange ) return;
     const target = this.#dropTarget(event);
-    if ( !target ) return;
+    if ( !target || !((target.kind === "ammo") ? this.canEdit : this.canArrange) ) return;
     event.preventDefault();
     this.#clearDrop();
     target.el.classList.add("ddu-drop");
@@ -1184,6 +1234,7 @@ export class Bar {
   async #onDrop(event) {
     const target = this.#dropTarget(event);
     this.#clearDrop();
+    if ( target?.kind === "ammo" ) return this.#dropAmmo(event, target);
     if ( !target || !this.canArrange ) return;
     event.preventDefault();
     event.stopPropagation();
@@ -1193,6 +1244,7 @@ export class Bar {
     const drag = this.drag;
     if ( drag ) {
       this.drag = null;
+      if ( (target.kind === "weapon") && (await this.#ammoOnWeapon(target, resolveRef(this.actor, drag.ref)?.item)) ) return;
       if ( target.kind === "weapon" ) return this.#placeWeapon(target.set, target.hand, drag.ref);
       // Dans la vue par défaut et dans un même conteneur : on déplace (ou on échange) ; d'un onglet vers ailleurs :
       // on copie, l'icône reste dans son onglet (core/layout.mjs#isMove).
@@ -1215,8 +1267,40 @@ export class Bar {
       return ui.notifications.warn(loc("Bar.NotOwnedItem"));
     }
     const ref = refOf(doc);
+    if ( (target.kind === "weapon") && (await this.#ammoOnWeapon(target, item)) ) return;
     if ( target.kind === "weapon" ) return this.#placeWeapon(target.set, target.hand, `Item.${item.id}`);
     this.#update(place(this.layout, target.container, target.index, ref));
+  }
+
+  /**
+   * §56 (retour de l'utilisateur, 2026-10-28) : une munition lâchée sur l'arme elle-même — la pastille est petite, le joueur vise souvent
+   * l'arme. Elle devient la munition de l'arme si celle-ci la tire, sinon elle est refusée ; jamais une munition à la place de l'arme.
+   * true : le dépôt est traité (équipé ou refusé).
+   */
+  async #ammoOnWeapon(target, item) {
+    if ( (item?.type !== "consumable") || (item.system.type?.value !== "ammo") ) return false;
+    const weapon = resolveRef(this.actor, this.layout.weapons.sets[target.set]?.[target.hand])?.item ?? null;
+    if ( !weapon || !ammoOf(weapon) ) {
+      ui.notifications.warn(loc("Bar.AmmoNoWeapon", { ammo: item.name }));
+      return true;
+    }
+    if ( !(await setAmmoOf(weapon, item.id)) ) ui.notifications.warn(loc("Bar.AmmoWrong", { ammo: item.name, weapon: weapon.name }));
+    return true;
+  }
+
+  /** §56 : une munition de la fiche lâchée sur la pastille d'une arme devient celle qu'elle tire. */
+  async #dropAmmo(event, target) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.dropped = true;
+    this.drag = null;
+    if ( !this.canEdit ) return;
+    const data = foundry.applications.ux.TextEditor.implementation.getDragEventData(event);
+    const doc = data?.uuid ? await fromUuid(data.uuid) : null;
+    const weapon = this.#weaponInHand(target.hand);
+    if ( !doc || (doc.documentName !== "Item") || !weapon ) return;
+    if ( doc.parent?.id !== this.actor.id ) return ui.notifications.warn(loc("Bar.NotOwnedItem"));
+    if ( !(await setAmmoOf(weapon, doc.id)) ) ui.notifications.warn(loc("Bar.AmmoWrong", { ammo: doc.name, weapon: weapon.name }));
   }
 
   /** Lâché hors de la Barre : la case est retirée (BG3), sauf si la barre est verrouillée. */

@@ -1391,3 +1391,26 @@ body.ddu-hide-hotbar #hotbar { display: none; }
 .ddu-roll__tile.reserve { opacity: 0.8; border-style: dashed; }
 .ddu-roll__tile.reserve.applied { opacity: 1; border-style: solid; }
 .ddu-roll__reserve { font-size: 10px; opacity: 0.75; font-style: italic; }
+
+/* §56 (issue #7) : pastille ronde de munition, au coin bas-gauche d'une arme qui en tire. */
+.ddu-ammo {
+  position: absolute; bottom: -6px; left: -6px; width: calc(22px * var(--ddu-scale)); height: calc(22px * var(--ddu-scale)); min-height: 0;
+  padding: 0; margin: 0; border-radius: 50%; border: 1px solid var(--ddu-gold); background: var(--ddu-rest-lo); color: var(--ddu-gold);
+  display: flex; align-items: center; justify-content: center; font-size: calc(10px * var(--ddu-scale)); cursor: pointer; z-index: 2;
+  overflow: visible;
+}
+.ddu-ammo img { width: 100%; height: 100%; border: none; border-radius: 50%; object-fit: cover; }
+.ddu-ammo__qty {
+  position: absolute; bottom: -4px; right: -6px; min-width: calc(12px * var(--ddu-scale)); padding: 0 2px; border-radius: 6px;
+  background: var(--ddu-panel); color: var(--ddu-text); font-size: calc(9px * var(--ddu-scale)); line-height: 1.3; text-align: center;
+}
+.ddu-ammo:hover { box-shadow: 0 0 6px var(--ddu-active); }
+.ddu-ammo--empty img, .ddu-ammo--empty i { filter: grayscale(1) brightness(0.6); }
+.ddu-ammo--empty .ddu-ammo__qty { color: var(--ddu-gold-dim); }
+.ddu-ammo[disabled] { cursor: default; }
+.ddu-ammo.ddu-drop { box-shadow: 0 0 8px var(--ddu-gold); }
+.ddu-bar__ammomenu { flex-direction: column; }
+.ddu-bar__ammomenu img { width: calc(22px * var(--ddu-scale)); height: calc(22px * var(--ddu-scale)); border: none; border-radius: 3px; }
+.ddu-bar__ammomenu .ddu-ammo__count { margin-left: auto; padding-left: 8px; opacity: 0.8; }
+.ddu-bar__ammomenu button.ddu-on { border-color: var(--ddu-gold); }
+.ddu-bar__ammomenu button[disabled] { opacity: 0.45; cursor: default; }

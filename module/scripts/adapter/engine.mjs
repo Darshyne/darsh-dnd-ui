@@ -158,6 +158,24 @@ export function setNonLethalOf(actor, on) {
   return typeof api?.set === "function" ? api.set(actor, on) : null;
 }
 
+/**
+ * §56 (issue #7) : les munitions d'une arme selon le moteur (≥ 0.266.0, `api.ammo.options`, son §274) — `{ options: [{ id, name, img,
+ * quantity }], current, ask }`, ou null si l'arme n'en tire pas ou si le moteur ne le publie pas (pastille masquée).
+ */
+export function ammoOf(item) {
+  if ( !engineActive() || !item ) return null;
+  const api = game.modules.get(ENGINE_ID).api.ammo;
+  if ( typeof api?.options !== "function" ) return null;
+  try { return api.options(item) ?? null; } catch ( err ) { log.warn("engine: api.ammo.options failed", err); return null; }
+}
+
+/** Retient la munition que l'arme tirera (`api.ammo.set`) : le moteur n'ouvre plus sa fenêtre de choix pour elle. */
+export async function setAmmoOf(item, ammoId) {
+  if ( !engineActive() || !item ) return false;
+  const api = game.modules.get(ENGINE_ID).api.ammo;
+  return typeof api?.set === "function" ? api.set(item, ammoId) : false;
+}
+
 export function sneakingOf(token) {
   if ( !engineActive() || !token ) return null;
   const api = game.modules.get(ENGINE_ID).api.sneak;
