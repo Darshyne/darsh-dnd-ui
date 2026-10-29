@@ -68,8 +68,6 @@
       },
       "AddRow": "Adicionar linha",
       "RemoveRow": "Remover linha",
-      "Collapse": "Ocultar a barra de ações",
-      "Expand": "Mostrar a barra de ações",
       "EndTurn": "Encerrar turno",
       "TurnOf": "Turno de {name}",
       "Movement": "Deslocamento: {left} / {allowed}",
@@ -109,11 +107,19 @@
       "MovementClimb": "Escalada: {left} / {allowed}; cada quadrado custa {cost}",
       "Climb": "Escalar: a parede ou, se possível, o teto",
       "ClimbMenu": "Escalada: subir, descer, soltar-se",
+      "NonLethalOn": "Ataques não letais: um golpe corpo a corpo que reduziria uma criatura a 0 PV a deixa com 1 PV, Inconsciente (clique para desativar)",
+      "NonLethalOff": "Ataques letais (clique para ativar ataques não letais: nocautear em vez de matar)",
+      "Collapse": "Ocultar a barra de ações",
+      "Expand": "Mostrar a barra de ações",
       "TwoHandedOff": "Mão secundária ocupada por {name} (duas mãos)",
       "OffHandBlocked": "{name} é de duas mãos: a mão secundária fica livre.",
       "PrevWeapons": "Conjunto de armas anterior",
       "NextWeapons": "Próximo conjunto de armas",
-      "WeaponConfig": "Configurar conjuntos de armas"
+      "WeaponConfig": "Configurar conjuntos de armas",
+      "Ammo": "Munição: {name} (restante: {quantity}) — clique para trocar ou solte munição sobre a arma",
+      "AmmoNone": "Nenhuma munição compatível com esta arma",
+      "AmmoWrong": "{weapon} não pode disparar {ammo}.",
+      "AmmoNoWeapon": "Solte {ammo} sobre uma arma que use essa munição (arco, besta, funda…)."
     },
     "Reason": {
       "NoUses": "Sem usos restantes",
@@ -126,10 +132,8 @@
       "CustomSlotHint": "Usa a célula correspondente da aba Personalizado. Se estiver vazia, a tecla continua funcionando na barra de macros.",
       "PinTooltip": "Barra: fixar dica",
       "PinTooltipHint": "Fixa a dica detalhada da célula sob o cursor (fora da barra, a tecla mantém sua função normal de selecionar alvos).",
-      "SwapWeapons": "Barra: alternar conjuntos de armas",
-      "SwapWeaponsHint": "Alterna para o outro conjunto de armas (durante uma medição, a tecla adiciona um ponto intermediário).",
-      "ToggleBar": "Barra: ocultar / mostrar",
-      "ToggleBarHint": "Oculta a barra de ações (uma pequena aba permanece para trazê-la de volta) ou a mostra novamente. As teclas numéricas continuam usando as células Personalizadas enquanto ela está oculta.",
+      "SwapWeapons": "Barra: próximo conjunto de armas",
+      "SwapWeaponsHint": "Alterna para o próximo conjunto de armas (durante uma medição, a tecla adiciona um ponto intermediário).",
       "BasicHint": "Executa esta ação básica do mecanismo de combate para o personagem exibido na barra.",
       "Basic": {
         "dash": "Ação: Disparada",
@@ -141,6 +145,8 @@
         "ready": "Ação: Preparar",
         "escape": "Ação: Escapar"
       },
+      "ToggleBar": "Barra: ocultar / mostrar",
+      "ToggleBarHint": "Oculta a barra de ações, mantendo um pequeno botão para exibi-la novamente. Mesmo com a barra oculta, as teclas numéricas continuam acionando as células da aba Personalizado.",
       "PrevWeapons": "Barra: conjunto de armas anterior",
       "PrevWeaponsHint": "Passa para o conjunto de armas anterior."
     },
@@ -235,7 +241,14 @@
       },
       "friezeAutoSelect": {
         "Name": "Faixa: selecionar o combatente ativo",
-        "Hint": "A cada turno, o token do combatente ativo é selecionado e a câmera é centralizada nele. O mestre pode selecionar qualquer combatente; um jogador, apenas os seus."
+        "Hint": "No turno de cada um dos seus combatentes, seu token é selecionado e a câmera é centralizada nele. Para jogadores: o mestre tem uma configuração própria (pré-seleção do mestre)."
+      },
+      "friezeAutoSelectGM": {
+        "Name": "Faixa: pré-seleção do mestre",
+        "Hint": "Na tela do mestre, a cada turno: seleciona o token do combatente ativo e centraliza a câmera nele — nunca, somente PNJs (combatentes sem jogador como proprietário) ou todos.",
+        "none": "Nenhuma",
+        "npc": "Somente PNJs",
+        "all": "Todos"
       },
       "friezeHideDefeated": {
         "Name": "Faixa: ocultar criaturas derrotadas",
@@ -302,8 +315,11 @@
         "Hint": "Impede que os jogadores movam, adicionem ou removam células da barra."
       },
       "softPath": {
-        "Name": "Tabuleiro: trajeto suave",
-        "Hint": "As casas do trajeto de deslocamento aparecem como marcações com bordas suaves, em vez de preenchimentos sólidos. Mantém as mesmas cores (verde, amarelo e vermelho conforme o deslocamento)."
+        "Name": "Tabuleiro: estilo do trajeto",
+        "Hint": "As casas do trajeto de deslocamento: cor sólida (dnd5e), marcações com bordas suaves ou pequenos pontos com um terço da largura de uma casa. Mantém as mesmas cores (verde, amarelo e vermelho conforme o deslocamento).",
+        "flat": "Preenchimento sólido",
+        "soft": "Marcações suaves",
+        "dots": "Pontos pequenos"
       },
       "rulerOutOfCombat": {
         "Name": "Tabuleiro: mostrar trajeto fora de combate",
@@ -319,7 +335,11 @@
       },
       "weaponSets": {
         "Name": "Conjuntos de armas",
-        "Hint": "Quantos conjuntos de armas este computador percorre (setas ao lado dos conjuntos, teclas próximo / anterior). Cada conjunto tem uma mão principal (à esquerda) e uma mão secundária (à direita)."
+        "Hint": "Define quantos conjuntos de armas podem ser alternados neste dispositivo (pelas setas ao lado dos conjuntos ou pelos atalhos para o próximo e o anterior). Cada conjunto tem um espaço para a mão principal (à esquerda) e outro para a mão secundária (à direita)."
+      },
+      "rollWindow": {
+        "Name": "Janela de rolagem no estilo BG3",
+        "Hint": "Quando o mestre solicita uma rolagem, ela é aberta em uma janela no estilo de Baldur's Gate 3 (CD, d20 clicável, bônus em blocos e auxílios). Desmarcado: usa a janela de rolagem do dnd5e."
       }
     },
     "Theme": {
@@ -417,7 +437,18 @@
         "light-dark": "Escuridão",
         "gm-heal": "Mestre: curar",
         "gm-kill": "Mestre: matar",
-        "text-on-image": "Texto sobre retratos"
+        "text-on-image": "Texto sobre retratos",
+        "roll-veil": "Véu de fundo",
+        "roll-panel-hi": "Medalhão (centro)",
+        "roll-panel-lo": "Medalhão (borda)",
+        "roll-die": "d20 (faces)",
+        "roll-die-face": "d20 (face frontal)",
+        "roll-die-edge": "d20 (arestas)",
+        "roll-die-text": "d20 (número)",
+        "roll-tile-hi": "Bloco (superior)",
+        "roll-tile-lo": "Bloco (inferior)",
+        "roll-success": "Sucesso, Vantagem",
+        "roll-failure": "Falha, Desvantagem"
       },
       "Group": {
         "frames": "Molduras e fundos",
@@ -426,7 +457,8 @@
         "health": "Pontos de Vida",
         "sides": "Lados e turnos",
         "buttons": "Botões, abas e separadores",
-        "states": "Condições e efeitos"
+        "states": "Condições e efeitos",
+        "roll": "Janela de rolagem"
       },
       "Preset": {
         "bg3": "BG3",
@@ -474,6 +506,57 @@
       "Locked": "A Barra está travada: os espaços não podem ser alterados.",
       "Pool": "Arraste uma arma para um espaço; solte um espaço aqui para esvaziá-lo.",
       "None": "Nenhuma arma, escudo ou fonte de luz."
+    },
+    "Roll": {
+      "DC": "Classe de Dificuldade",
+      "Click": "Clique nos dados para rolar",
+      "Waiting": "Aguardando o auxílio…",
+      "Rolling": "Rolando…",
+      "Advantage": "Vantagem",
+      "Disadvantage": "Desvantagem",
+      "Total": "Bônus total",
+      "Cancel": "Cancelar",
+      "Success": "Sucesso",
+      "Failure": "Falha",
+      "CheckOf": "Teste de {ability}",
+      "Check": "Teste de Atributo",
+      "Save": "Salvaguarda",
+      "Proficiency": "Proficiência: {name}",
+      "GMModifier": "Modificador do mestre",
+      "Aid": {
+        "Guidance": "Orientação de {name}",
+        "Inspiration": "Inspiração de {name}",
+        "Help": "Ajuda de {name}"
+      },
+      "AidHint": {
+        "guidance": "Peça a este personagem para conjurar Orientação em você: +1d4 neste teste.",
+        "inspiration": "Peça Inspiração de Bardo: o dado será adicionado se o teste falhar.",
+        "help": "Peça Ajuda: o teste terá Vantagem."
+      },
+      "AidState": {
+        "pending": "Solicitação enviada…",
+        "granted": "Concedido",
+        "refused": "Recusado",
+        "taken": "Um auxílio desse tipo já foi solicitado para esta rolagem"
+      },
+      "Source": {
+        "gm": "solicitado pelo mestre",
+        "help": "Ajudar",
+        "system": "condição, talento ou magia",
+        "forced": "forçado"
+      },
+      "Force": {
+        "advantage": "Forçar Vantagem",
+        "disadvantage": "Forçar Desvantagem"
+      },
+      "ForceHint": {
+        "advantage": "Role com Vantagem, independentemente do que o mestre e a ficha indicarem. Clique novamente para cancelar.",
+        "disadvantage": "Role com Desvantagem, independentemente do que o mestre e a ficha indicarem. Clique novamente para cancelar."
+      },
+      "Inspired": "Inspiração de {name}",
+      "Reserve": "em caso de falha",
+      "ReserveHint": "Já recebido: após uma falha, você poderá optar por adicionar este dado.",
+      "Close": "Fechar"
     }
   }
 }
