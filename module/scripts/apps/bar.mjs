@@ -20,7 +20,8 @@ import {
   refOf, resolveRef, validRefs, inactiveRefs, autoEntries, tabRefs, classLabel, slotsOf, hasCantrips, classResources,
   cellView, weaponsOf, equipWeaponSet, enchantmentsOf, tabOf, offhandMode, isTwoHanded
 } from "../adapter/items.mjs";
-import { iconEffectsOf } from "../adapter/actor.mjs";
+import { iconEffectsOf, adjustHP } from "../adapter/actor.mjs";
+import { planOf } from "../core/hp-adjust.mjs";
 import { layoutHost, readLayout, writeLayout } from "../adapter/forms.mjs";
 import { matcherFor, equipActive } from "../adapter/weapon-return.mjs";
 import { viewedCombat, nameFor } from "../adapter/combat.mjs";
@@ -183,9 +184,13 @@ export class Bar {
       // Calculé une fois par acteur montré : un objet ramassé en forme animale ne doit pas changer de clé.
       this.host = actor ? layoutHost(actor) : null;
     } else if ( this.pending ) keepLayout = true;   // une écriture est en route : garder le dernier geste
+    // §58 : le tiroir des PV survit à un rendu du même acteur (ses PV changent pendant la saisie) : rouvert ensuite, saisie gardée.
+    const hpDraft = (actor && (actor === this.actor) && (this.popupRef === "hp"))
+      ? (this.popup?.querySelector(".ddu-bar__hpinput")?.value ?? "") : null;
     this.actor = actor;
     this.element.hidden = !actor;
     this.#closePopup();
+    if ( hpDraft !== null ) queueMicrotask(() => this.#reopenHPPopup(hpDraft));
     if ( !actor ) {
       this.element.replaceChildren();
       return;
@@ -290,7 +295,8 @@ export class Bar {
     const speed = this.actor.system.attributes?.movement?.walk;
     portraitBox.dataset.tooltip = [this.actor.name, this.host?.key ? loc("Bar.Form", { name: this.host.form }) : null,
       ac ? `${loc("Bar.AC")} ${ac}` : null,
-      speed ? `${loc("Bar.Speed")} ${speed}` : null].filter(Boolean).join(" · ");
+      speed ? `${loc("Bar.Speed")} ${speed}` : null].filter(Boolean).join(" · ")
+      + (this.actor.isOwner && this.actor.system.attributes?.hp ? `<br>${loc("Bar.HP.Hint")}` : "");
 
     const conc = this.#concentration();
     if ( conc ) portraitBox.append(conc);
@@ -330,6 +336,61 @@ export class Bar {
     const value = full ? Math.max(0, hp.effectiveMax ?? hp.max ?? 0) : 0;
     if ( hp.value === value ) return;
     return this.actor.update({ "system.attributes.hp.value": value });
+  }
+
+  /**
+   * §58 (issue #8) : tiroir des PV, ouvert par un clic droit sur les PV du portrait. Champ (« 7 », « -7 », « +5 ») et trois
+   * boutons : Dégâts, Soin, PV temporaires. Entrée applique (le signe décide, dégâts sans signe), Échap ferme. Le propriétaire de
+   * l'acteur seulement (le MJ pour tous, le joueur pour son personnage) ; la règle passe par dnd5e (adapter/actor `adjustHP`).
+   */
+  #openHPPopup(anchor) {
+    if ( !this.actor?.isOwner || !this.actor.system.attributes?.hp ) return;
+    if ( this.popup && (this.popupRef === "hp") ) return this.#closePopup();
+    const button = (kind, icon) => `<button type="button" data-action="hpApply" data-kind="${kind}"
+      data-tooltip="${esc(loc(`Bar.HP.${kind}Tip`))}"><i class="fa-solid ${icon}"></i> ${esc(loc(`Bar.HP.${kind}`))}</button>`;
+    this.#openPopup(anchor, `<input type="text" class="ddu-bar__hpinput" inputmode="numeric" autocomplete="off"
+      placeholder="${esc(loc("Bar.HP.Placeholder"))}" aria-label="${esc(loc("Bar.HP.Amount"))}">`
+      + button("damage", "fa-burst") + button("heal", "fa-heart") + button("temp", "fa-shield-heart"), "ddu-bar__hppop");
+    this.popupRef = "hp";
+    const input = this.popup.querySelector("input");
+    // Entrée et Échap écoutés sur le champ seulement (la Barre n'écoute jamais ces touches ailleurs, SPEC §8.4).
+    input.addEventListener("keydown", event => {
+      if ( event.key === "Enter" ) {
+        event.preventDefault();
+        this.#applyHP(null);
+      }
+      else if ( event.key === "Escape" ) {
+        event.preventDefault();
+        event.stopPropagation();
+        this.#closePopup();
+      }
+    });
+    input.focus();
+  }
+
+  /** §58 : rouvre le tiroir des PV après un rendu, avec la saisie en cours (rien si un autre tiroir s'est ouvert entre-temps). */
+  #reopenHPPopup(draft) {
+    const anchor = this.element.querySelector(".ddu-bar__portrait .ddu-portrait__hp");
+    if ( this.popup || !anchor || anchor.hidden ) return;
+    this.#openHPPopup(anchor);
+    const input = this.popup?.querySelector(".ddu-bar__hpinput");
+    if ( input ) input.value = draft;
+  }
+
+  /** §58 : applique la saisie du tiroir des PV (`kind` : le bouton cliqué, null pour Entrée). Saisie invalide : le champ tremble. */
+  async #applyHP(kind) {
+    const input = this.popup?.querySelector(".ddu-bar__hpinput");
+    if ( !input ) return;
+    const plan = planOf(input.value, kind);
+    if ( !plan ) {
+      input.classList.remove("ddu-bar__hpinput--bad");
+      void input.offsetWidth;
+      input.classList.add("ddu-bar__hpinput--bad");
+      return input.focus();
+    }
+    const actor = this.actor;
+    this.#closePopup();
+    return adjustHP(actor, plan);
   }
 
   /** Token du personnage de la Barre sur la scène : le contrôlé s'il le porte, sinon le premier. */
@@ -746,6 +807,7 @@ export class Bar {
       case "collapse": return this.toggleCollapsed();
       case "gmHeal": return this.#setHP(true);
       case "gmKill": return this.#setHP(false);
+      case "hpApply": return this.#applyHP(target.dataset.kind);
       case "endConcentration": return this.canEdit && this.actor.endConcentration();
       case "filter": return this.#toggleFilter(target);
       case "tab":
@@ -854,8 +916,17 @@ export class Bar {
     return r.item.use({ event });
   }
 
-  /** Clic droit sur un effet actif : le retirer. Cases et armes ont leur menu (#contextMenu). */
+  /**
+   * Clic droit sur un effet actif : le retirer. Sur les PV du portrait : le tiroir des PV (§58). Cases et armes ont leur
+   * menu (#contextMenu).
+   */
   #onRightClick(event) {
+    const hp = event.target.closest(".ddu-bar__portrait .ddu-portrait__hp");
+    if ( hp ) {
+      event.preventDefault();
+      event.stopPropagation();
+      return this.#openHPPopup(hp);
+    }
     const effect = event.target.closest(".ddu-bar__effect");
     if ( !effect ) return;
     event.preventDefault();

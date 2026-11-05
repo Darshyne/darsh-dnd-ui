@@ -46,6 +46,17 @@
       "EndConcentration": "End Concentration",
       "GMHeal": "GM: restore all Hit Points",
       "GMKill": "GM: reduce to 0 Hit Points",
+      "HP": {
+        "Hint": "Right-click the Hit Points: damage or heal",
+        "Amount": "Amount",
+        "Placeholder": "-7 / +5",
+        "damage": "Damage",
+        "damageTip": "Subtract this many Hit Points (Temporary Hit Points go first; no resistance applied)",
+        "heal": "Heal",
+        "healTip": "Restore this many Hit Points, up to the maximum",
+        "temp": "Temp. HP",
+        "tempTip": "Gain this many Temporary Hit Points (kept only if higher than the current ones)"
+      },
       "ConcentrationTag": "Concentration",
       "Ritual": "Ritual",
       "RitualCast": "As a Ritual: no spell slot, 10 more minutes",

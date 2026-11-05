@@ -1137,6 +1137,23 @@ body.ddu-hide-hotbar #hotbar { display: none; }
 }
 .ddu-bar__popup button:hover { border-color: var(--ddu-gold); }
 .ddu-bar__restmenu { flex-direction: column; }
+/* §58 (issue #8) : tiroir des PV, ouvert par un clic droit sur les PV du portrait de la Barre (seul endroit où le chiffre prend la souris). */
+.ddu-bar__portrait .ddu-portrait__hp { pointer-events: auto; cursor: context-menu; }
+.ddu-bar__hppop { align-items: center; }
+.ddu-bar__hpinput {
+  width: calc(64px * var(--ddu-scale));
+  height: auto;
+  padding: 5px 6px;
+  border: 1px solid var(--ddu-gold-dim);
+  border-radius: 5px;
+  background: color-mix(in srgb, var(--ddu-well) 70%, transparent);
+  color: var(--ddu-text);
+  font-size: calc(15px * var(--ddu-scale));
+  text-align: center;
+}
+.ddu-bar__hpinput:focus { border-color: var(--ddu-gold); outline: none; box-shadow: none; }
+.ddu-bar__hpinput--bad { animation: ddu-hp-shake 0.3s; border-color: var(--ddu-flash-damage); }
+@keyframes ddu-hp-shake { 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
 /* Tiroir des niveaux, plus grand que les filtres : c'est un choix à faire vite (demande du 2026-10-03). */
 .ddu-bar__upcast { gap: calc(6px * var(--ddu-scale)); padding: calc(7px * var(--ddu-scale)); }
 .ddu-bar__upcast button { gap: calc(8px * var(--ddu-scale)); padding: calc(8px * var(--ddu-scale)) calc(12px * var(--ddu-scale)); }

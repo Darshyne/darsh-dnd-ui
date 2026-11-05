@@ -46,6 +46,17 @@
       "EndConcentration": "Mettre fin à la concentration",
       "GMHeal": "MJ : soigner complètement (PV au maximum)",
       "GMKill": "MJ : tuer (0 PV)",
+      "HP": {
+        "Hint": "Clic droit sur les PV : dégâts ou soin",
+        "Amount": "Montant",
+        "Placeholder": "-7 / +5",
+        "damage": "Dégâts",
+        "damageTip": "Retirer ce nombre de PV (les PV temporaires partent en premier ; aucune résistance appliquée)",
+        "heal": "Soin",
+        "healTip": "Rendre ce nombre de PV, sans dépasser le maximum",
+        "temp": "PV temp.",
+        "tempTip": "Gagner ce nombre de PV temporaires (gardés seulement s'ils dépassent les actuels)"
+      },
       "ConcentrationTag": "Concentration",
       "Ritual": "Rituel",
       "RitualCast": "En rituel : sans emplacement, 10 minutes de plus",
