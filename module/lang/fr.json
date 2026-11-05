@@ -181,8 +181,12 @@
         "Target": "Cibler",
         "RaiseHand": "Lever la main",
         "LowerHand": "Baisser la main",
-        "Ping": "Signaler"
-      }
+        "Ping": "Signaler",
+        "GiveHeroic": "Donner l'Inspiration héroïque",
+        "RemoveHeroic": "Retirer l'Inspiration héroïque"
+      },
+      "InspirationGive": "Inspiration héroïque : clic pour la donner",
+      "InspirationRemove": "Inspiration héroïque : clic pour la retirer"
     },
     "Portrait": {
       "Ward": "{name} : {value}/{max}",

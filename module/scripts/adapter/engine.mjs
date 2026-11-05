@@ -113,6 +113,17 @@ export function tokenMenuOf(token) {
 }
 
 /**
+ * MJ : donne ou retire l'Inspiration héroïque d'un personnage joueur — par le moteur ≥ 0.267.0 (`api.heroic.set`, son SPEC §282 : carte
+ * et retour à toute la table), sinon par la case de la fiche (dnd5e `system.attributes.inspiration`).
+ */
+export async function setHeroicOf(actor, on) {
+  if ( !game.user.isGM || (actor?.type !== "character") ) return;
+  const set = engineActive() ? game.modules.get(ENGINE_ID).api.heroic?.set : null;
+  if ( typeof set === "function" ) return set(actor, on);
+  return actor.update({ "system.attributes.inspiration": !!on });
+}
+
+/**
  * Une zone déplaçable déjà posée par cette activité (Rayon de lune) : l'utiliser la déplace, sans emplacement. Moteur ≥ 0.198.4
  * (`api.ui.movableZone`, son SPEC §111) ; faux sinon.
  */

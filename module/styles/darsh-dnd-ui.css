@@ -568,6 +568,10 @@
 .ddu-party__member--combat .ddu-party__swords { display: block; }
 .ddu-party__hand { display: block; top: -8px; left: -6px; font-size: calc(15px * var(--ddu-scale)); color: var(--ddu-hand); pointer-events: auto; }
 .ddu-party__inspiration { display: block; bottom: 22%; right: -6px; font-size: calc(12px * var(--ddu-scale)); pointer-events: auto; }
+/* Moteur §282 : l'étoile du MJ — éteinte sans Inspiration, cliquable pour la donner ou la retirer. */
+.ddu-party__inspiration--off { opacity: 0.35; filter: grayscale(1); }
+.ddu-party__inspiration--gm { cursor: pointer; }
+.ddu-party__inspiration--gm:hover { opacity: 1; filter: drop-shadow(0 0 3px var(--ddu-gold)); }
 .ddu-party--right .ddu-party__swords { left: auto; right: -16px; }
 
 /* Pastilles A/B/R du moteur, en haut du portrait */

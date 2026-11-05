@@ -181,8 +181,12 @@
         "Target": "Target",
         "RaiseHand": "Raise hand",
         "LowerHand": "Lower hand",
-        "Ping": "Ping"
-      }
+        "Ping": "Ping",
+        "GiveHeroic": "Give Heroic Inspiration",
+        "RemoveHeroic": "Remove Heroic Inspiration"
+      },
+      "InspirationGive": "Heroic Inspiration: click to give it",
+      "InspirationRemove": "Heroic Inspiration: click to remove it"
     },
     "Portrait": {
       "Ward": "{name}: {value}/{max}",

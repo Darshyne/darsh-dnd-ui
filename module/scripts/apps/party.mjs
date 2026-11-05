@@ -12,7 +12,7 @@ import {
   partyActors, companionsOf, ownerColor, currentActor, tokenOnScene, combatantOf, effectsOf, hasInspiration
 } from "../adapter/party.mjs";
 import { viewedCombat } from "../adapter/combat.mjs";
-import { budgetOf, tokenMenuOf } from "../adapter/engine.mjs";
+import { budgetOf, setHeroicOf, tokenMenuOf } from "../adapter/engine.mjs";
 import { MODULE_ID, loc, setting } from "../shared.mjs";
 
 const esc = s => foundry.utils.escapeHTML(String(s ?? ""));
@@ -181,9 +181,13 @@ export class Party {
         frame.insertAdjacentHTML("beforeend",
           `<i class="ddu-party__hand fa-solid fa-hand" data-tooltip="${esc(loc("Party.HandRaised"))}"></i>`);
       }
-      if ( hasInspiration(actor) ) {
-        frame.insertAdjacentHTML("beforeend",
-          `<i class="ddu-party__inspiration fa-solid fa-star" data-tooltip="${esc(loc("Party.Inspiration"))}"></i>`);
+      // Moteur §282 : le MJ voit l'étoile de chaque personnage joueur, éteinte quand il n'a pas l'Inspiration ; un clic la donne ou la retire.
+      const inspired = hasInspiration(actor);
+      const gm = game.user.isGM && (actor.type === "character");
+      if ( inspired || gm ) {
+        const tip = gm ? loc(inspired ? "Party.InspirationRemove" : "Party.InspirationGive") : loc("Party.Inspiration");
+        frame.insertAdjacentHTML("beforeend", `<i class="ddu-party__inspiration ${inspired ? "fa-solid" : "fa-regular ddu-party__inspiration--off"}`
+          + `${gm ? " ddu-party__inspiration--gm" : ""} fa-star" data-tooltip="${esc(tip)}"></i>`);
       }
       const budget = combatant && combat.started ? budgetOf(combatant) : null;
       if ( budget ) {
@@ -236,6 +240,7 @@ export class Party {
       }
       const r = this.#resolve(event.target);
       if ( !r ) return;
+      if ( event.target.closest?.(".ddu-party__inspiration--gm") ) return setHeroicOf(r.actor, !hasInspiration(r.actor));
       const placeable = r.token?.object;
       if ( !placeable || !placeable.visible ) return;
       if ( r.actor.isOwner ) placeable.control({ releaseOthers: !(event.ctrlKey || event.metaKey || event.shiftKey) });
@@ -358,6 +363,16 @@ export class Party {
         onClick: (_e, t) => resolve(t)?.actor.unsetFlag(MODULE_ID, "handRaised")
       },
       {
+        label: "DDU.Party.Menu.GiveHeroic", icon: '<i class="fa-solid fa-star"></i>',
+        visible: t => { const a = resolve(t)?.actor; return game.user.isGM && (a?.type === "character") && !hasInspiration(a); },
+        onClick: (_e, t) => setHeroicOf(resolve(t)?.actor, true)
+      },
+      {
+        label: "DDU.Party.Menu.RemoveHeroic", icon: '<i class="fa-regular fa-star"></i>',
+        visible: t => { const a = resolve(t)?.actor; return game.user.isGM && (a?.type === "character") && hasInspiration(a); },
+        onClick: (_e, t) => setHeroicOf(resolve(t)?.actor, false)
+      },
+      {
         label: "DDU.Party.Menu.Ping", icon: '<i class="fa-solid fa-location-crosshairs"></i>',
         visible: t => !!resolve(t)?.token?.object?.visible,
         onClick: (_e, t) => {
@@ -371,7 +386,9 @@ export class Party {
     // token en main peut en faire (suivre, échanger, observer…), sans avoir à le chercher sur la carte. Relues à
     // chaque ouverture : `onOpen` passe avant le rendu du menu (applications/ux/context-menu.mjs:599).
     menu.onOpen = target => {
-      const extra = tokenMenuOf(resolve(target)?.token).map(entry => ({
+      // Le moteur propose aussi « Donner / Retirer l'Inspiration héroïque » au MJ : celles du portrait suffisent.
+      const own = new Set(["DND5ECOMBAT.Heroique.MenuDonner", "DND5ECOMBAT.Heroique.MenuRetirer"].map(k => game.i18n.localize(k)));
+      const extra = tokenMenuOf(resolve(target)?.token).filter(entry => !own.has(entry.label)).map(entry => ({
         label: entry.label, icon: `<i class="${foundry.utils.escapeHTML(entry.icon ?? "")}"></i>`, group: "engine",
         onClick: event => entry.run(event)
       }));
