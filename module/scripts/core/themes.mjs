@@ -60,8 +60,8 @@ export const TOKENS = Object.freeze([
   { key: "side-secret", group: "sides", default: "#8a5bbd", main: true },
   { key: "active", group: "sides", default: "#36c9d6", main: true },
   { key: "hand", group: "sides", default: "#f0d060" },
-  // Issue #35 : le sablier de qui la table attend (le rose du sablier du moteur).
-  { key: "awaiting", group: "sides", default: "#ee0388" },
+  // Issue #35 : le filet du sablier de qui la table attend (blanc, comme le sablier du moteur ; pas de rose : demande de l'utilisateur).
+  { key: "awaiting", group: "sides", default: "#ffffff" },
   // Boutons, onglets, séparateurs
   { key: "button", group: "buttons", default: "#1a120c", main: true },
   { key: "button-hover", group: "buttons", default: "#2b1d12" },

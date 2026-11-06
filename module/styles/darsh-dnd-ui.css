@@ -42,7 +42,7 @@
   --ddu-toggle: rgba(10, 8, 6, 0.75);
   --ddu-icon: #e8e2d6;
   --ddu-hand: #f0d060;
-  --ddu-awaiting: #ee0388;
+  --ddu-awaiting: #ffffff;
   --ddu-grid: rgba(12, 6, 5, 0.82);
   --ddu-d20-hi: #2a3a52;
   --ddu-d20-lo: #101820;
@@ -1443,10 +1443,9 @@ body.ddu-hide-hotbar #hotbar { display: none; }
   display: grid; place-items: center; width: calc(18px * var(--ddu-scale)); height: calc(18px * var(--ddu-scale));
   border-radius: 50%; font-size: calc(10px * var(--ddu-scale)); pointer-events: auto;
   color: var(--ddu-text-strong); background: color-mix(in srgb, var(--ddu-shade) 70%, transparent);
-  box-shadow: 0 0 0 2px var(--ddu-awaiting), 0 0 6px var(--ddu-awaiting);
+  box-shadow: 0 0 0 1.5px var(--ddu-awaiting);
 }
 .ddu-awaiting::before { display: inline-block; animation: ddu-awaiting-flip 2.4s ease-in-out infinite; }
 .ddu-frieze__slot .ddu-awaiting { top: 2px; }   /* la piste de la Frise coupe ce qui dépasse en haut */
-.ddu-awaiting--on .ddu-portrait { box-shadow: 0 0 6px var(--ddu-awaiting); }
 @keyframes ddu-awaiting-flip { 0% { transform: rotate(0deg); } 19% { transform: rotate(180deg); } 100% { transform: rotate(180deg); } }
 @media (prefers-reduced-motion: reduce) { .ddu-awaiting::before { animation: none; } }
