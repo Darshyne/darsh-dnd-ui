@@ -1446,7 +1446,7 @@ body.ddu-hide-hotbar #hotbar { display: none; }
   box-shadow: 0 0 0 2px var(--ddu-awaiting), 0 0 6px var(--ddu-awaiting);
 }
 .ddu-awaiting::before { display: inline-block; animation: ddu-awaiting-flip 2.4s ease-in-out infinite; }
-.ddu-frieze__slot .ddu-awaiting { top: -4px; }
+.ddu-frieze__slot .ddu-awaiting { top: 2px; }   /* la piste de la Frise coupe ce qui dépasse en haut */
 .ddu-awaiting--on .ddu-portrait { box-shadow: 0 0 6px var(--ddu-awaiting); }
 @keyframes ddu-awaiting-flip { 0% { transform: rotate(0deg); } 19% { transform: rotate(180deg); } 100% { transform: rotate(180deg); } }
 @media (prefers-reduced-motion: reduce) { .ddu-awaiting::before { animation: none; } }
