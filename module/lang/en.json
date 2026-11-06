@@ -427,6 +427,7 @@
         "side-secret": "Secret",
         "active": "Current turn",
         "hand": "Player's hand",
+        "awaiting": "Awaited answer (hourglass)",
         "button": "Buttons",
         "button-hover": "Buttons (hover)",
         "button-danger": "Buttons (danger)",
@@ -572,6 +573,9 @@
       "Reserve": "if failed",
       "ReserveHint": "Already received: after a failure, you are offered to add this die.",
       "Close": "Close"
+    },
+    "Awaiting": {
+      "Someone": "Waiting for an answer"
     }
   }
 }

@@ -3,6 +3,7 @@
  */
 import { Frieze } from "../apps/frieze.mjs";
 import { route } from "./router.mjs";
+import { AWAITING_HOOK } from "../adapter/engine.mjs";
 import { setting } from "../shared.mjs";
 import { autoSelectsTurn } from "../core/select.mjs";
 
@@ -57,4 +58,6 @@ export function registerFrieze() {
   route("combatStart", "frieze-initiative", combat => frieze?.announceInitiative(combat));
   route("combatTurnChange", "frieze-select", selectCurrent);
   route("hoverToken", "frieze", (token, hovered) => frieze?.onTokenHover(token, hovered));
+  // Issue #35 : qui la table attend (moteur §381) — le sablier seul, sans redessin.
+  route(AWAITING_HOOK, "frieze: awaiting", () => frieze?.markAwaited());
 }

@@ -7,6 +7,7 @@
  * donc le tracker natif et la Frise restent synchronisés dans les deux sens.
  */
 import { Portrait } from "./portrait.mjs";
+import { markAwaited } from "./awaiting.mjs";
 import { reorder } from "../core/initiative.mjs";
 import {
   viewedCombat, friezeWanted, entriesOf, nameFor, subtitleFor, initiativeVisible, tokenVisible,
@@ -98,9 +99,15 @@ export class Frieze {
     caption.className = "ddu-frieze__caption";
     this.element.append(bar, caption);
     this.#updateCaption();
+    this.markAwaited();
 
     // Garder le combattant actif visible quand la frise déborde.
     track.querySelector(".ddu-frieze__slot--active")?.scrollIntoView({ block: "nearest", inline: "center" });
+  }
+
+  /** Issue #35 : le sablier sur la case de qui la table attend (moteur §381), sans redessiner la Frise. */
+  markAwaited() {
+    markAwaited(this.element, ".ddu-frieze__slot");
   }
 
   /* -------------------------------------------- */
@@ -111,6 +118,9 @@ export class Frieze {
     const li = document.createElement("li");
     li.className = "ddu-frieze__slot";
     li.dataset.combatantId = combatant.id;
+    // Issue #35 : le sablier se pose par le token (ou l'acteur) du combattant.
+    if ( combatant.tokenId ) li.dataset.tokenId = combatant.tokenId;
+    if ( combatant.actorId ) li.dataset.actorId = combatant.actorId;
     li.classList.toggle("ddu-frieze__slot--active", active);
     li.classList.toggle("ddu-frieze__slot--played", played);
     li.classList.toggle("ddu-frieze__slot--hidden", combatant.hidden);

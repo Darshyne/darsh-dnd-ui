@@ -255,3 +255,16 @@ export function rollBreakdown(actor, request) {
     return null;
   }
 }
+
+/** Issue #35 (moteur §381, `api.ui.awaiting`) : le hook que le moteur appelle sur chaque client quand la liste des attentes change. */
+export const AWAITING_HOOK = `${ENGINE_ID}.awaiting`;
+
+/**
+ * Qui la table attend (moteur §381) : la liste publique du moteur, avec ce que ce client en montre (`shown`). Vide avec un moteur plus
+ * ancien ou en veille.
+ * @returns {Array<{id: string, token: string|null, actor: string|null, userName: string, kind: string, shown: string}>}
+ */
+export function awaitingOf() {
+  const list = read("awaiting");
+  return Array.isArray(list) ? list : [];
+}

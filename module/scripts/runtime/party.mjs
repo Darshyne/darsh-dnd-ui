@@ -3,6 +3,7 @@
  */
 import { Party } from "../apps/party.mjs";
 import { route } from "./router.mjs";
+import { AWAITING_HOOK } from "../adapter/engine.mjs";
 import { MODULE_ID } from "../shared.mjs";
 
 /** @type {Party|null} */
@@ -47,6 +48,8 @@ export function registerParty() {
     if ( ["name", "texture", "actorLink", "flags", "actorId"].some(k => k in changes) ) redraw();
   });
   route("hoverToken", "party", (token, hovered) => party?.onTokenHover(token, hovered));
+  // Issue #35 : qui la table attend (moteur §381) — le sablier seul, sans redessin.
+  route(AWAITING_HOOK, "party: awaiting", () => party?.markAwaited());
   // Les outils de scène changent de hauteur avec la couche active : la colonne peut passer du bord à côté d'eux.
   route("renderSceneControls", "party", () => requestAnimationFrame(() => party?.place()));
 }
