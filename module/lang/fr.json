@@ -427,6 +427,7 @@
         "side-secret": "Secret",
         "active": "Tour en cours",
         "hand": "Main du joueur",
+        "awaiting": "Réponse attendue (sablier)",
         "button": "Boutons",
         "button-hover": "Boutons (survol)",
         "button-danger": "Boutons (danger)",
@@ -572,6 +573,10 @@
       "Reserve": "si échec",
       "ReserveHint": "Déjà reçue : après un échec, le jeu propose d'ajouter ce dé.",
       "Close": "Fermer"
+    },
+    "Awaiting": {
+      "Who": "En attente de la réponse de {name}",
+      "Someone": "En attente d'une réponse"
     }
   }
 }

@@ -42,6 +42,7 @@
   --ddu-toggle: rgba(10, 8, 6, 0.75);
   --ddu-icon: #e8e2d6;
   --ddu-hand: #f0d060;
+  --ddu-awaiting: #ee0388;
   --ddu-grid: rgba(12, 6, 5, 0.82);
   --ddu-d20-hi: #2a3a52;
   --ddu-d20-lo: #101820;
@@ -1435,3 +1436,17 @@ body.ddu-hide-hotbar #hotbar { display: none; }
 .ddu-bar__ammomenu .ddu-ammo__count { margin-left: auto; padding-left: 8px; opacity: 0.8; }
 .ddu-bar__ammomenu button.ddu-on { border-color: var(--ddu-gold); }
 .ddu-bar__ammomenu button[disabled] { opacity: 0.45; cursor: default; }
+
+/* Issue #35 (moteur §381) : le sablier de qui la table attend — portrait du Groupe, case de la Frise. */
+.ddu-awaiting {
+  position: absolute; top: -7px; left: 50%; transform: translateX(-50%); z-index: 3;
+  display: grid; place-items: center; width: calc(18px * var(--ddu-scale)); height: calc(18px * var(--ddu-scale));
+  border-radius: 50%; font-size: calc(10px * var(--ddu-scale)); pointer-events: auto;
+  color: var(--ddu-text-strong); background: color-mix(in srgb, var(--ddu-shade) 70%, transparent);
+  box-shadow: 0 0 0 2px var(--ddu-awaiting), 0 0 6px var(--ddu-awaiting);
+}
+.ddu-awaiting::before { display: inline-block; animation: ddu-awaiting-flip 2.4s ease-in-out infinite; }
+.ddu-frieze__slot .ddu-awaiting { top: -4px; }
+.ddu-awaiting--on .ddu-portrait { box-shadow: 0 0 6px var(--ddu-awaiting); }
+@keyframes ddu-awaiting-flip { 0% { transform: rotate(0deg); } 19% { transform: rotate(180deg); } 100% { transform: rotate(180deg); } }
+@media (prefers-reduced-motion: reduce) { .ddu-awaiting::before { animation: none; } }

@@ -7,6 +7,7 @@
  * Ses compagnons et invocations suivent, en petit. Les portraits sont gardés d'un rendu à l'autre.
  */
 import { Portrait } from "./portrait.mjs";
+import { markAwaited } from "./awaiting.mjs";
 import { orderMembers, moveMember, effectColumn } from "../core/party.mjs";
 import {
   partyActors, companionsOf, ownerColor, currentActor, tokenOnScene, combatantOf, effectsOf, hasInspiration
@@ -128,7 +129,13 @@ export class Party {
     list.className = "ddu-party__list";
     for ( const entry of entries ) list.append(this.#member(entry, combat, current));
     this.element.append(list);
+    this.markAwaited();
     this.#place();    // après le dessin : la place dépend de la hauteur de la colonne
+  }
+
+  /** Issue #35 : le sablier sur le portrait de qui la table attend (moteur §381), sans redessiner la colonne. */
+  markAwaited() {
+    markAwaited(this.element, ".ddu-party__member", ".ddu-party__frame");
   }
 
   /** Replacer la colonne (outils de scène changés, fenêtre redimensionnée). */
