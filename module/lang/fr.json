@@ -575,7 +575,6 @@
       "Close": "Fermer"
     },
     "Awaiting": {
-      "Who": "En attente de la réponse de {name}",
       "Someone": "En attente d'une réponse"
     }
   }

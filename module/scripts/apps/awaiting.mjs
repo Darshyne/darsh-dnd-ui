@@ -25,7 +25,8 @@ export function markAwaited(root, selector, frameSelector=null) {
     const badge = host.querySelector(`:scope > .${BADGE}`);
     el.classList.toggle(`${BADGE}--on`, !!names);
     if ( !names ) { badge?.remove(); continue; }
-    const tip = names.filter(Boolean).length ? loc("Awaiting.Who", { name: names.filter(Boolean).join(", ") }) : loc("Awaiting.Someone");
+    // Juste le sablier : aucun nom (l'utilisateur, 2026-11-06).
+    const tip = loc("Awaiting.Someone");
     if ( badge ) { badge.dataset.tooltip = tip; continue; }
     host.insertAdjacentHTML("beforeend", `<i class="${BADGE} fa-solid fa-hourglass-half" data-tooltip="${foundry.utils.escapeHTML(tip)}"></i>`);
   }
