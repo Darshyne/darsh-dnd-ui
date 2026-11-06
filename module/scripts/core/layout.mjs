@@ -324,12 +324,17 @@ export function setRows(layout, rows) {
 
 /** Jeux d'armes : N jeux × (main principale, main secondaire). */
 export function setWeapon(layout, set, hand, ref) {
+  // 0.32.1 : un jeu ou une main hors bornes (NaN : un bouton sans `data-set`) laisse la disposition inchangée.
+  if ( !isWeaponSlot(set, hand) ) return layout;
   const out = withWeaponSets(layout, set + 1);
   // Une même arme n'est que dans une main d'un jeu à la fois.
   for ( const s of out.weapons.sets ) for ( let h = 0; h < 2; h++ ) if ( ref && s[h] === ref ) s[h] = null;
   out.weapons.sets[set][hand] = ref;
   return out;
 }
+
+/** Un emplacement d'arme valide : jeu entier de 0 à MAX_WEAPON_SETS - 1, main 0 ou 1. */
+export const isWeaponSlot = (set, hand) => Number.isInteger(set) && (set >= 0) && (set < MAX_WEAPON_SETS) && [0, 1].includes(hand);
 
 /** §52 : une copie de la disposition avec au moins `count` jeux d'armes (MAX_WEAPON_SETS au plus). */
 export function withWeaponSets(layout, count) {
@@ -376,6 +381,7 @@ export function weaponColumn(active, count) {
  * @returns {{layout: object, hand: 0|1|null}}
  */
 export function placeWeapon(layout, set, hand, ref, twoHanded=() => false) {
+  if ( !isWeaponSlot(set, hand) ) return { layout, hand: null };
   const current = layout.weapons.sets[set] ?? [null, null];
   const main = (current[0] === ref) ? null : current[0];
   let h = hand;

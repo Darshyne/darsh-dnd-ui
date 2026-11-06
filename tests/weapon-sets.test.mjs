@@ -29,6 +29,17 @@ describe("§52 : jeux d'armes", () => {
     expect(placeWeapon(l, 0, 1, "Item.staff", twoHanded).layout.weapons.sets[0]).toEqual(["Item.staff", null]);
   });
 
+  it("0.32.1 : un jeu hors bornes (NaN : bouton d'en-tête sans data-set) laisse la disposition inchangée", () => {
+    const l = setWeapon(emptyLayout(), 0, 0, "Item.sword");
+    expect(() => setWeapon(l, NaN, 1, null)).not.toThrow();
+    expect(setWeapon(l, NaN, 1, null)).toBe(l);
+    expect(setWeapon(l, MAX_WEAPON_SETS, 0, "Item.bow")).toBe(l);
+    expect(setWeapon(l, -1, 0, "Item.bow")).toBe(l);
+    expect(setWeapon(l, 0, 2, "Item.bow")).toBe(l);
+    expect(placeWeapon(l, NaN, 0, "Item.bow", twoHanded)).toEqual({ layout: l, hand: null });
+    expect(setWeapon(l, MAX_WEAPON_SETS - 1, 1, "Item.bow").weapons.sets.length).toBe(MAX_WEAPON_SETS);
+  });
+
   it("plus de deux jeux : ajoutés à la demande, gardés à la relecture, bornés", () => {
     let l = setWeapon(emptyLayout(), 3, 0, "Item.bow");
     expect(l.weapons.sets.length).toBe(4);

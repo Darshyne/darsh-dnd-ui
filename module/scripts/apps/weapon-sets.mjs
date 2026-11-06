@@ -104,7 +104,10 @@ export class WeaponSetsConfig extends ApplicationV2 {
       await game.settings.set(MODULE_ID, "weaponSets", Number(ev.currentTarget.value));
       this.render();
     });
-    for ( const button of el.querySelectorAll("button[data-action]") ) {
+    // Les boutons du contenu seulement : ceux de l'en-tête de la fenêtre (fermer, contrôles) portent aussi un `data-action`, sans
+    // `data-set` — un clic sur la croix vidait le jeu NaN (0.32.1, rapport de bug). L'en-tête n'est pas redessiné : y poser un écouteur à
+    // chaque dessin les empilait.
+    for ( const button of el.querySelectorAll(".ddu-weapon-sets button[data-action][data-set]") ) {
       button.addEventListener("click", async ev => {
         const set = Number(ev.currentTarget.dataset.set);
         if ( ev.currentTarget.dataset.action === "hold" ) await this.bar.selectWeaponSet(set);
