@@ -25,14 +25,17 @@ export class Portrait {
    * @param {string} [options.policy]         Politique de PV imposée ("exact"…) ; sinon selon les droits.
    * @param {string} [options.label]          Nom à donner à l'image (ex. « ??? » pour une créature au nom
    *                                          masqué) ; sinon celui du token ou de l'acteur.
+   * @param {string} [options.img]            Image montrée quand il n'y a ni token ni acteur : un évènement de l'initiative
+   *                                          du moteur (un piège, une action d'antre, son §250), qui n'est pas une créature.
    */
-  constructor({ actor, token, shape = "card", showSide = false, policy = null, label = null } = {}) {
+  constructor({ actor, token, shape = "card", showSide = false, policy = null, label = null, img = null } = {}) {
     this.token = token ?? null;
     this.actor = token?.actor ?? actor ?? null;
     this.shape = shape;
     this.showSide = showSide;
     this.policy = policy;
     this.label = label;
+    this.img = img;
     this.element = this.#build();
     this.health = null;
     this.refresh({ flash: false });
@@ -67,10 +70,14 @@ export class Portrait {
     const actor = this.subject;
     const el = this.element;
     if ( !actor ) {
-      el.hidden = true;
+      // 2026-11-06 : un évènement de l'initiative (le piège de DAS · Loot & Trade) n'a ni token ni acteur — son image seule, sans PV ;
+      // sans image, rien (le portrait se cachait toujours : sa carte manquait dans la Frise).
+      el.hidden = !this.img;
+      if ( this.img ) this.#renderEvent();
       return;
     }
     el.hidden = false;
+    el.classList.remove("ddu-portrait--event");
 
     const img = el.querySelector(".ddu-portrait__image img");
     const src = portraitImage(actor, this.token, setting("portraitImage"));
@@ -141,6 +148,20 @@ export class Portrait {
     el.dataset.kind = badge.kind;
     el.innerHTML = `<i class="fa-solid ${badge.icon}"></i>`;
     el.dataset.tooltip = loc(badge.key, { height: badge.height, units: badge.units });
+  }
+
+  /** Un évènement de l'initiative : son image, son nom, rien d'une créature (PV, voile, mort, égide, escalade). */
+  #renderEvent() {
+    const el = this.element;
+    el.classList.add("ddu-portrait--event");
+    const img = el.querySelector(".ddu-portrait__image img");
+    if ( img.getAttribute("src") !== this.img ) img.src = this.img;
+    img.alt = this.label ?? "";
+    if ( this.showSide ) el.dataset.side = "neutral";   // ni allié ni ennemi : le cadre neutre du thème
+    el.dataset.tier = "unhurt";
+    el.style.setProperty("--ddu-veil", "0");
+    for ( const part of el.querySelectorAll(".ddu-portrait__hp, .ddu-portrait__ward, .ddu-portrait__climb, .ddu-portrait__death") ) part.hidden = true;
+    this.health = null;
   }
 
   #renderDeath(saves) {

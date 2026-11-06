@@ -120,10 +120,13 @@ export class Frieze {
     let portrait = this.portraits.get(combatant.id);
     if ( portrait ) {
       portrait.label = nameFor(combatant);
+      portrait.img = combatant.img || null;
       portrait.refresh();   // flash seulement si les PV ont vraiment changé
     } else {
       portrait = new Portrait({
-        token: combatant.token, actor: combatant.actor, shape: "card", showSide: true, label: nameFor(combatant)
+        token: combatant.token, actor: combatant.actor, shape: "card", showSide: true, label: nameFor(combatant),
+        // 2026-11-06 : un évènement de l'initiative du moteur (piège, action d'antre) n'a ni token ni acteur : son image.
+        img: combatant.img || null
       });
       portrait.element.classList.add("ddu-portrait--frieze");
       this.portraits.set(combatant.id, portrait);
