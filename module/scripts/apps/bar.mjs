@@ -920,7 +920,7 @@ export class Bar {
     const view = cellView(this.actor, ref, this.ctx);
     if ( !view ) return;
     if ( view.freeCast && !event.shiftKey ) return this.#useCell(ref, event);
-    // §59 (moteur, issue #31) : la règle maison des potions de soins — action Bonus (jet) ou action (soin maximal), au choix dans un
+    // §63 (moteur §398, issue #31) : la règle maison des potions de soins — action Bonus (jet) ou action (soin maximal), au choix dans un
     // tiroir quand les deux sont libres. Maj + clic : l'action Bonus, comme sans la règle.
     const potion = event.shiftKey ? null : potionChoiceOf(view.activity ?? view.primary);
     if ( potion?.ask ) return this.#openPotion(cell, view, potion);
