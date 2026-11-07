@@ -34,6 +34,14 @@ import { MODULE_ID, loc, setting } from "../shared.mjs";
 
 const esc = s => foundry.utils.escapeHTML(String(s ?? ""));
 
+/**
+ * Issue #31 du moteur : la règle maison des potions de soins (action Bonus : soin lancé ; action : soin maximal) — `api.ui.potion` du
+ * moteur, null sans la règle, pour autre chose qu'une potion de soins, ou avec un moteur plus ancien.
+ */
+function potionChoiceOf(activity) {
+  try { return activity ? (game.modules.get("dnd5e-combat")?.api?.ui?.potion?.(activity) ?? null) : null; } catch { return null; }
+}
+
 /** Touches des 12 premières cases de l'onglet Personnalisé (BG3 : 1 – 0, -, =). */
 export const CUSTOM_KEYS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "="];
 
@@ -868,6 +876,7 @@ export class Bar {
         return item?.use({ event, ...(foundry.utils.isEmpty(engine) ? {} : { "dnd5e-combat": engine }) });
       }
       case "upcast": return this.#useCell(this.popupRef, event, target.dataset.slot);
+      case "potion": return this.#useCell(this.popupRef, event, null, target.dataset.mode);
     }
     if ( target.classList.contains("ddu-cell") && target.dataset.ref ) return this.#onCellClick(target, event);
   }
@@ -911,6 +920,10 @@ export class Bar {
     const view = cellView(this.actor, ref, this.ctx);
     if ( !view ) return;
     if ( view.freeCast && !event.shiftKey ) return this.#useCell(ref, event);
+    // §59 (moteur, issue #31) : la règle maison des potions de soins — action Bonus (jet) ou action (soin maximal), au choix dans un
+    // tiroir quand les deux sont libres. Maj + clic : l'action Bonus, comme sans la règle.
+    const potion = event.shiftKey ? null : potionChoiceOf(view.activity ?? view.primary);
+    if ( potion?.ask ) return this.#openPotion(cell, view, potion);
     if ( view.canUpcast && view.upcast.length > 1 && !event.shiftKey ) return this.#openUpcast(cell, view);
     return this.#useCell(ref, event, view.canUpcast ? view.upcast[0]?.key : null);
   }
@@ -920,7 +933,7 @@ export class Bar {
    * est passé tel quel (`usageConfig.spell.slot`). Alt / Ctrl de l'événement restent lus par le système
    * et le moteur (avantage / désavantage).
    */
-  async #useCell(ref, event, slot = null) {
+  async #useCell(ref, event, slot = null, potionMode = null) {
     this.#closePopup();
     const r = resolveRef(this.actor, ref);
     if ( !r ) return;
@@ -936,7 +949,10 @@ export class Bar {
     if ( slot && !activity ) activity = activities?.find(a => a.requiresSpellSlot && a.consumption?.spellSlot) ?? null;
     // §65 : par le moteur — un sort refusé par le seul champ antimagie propose « le faire quand même » (adapter/engine.mjs).
     if ( slot && activity ) return useFromBar(activity, { event, spell: { slot } }, { configure: false });
-    if ( activity ) return useFromBar(activity, { event });
+    // Issue #31 (moteur) : le choix du tiroir des potions part avec l'utilisation — le moteur ne repose pas la question.
+    // Maj + clic : l'action Bonus de la donnée (pas de tiroir, pas de question).
+    const engine = potionMode ? { potionMode } : ((event?.shiftKey && potionChoiceOf(activity)) ? { potionMode: "bonus" } : null);
+    if ( activity ) return useFromBar(activity, { event, ...(engine ? { "dnd5e-combat": engine } : {}) });
     return useFromBar(r.item, { event });
   }
 
@@ -1482,6 +1498,17 @@ export class Bar {
       Object.assign(el.dataset, JSON.parse(el.dataset.dduMuted));
       delete el.dataset.dduMuted;
     }
+  }
+
+  /** Issue #31 (moteur) : le tiroir des potions de soins — action Bonus (le soin lancé) ou action (soin maximal). */
+  #openPotion(cell, view, potion) {
+    const button = (mode, pip, label) => `<button type="button" data-action="potion" data-mode="${mode}"${potion.available[mode] ? "" : " disabled"}>
+      <span class="ddu-pip ddu-pip--${pip}"></span><span>${esc(label)}</span></button>`;
+    this.#openPopup(cell, [
+      button("bonus", "bonus", loc("Bar.Potion.Bonus", { formula: potion.formula ?? "?" })),
+      button("action", "action", loc("Bar.Potion.Action", { max: potion.max ?? "?" }))
+    ].join(""), "ddu-bar__upcast ddu-bar__potion");
+    this.popupRef = view.ref;
   }
 
   #openUpcast(cell, view) {

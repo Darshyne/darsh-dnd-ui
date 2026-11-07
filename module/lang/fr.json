@@ -132,7 +132,11 @@
       "OffHandBlocked": "{name} se manie à deux mains : la main secondaire reste libre.",
       "PrevWeapons": "Jeu d'armes précédent",
       "NextWeapons": "Jeu d'armes suivant",
-      "WeaponConfig": "Configurer les jeux d'armes"
+      "WeaponConfig": "Configurer les jeux d'armes",
+      "Potion": {
+        "Bonus": "Action Bonus — lancer {formula}",
+        "Action": "Action — {max} PV (soin maximal)"
+      }
     },
     "Reason": {
       "NoUses": "Plus d'utilisation",

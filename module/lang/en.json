@@ -132,7 +132,11 @@
       "OffHandBlocked": "{name} is two-handed: the off hand stays free.",
       "PrevWeapons": "Previous weapon set",
       "NextWeapons": "Next weapon set",
-      "WeaponConfig": "Configure weapon sets"
+      "WeaponConfig": "Configure weapon sets",
+      "Potion": {
+        "Bonus": "Bonus Action — roll {formula}",
+        "Action": "Action — {max} HP (maximum healing)"
+      }
     },
     "Reason": {
       "NoUses": "No uses left",
