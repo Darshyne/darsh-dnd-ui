@@ -75,7 +75,9 @@
         "Details": "Détails",
         "Sheet": "Ouvrir la fiche",
         "Remove": "Retirer de la barre",
-        "Light": "Allumer / éteindre"
+        "Light": "Allumer / éteindre",
+        "WithoutDas": "Lancer sans DAS",
+        "Correction": "Correction du MJ"
       },
       "AddRow": "Ajouter une rangée",
       "RemoveRow": "Retirer une rangée",

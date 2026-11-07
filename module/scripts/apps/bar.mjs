@@ -26,7 +26,7 @@ import { layoutHost, readLayout, writeLayout } from "../adapter/forms.mjs";
 import { matcherFor, equipActive } from "../adapter/weapon-return.mjs";
 import { viewedCombat, nameFor } from "../adapter/combat.mjs";
 import { combatantOf, currentActor } from "../adapter/party.mjs";
-import { budgetOf, movementOf, multiattackOf, lightOf, carriedLightOf, toggleLight, sneakingOf, toggleSneak, climbOf, climbEntriesOf, issuesOf, nonLethalOf, setNonLethalOf, ammoOf, setAmmoOf } from "../adapter/engine.mjs";
+import { budgetOf, movementOf, multiattackOf, lightOf, carriedLightOf, toggleLight, sneakingOf, toggleSneak, climbOf, climbEntriesOf, issuesOf, nonLethalOf, setNonLethalOf, ammoOf, setAmmoOf, withoutDasAvailable, useWithoutDas, correctionAvailable, openCorrection } from "../adapter/engine.mjs";
 import { climbButtonShown, ringTooltip } from "../core/climb.mjs";
 import { WeaponSetsConfig } from "./weapon-sets.mjs";
 import { MODULE_ID, loc, setting } from "../shared.mjs";
@@ -962,6 +962,30 @@ export class Bar {
           return !!item?.isOwner && !!carriedLightOf(item);
         },
         onClick: (_e, t) => toggleLight(resolveRef(this.actor, this.#refOf(t))?.item)
+      },
+      {
+        // §61 : ce seul lancement par dnd5e, sans DAS (moteur §395) — MJ et joueurs, sur ce qu'ils possèdent.
+        label: "DDU.Bar.Menu.WithoutDas", icon: '<i class="fa-solid fa-dice-d20"></i>',
+        visible: t => {
+          const r = resolveRef(this.actor, this.#refOf(t));
+          return !!r?.item?.isOwner && !!r.item.system.activities?.size && withoutDasAvailable();
+        },
+        onClick: (event, t) => {
+          const r = resolveRef(this.actor, this.#refOf(t));
+          if ( r?.item ) useWithoutDas(r.activity ?? r.item, event);
+        }
+      },
+      {
+        // §61 : la correction du MJ (moteur §396) — rattraper une erreur : dégâts, effets, concentration au choix.
+        label: "DDU.Bar.Menu.Correction", icon: '<i class="fa-solid fa-screwdriver-wrench"></i>',
+        visible: t => {
+          const r = resolveRef(this.actor, this.#refOf(t));
+          return !!r?.item?.system.activities?.size && correctionAvailable();
+        },
+        onClick: (_e, t) => {
+          const r = resolveRef(this.actor, this.#refOf(t));
+          if ( r?.item ) openCorrection(r.activity ?? r.item);
+        }
       },
       {
         label: "DDU.Bar.Menu.Sheet", icon: '<i class="fa-solid fa-book-open"></i>',

@@ -109,6 +109,12 @@ export class RollWindow {
   #titles() {
     const { type, key } = this.request;
     const abilities = CONFIG.DND5E.abilities ?? {};
+    // §61 : l'initiative demandée au lancement d'un combat (moteur §397) — « Initiative », puis le test de sa caractéristique.
+    if ( type === "initiative" ) {
+      const initKey = this.actor.system.attributes?.init?.ability || CONFIG.DND5E.defaultAbilities?.initiative || "dex";
+      const ability = game.i18n.localize(abilities[initKey]?.label ?? initKey);
+      return [game.i18n.localize("DND5E.Initiative"), loc("Roll.CheckOf", { ability })];
+    }
     const abilityKey = (type === "check" || type === "save") ? key
       : (this.request.ability ?? (type === "skill" ? this.actor.system.skills?.[key]?.ability : this.actor.system.tools?.[key]?.ability)
         ?? CONFIG.DND5E.skills?.[key]?.ability ?? "int");

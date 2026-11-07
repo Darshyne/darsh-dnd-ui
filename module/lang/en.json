@@ -75,7 +75,9 @@
         "Details": "Details",
         "Sheet": "Open sheet",
         "Remove": "Remove from the bar",
-        "Light": "Light / put out"
+        "Light": "Light / put out",
+        "WithoutDas": "Use without DAS",
+        "Correction": "GM correction"
       },
       "AddRow": "Add a row",
       "RemoveRow": "Remove a row",

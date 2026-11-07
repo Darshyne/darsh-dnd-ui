@@ -113,6 +113,29 @@ export function tokenMenuOf(token) {
 }
 
 /**
+ * §61 : « Lancer sans DAS » — l'objet ou l'activité passe par dnd5e seul, et tout ce qui en découle (moteur ≥ 0.280.0, `api.vanilla.use`,
+ * son SPEC §395). Rend null si le moteur ne le propose pas.
+ */
+export function withoutDasAvailable() {
+  return engineActive() && (typeof game.modules.get(ENGINE_ID).api.vanilla?.use === "function");
+}
+
+export function useWithoutDas(subject, event=null) {
+  if ( !withoutDasAvailable() ) return null;
+  return game.modules.get(ENGINE_ID).api.vanilla.use(subject, { event });
+}
+
+/** §61 : la correction du MJ (moteur ≥ 0.280.0, `api.correction.open`, son SPEC §396) — dégâts, effets, concentration au choix. */
+export function correctionAvailable() {
+  return game.user.isGM && engineActive() && (typeof game.modules.get(ENGINE_ID).api.correction?.open === "function");
+}
+
+export function openCorrection(subject) {
+  if ( !correctionAvailable() ) return null;
+  return game.modules.get(ENGINE_ID).api.correction.open(subject);
+}
+
+/**
  * MJ : donne ou retire l'Inspiration héroïque d'un personnage joueur — par le moteur ≥ 0.267.0 (`api.heroic.set`, son SPEC §282 : carte
  * et retour à toute la table), sinon par la case de la fiche (dnd5e `system.attributes.inspiration`).
  */
