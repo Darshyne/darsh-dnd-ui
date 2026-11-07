@@ -331,6 +331,10 @@
         "Name": "Bar: lock for players",
         "Hint": "Players can no longer move, add or remove cells."
       },
+      "barRememberTab": {
+        "Name": "Bar: remember the chosen tab",
+        "Hint": "On this computer, the action bar reopens each character's last chosen tab instead of going back to the default view. Filters still reset."
+      },
       "softPath": {
         "Name": "Board: path style",
         "Hint": "The cells of the movement path: flat colour (dnd5e), soft-edged pads, or small dots a third of a square wide. Same colours (green, yellow, red by speed).",

@@ -331,6 +331,10 @@
         "Name": "Barre : verrouiller pour les joueurs",
         "Hint": "Les joueurs ne peuvent plus déplacer, ajouter ni retirer de cases."
       },
+      "barRememberTab": {
+        "Name": "Barre : se souvenir de l’onglet choisi",
+        "Hint": "Sur cet ordinateur, la Barre rouvre pour chaque personnage le dernier onglet choisi au lieu de revenir à la vue par défaut. Les filtres repartent à zéro."
+      },
       "softPath": {
         "Name": "Plateau : tracé du chemin",
         "Hint": "Les cases du chemin de déplacement : aplats de couleur (dnd5e), pastilles aux bords fondus, ou petits ronds d'un tiers de case. Mêmes couleurs (vert, jaune, rouge selon la vitesse).",

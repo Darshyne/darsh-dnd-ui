@@ -181,6 +181,9 @@ export function registerBarSettings(redraw, hotbar) {
   reg("barGMHotbar", "world", false, { onChange: hotbar });
   reg("barFullTooltips", "client", false);
   reg("barLockPlayers", "world", false);
+  // §62 (issue #9) : l'onglet choisi est retenu par personnage sur ce client (mémoire dans `barTabs`, caché).
+  reg("barRememberTab", "client", true);
+  game.settings.register(MODULE_ID, "barTabs", { scope: "client", config: false, type: Object, default: {} });
   // §52 : jeux d'armes en rotation sur ce client (flèches et raccourcis), de 2 à 6.
   game.settings.register(MODULE_ID, "weaponSets", {
     name: "DDU.Settings.weaponSets.Name", hint: "DDU.Settings.weaponSets.Hint",

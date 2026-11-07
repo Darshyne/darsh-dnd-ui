@@ -16,6 +16,7 @@ import {
   resize, setRows, setWeapon, setActiveWeapons, seedWeapons, restoreLost, placeWeapon, cycleWeaponSet, weaponColumn, activeWeaponRefs
 } from "../core/layout.mjs";
 import { roman, matchesFilter } from "../core/cells.mjs";
+import { rememberedTab, rememberTab } from "../core/bar-tab.mjs";
 import {
   refOf, resolveRef, validRefs, inactiveRefs, autoEntries, tabRefs, classLabel, slotsOf, hasCantrips, classResources,
   cellView, weaponsOf, equipWeaponSet, enchantmentsOf, tabOf, offhandMode, isTwoHanded
@@ -177,12 +178,13 @@ export class Bar {
     if ( actor !== this.actor ) {
       this.portrait?.destroy();
       this.portrait = null;
-      this.tab = "default";
       this.filter = null;
       this.pending = false;
       this.d20.close();
       // Calculé une fois par acteur montré : un objet ramassé en forme animale ne doit pas changer de clé.
       this.host = actor ? layoutHost(actor) : null;
+      // §62 (issue #9) : l'onglet retenu pour ce personnage sur ce client (le filtre, lui, repart à zéro).
+      this.tab = this.#restoreTab();
     } else if ( this.pending ) keepLayout = true;   // une écriture est en route : garder le dernier geste
     // §58 : le tiroir des PV survit à un rendu du même acteur (ses PV changent pendant la saisie) : rouvert ensuite, saisie gardée.
     const hpDraft = (actor && (actor === this.actor) && (this.popupRef === "hp"))
@@ -812,6 +814,7 @@ export class Bar {
       case "filter": return this.#toggleFilter(target);
       case "tab":
         this.tab = target.dataset.tab;
+        this.#saveTab();
         return this.render({ keepLayout: true });
       case "lock": return this.#update({ ...this.layout, locked: !this.layout.locked });
       case "addRow": return this.#update(setRows(this.layout, this.layout.rows + 1));
@@ -867,6 +870,26 @@ export class Bar {
       case "upcast": return this.#useCell(this.popupRef, event, target.dataset.slot);
     }
     if ( target.classList.contains("ddu-cell") && target.dataset.ref ) return this.#onCellClick(target, event);
+  }
+
+  /** §62 : clé de mémoire de l'onglet — l'acteur qui porte la disposition (le druide pour sa forme sauvage). */
+  #tabKey() {
+    return this.host?.host?.id ?? this.actor?.id ?? null;
+  }
+
+  #restoreTab() {
+    const key = this.#tabKey();
+    const { tab, stale } = rememberedTab(setting("barTabs"), key, !!setting("barRememberTab"));
+    if ( stale ) game.settings.set(MODULE_ID, "barTabs", rememberTab(setting("barTabs"), key, "default"));
+    return tab;
+  }
+
+  #saveTab() {
+    if ( !setting("barRememberTab") ) return;
+    const key = this.#tabKey();
+    const memory = setting("barTabs") ?? {};
+    if ( (memory[key] ?? "default") === this.tab ) return;
+    game.settings.set(MODULE_ID, "barTabs", rememberTab(memory, key, this.tab));
   }
 
   #toggleFilter(button) {
