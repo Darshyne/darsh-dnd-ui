@@ -14,7 +14,8 @@
  *
  * Ce que le relevé sait suivre : l'accès direct (`game.modules.get(ID).api.x.y`), le module gardé dans une variable
  * (`const mod = game.modules.get(ID); mod.api.x`), une fonction d'accès (`function engine() { … return ….api; }`, puis
- * `engine()?.x`), une variable locale qui reçoit l'API ou un groupe (`const api = engine()?.combat; api.addEvent`).
+ * `engine()?.x`, ou `engine.content()?.x` après `import * as engine from "./adapter/engine.mjs"`), une variable locale qui reçoit
+ * l'API ou un groupe (`const api = engine()?.combat; api.addEvent`).
  * `CONTRACT_LIST=1 npx vitest run tests/core-contract.test.mjs` affiche ce qu'il a relevé.
  *
  * Réglages propres au module, facultatifs, dans `tests/core-contract.json` :
@@ -84,31 +85,47 @@ const directRoot = text => ({ source: `modules\\.get\\(\\s*(?:${idsIn(text).patt
 const callOf = name => `(?<![.\\w$])${escaped(name)}\\(\\s*\\)`;
 /** Ce fichier connaît-il cette fonction d'accès : il la déclare, ou il l'importe ? */
 const knows = (text, name) => new RegExp(`(?:function\\s+${escaped(name)}\\s*\\(|const\\s+${escaped(name)}\\s*=|import\\s*\\{[^}]*\\b${escaped(name)}\\b[^}]*\\})`).test(text);
+const baseName = path => path.split("/").pop();
+/** Les imports en espace de noms d'un fichier : `import * as engine from "./adapter/engine.mjs"` → `{ name: "engine", file: "engine.mjs" }`. */
+const namespaces = text => [...text.matchAll(new RegExp(`import\\s*\\*\\s*as\\s+(${NAME})\\s+from\\s*["']([^"']+)["']`, "g"))]
+  .map(found => ({ name: found[1], file: baseName(found[2]) }));
+/**
+ * Les façons d'appeler, dans ce fichier, les fonctions d'accès connues : par leur nom (déclarées ou importées ici), ou par
+ * l'espace de noms du fichier qui les déclare (`engine.content()` après `import * as engine from "./adapter/engine.mjs"`).
+ */
+function accessorRoots(text, known) {
+  const spaces = namespaces(text);
+  return known.flatMap(accessor => [
+    ...(knows(text, accessor.name) ? [{ source: callOf(accessor.name), prefix: accessor.prefix }] : []),
+    ...spaces.filter(space => space.file === baseName(accessor.file))
+      .map(space => ({ source: `(?<![.\\w$])${escaped(space.name)}\\s*\\.\\s*${escaped(accessor.name)}\\(\\s*\\)`, prefix: accessor.prefix }))
+  ]);
+}
 
 /**
- * Les fonctions d'accès du module : `{ name, prefix }` — `function engine() { return game.modules.get(ENGINE_ID)?.api ?? null; }`,
+ * Les fonctions d'accès du module : `{ name, prefix, file }` — `function engine() { return game.modules.get(ENGINE_ID)?.api ?? null; }`,
  * sa forme en plusieurs lignes (courte : elle lit le module du moteur et rend son `.api` tel quel), et celles qui en
  * dérivent (`const content = () => engine()?.content;`).
  */
 function accessors() {
   const found = [];
-  const add = (name, prefix) => { if ( !found.some(known => known.name === name) ) found.push({ name, prefix }); };
-  for ( const { text } of sources ) {
+  const add = (name, prefix, file) => { if ( !found.some(known => known.name === name) ) found.push({ name, prefix, file }); };
+  for ( const { text, file } of sources ) {
     const getsCore = new RegExp(`modules\\.get\\(\\s*(?:${idsIn(text).pattern})\\s*\\)`);
     for ( const match of text.matchAll(new RegExp(`(?:function\\s+(${NAME})\\s*\\([^)]*\\)|const\\s+(${NAME})\\s*=\\s*\\([^)]*\\)\\s*=>)\\s*\\{`, "g")) ) {
       const from = match.index + match[0].length;
       const body = text.slice(from, blockEnd(text, from));
       // Elle doit RENDRE l'API elle-même (`return mod.api ?? null;`, `return on ? (mod.api ?? null) : null;`), pas un objet à elle.
-      if ( (body.length <= 400) && getsCore.test(body) && /return[^;{]*\.api\s*(?:\?\?\s*null\s*)?\)?\s*(?::\s*null\s*)?;/.test(body) ) add(match[1] ?? match[2], []);
+      if ( (body.length <= 400) && getsCore.test(body) && /return[^;{]*\.api\s*(?:\?\?\s*null\s*)?\)?\s*(?::\s*null\s*)?;/.test(body) ) add(match[1] ?? match[2], [], file);
     }
   }
   for ( let pass = 0; pass < 3; pass++ ) {
-    for ( const { text } of sources ) {
-      const roots = [directRoot(text), ...found.filter(known => knows(text, known.name)).map(known => ({ source: callOf(known.name), prefix: known.prefix }))];
+    for ( const { text, file } of sources ) {
+      const roots = [directRoot(text), ...accessorRoots(text, found)];
       for ( const root of roots ) {
         const body = `(?:game\\.)?${root.source}${chainPattern}?`;
         const forms = [`function\\s+(${NAME})\\s*\\([^)]*\\)\\s*\\{\\s*return\\s+${body}${TAIL}\\s*\\}`, `const\\s+(${NAME})\\s*=\\s*\\(\\s*\\)\\s*=>\\s*${body}${TAIL}`];
-        for ( const form of forms ) for ( const match of text.matchAll(new RegExp(form, "g")) ) add(match[1], [...root.prefix, ...segments(match[2] ?? "")]);
+        for ( const form of forms ) for ( const match of text.matchAll(new RegExp(form, "g")) ) add(match[1], [...root.prefix, ...segments(match[2] ?? "")], file);
       }
     }
   }
@@ -131,7 +148,7 @@ function apiUses() {
     const holders = [...text.matchAll(new RegExp(`(?:const|let)\\s+(${NAME})\\s*=\\s*game\\.modules\\.get\\(\\s*(?:${ids})\\s*\\)\\s*;`, "g"))]
       .map(found => ({ source: `(?<![.\\w$])${escaped(found[1])}\\s*\\??\\.\\s*api`, prefix: [] }));
     const roots = [directRoot(text), ...holders, ...(config.roots ?? []).map(source => ({ source, prefix: [] })),
-      ...shared.filter(known => knows(text, known.name)).map(known => ({ source: callOf(known.name), prefix: known.prefix }))];
+      ...accessorRoots(text, shared)];
     for ( const root of roots ) {
       for ( const found of text.matchAll(new RegExp(`${root.source}${chainPattern}`, "g")) ) note([...root.prefix, ...segments(found[1])], found.index);
       // Une variable locale qui reçoit l'API ou un groupe : `const api = engineApi()?.combat;` — suivie jusqu'à la fin de son bloc.
