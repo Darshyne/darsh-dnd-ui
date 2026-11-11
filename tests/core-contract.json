@@ -1,0 +1,3 @@
+{
+  "dynamic": [{ "pattern": "\\bread\\(\"([A-Za-z]+)\"", "prefix": "ui." }]
+}

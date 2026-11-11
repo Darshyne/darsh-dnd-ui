@@ -17,6 +17,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Le contrat avec le moteur (tests/core-contract.test.mjs) lit docs/reference/surface.json de dnd5e-combat :
+      # on ne récupère que ce dossier (les tests du moteur ne doivent pas tourner ici).
+      - uses: actions/checkout@v4
+        with:
+          repository: Darshyne/dnd5e-combat
+          path: core
+          sparse-checkout: docs/reference
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -25,3 +33,5 @@ jobs:
       - run: npm ci
 
       - run: npm test
+        env:
+          DAS_CORE: ${{ github.workspace }}/core
