@@ -1,0 +1,28 @@
+{
+  "i18n": {
+    "namespaces": ["DDU"],
+    "groups": "DDU",
+    "calls": [{ "fn": "loc", "prefix": "DDU." }],
+    "minKeys": 200
+  },
+  "layers": {
+    "imports": {
+      "core": [".", "adapter", "apps", "runtime"],
+      "adapter": ["apps", "runtime"],
+      "apps": ["runtime"]
+    },
+    "pure": { "folders": ["core"] },
+    "router": "runtime/router.mjs",
+    "names": [{ "name": "dnd5e-combat", "only": ["adapter/engine.mjs"], "why": "seul engine.mjs connaît le moteur (ARCHITECTURE §4)" }],
+    "forbid": [{ "name": "fichiers-du-moteur", "pattern": "(?:\\bfrom|\\bimport)\\s*\\(?\\s*[\"'][^\"']*dnd5e-combat", "why": "aucun fichier n'importe un fichier du moteur, seulement son API" }],
+    "except": {
+      "names:dnd5e-combat:adapter/items.mjs": "exception listée dans ARCHITECTURE §4 : cellView appelle api.ui.ritual en direct, et lit les drapeaux du moteur",
+      "names:dnd5e-combat:runtime/settings-window.mjs": "exception listée dans ARCHITECTURE §4 : appelle api.settings.registerWindow",
+      "names:dnd5e-combat:adapter/forms.mjs": "exception listée dans ARCHITECTURE §4 : lit les drapeaux du moteur (revertForm)",
+      "names:dnd5e-combat:adapter/party.mjs": "exception listée dans ARCHITECTURE §4 : lit les drapeaux du moteur",
+      "names:dnd5e-combat:apps/bar.mjs": "exception listée dans ARCHITECTURE §4 : lit les drapeaux du moteur",
+      "names:dnd5e-combat:runtime/party.mjs": "exception listée dans ARCHITECTURE §4 : redessine sur un changement de flags.dnd5e-combat",
+      "names:dnd5e-combat:runtime/portraits.mjs": "exception listée dans ARCHITECTURE §4 : redessine sur un changement de flags.dnd5e-combat"
+    }
+  }
+}
