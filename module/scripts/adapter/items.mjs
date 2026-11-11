@@ -329,7 +329,9 @@ export function cellView(actor, ref, ctx) {
     // 0.18.0 : torche, lampe, lanterne, bougie — allumée ou non, temps restant (moteur, SPEC §121).
     light: carriedLightOf(item)
   };
-  view.reasons = reasonsFor({ ...view, slots: ctx.slots });
+  // 0.35.0 : le moteur (≥ son §410) juge lui-même emplacements, utilisations, quantité et préparation, et le clic ouvre sa fenêtre
+  // « Utiliser quand même » : ses raisons suffisent (les nôtres les doublaient). Moteur plus ancien : les nôtres.
+  view.reasons = engineState.resources ? [] : reasonsFor({ ...view, slots: ctx.slots });
   view.issues = engineState.issues ?? [];
   // Attaques multiples ouvertes par le moteur ce tour : ce qui reste à jouer, ce qui n'a plus rien.
   view.multi = ctx.multi?.left.has(item.uuid) ? "left" : ctx.multi?.spent.has(item.uuid) ? "spent" : null;

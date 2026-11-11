@@ -92,12 +92,13 @@ export function issuesOf(activity) {
 
 /**
  * 0.25.3 : raisons et coût d'une case en un seul calcul du moteur (≥ 0.247.0, `api.ui.cell`, son §205) — ils passaient deux fois par
- * le même calcul. Moteur plus ancien : les deux appels séparés. `{ issues: string[]|null, cost: string|null }`.
+ * le même calcul. Moteur plus ancien : les deux appels séparés. `{ issues: string[]|null, cost: string|null, resources?: boolean }`.
  */
 export function cellStateOf(activity) {
   if ( !activity ) return { issues: null, cost: null };
   const both = read("cell", activity);
-  if ( both ) return { issues: both.issues ?? [], cost: both.cost ?? null };
+  // 0.35.0 : `resources` — le moteur (≥ son §410) juge aussi emplacements, utilisations, quantité et préparation.
+  if ( both ) return { issues: both.issues ?? [], cost: both.cost ?? null, resources: both.resources === true };
   return { issues: issuesOf(activity), cost: read("cost", activity) };
 }
 
