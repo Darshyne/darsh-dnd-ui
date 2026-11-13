@@ -64,7 +64,9 @@
         "Details": "Detalhes",
         "Sheet": "Abrir ficha",
         "Remove": "Remover da barra",
-        "Light": "Acender / apagar"
+        "Light": "Acender / apagar",
+        "WithoutDas": "Usar sem DAS",
+        "Correction": "Correção do MJ"
       },
       "AddRow": "Adicionar linha",
       "RemoveRow": "Remover linha",
@@ -355,6 +357,10 @@
       "rollWindow": {
         "Name": "Janela de rolagem no estilo BG3",
         "Hint": "Quando o mestre solicita uma rolagem, ela é aberta em uma janela no estilo de Baldur's Gate 3 (CD, d20 clicável, bônus em blocos e auxílios). Desmarcado: usa a janela de rolagem do dnd5e."
+      },
+      "barRememberTab": {
+        "Name": "Barra: lembrar a aba escolhida",
+        "Hint": "Neste computador, a barra de ações reabre a última aba escolhida para cada personagem, em vez de voltar à visão padrão. Os filtros continuam sendo redefinidos."
       }
     },
     "Theme": {
@@ -463,7 +469,8 @@
         "roll-tile-hi": "Bloco (superior)",
         "roll-tile-lo": "Bloco (inferior)",
         "roll-success": "Sucesso, Vantagem",
-        "roll-failure": "Falha, Desvantagem"
+        "roll-failure": "Falha, Desvantagem",
+        "awaiting": "Aguardando resposta (ampulheta)"
       },
       "Group": {
         "frames": "Molduras e fundos",
@@ -572,6 +579,9 @@
       "Reserve": "em caso de falha",
       "ReserveHint": "Já recebido: após uma falha, você poderá optar por adicionar este dado.",
       "Close": "Fechar"
+    },
+    "Awaiting": {
+      "Someone": "Aguardando uma resposta"
     }
   }
 }
