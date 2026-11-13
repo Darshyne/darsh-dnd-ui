@@ -9,6 +9,7 @@
 import { veilFor, changeOf } from "../core/health.mjs";
 import { healthOf, deathSavesOf, isDead, portraitImage, healthPolicyFor, sideOf } from "../adapter/actor.mjs";
 import { wardsOf, climbOf } from "../adapter/engine.mjs";
+import { setStill } from "../adapter/media.mjs";
 import { climbBadge } from "../core/climb.mjs";
 import { loc, setting } from "../shared.mjs";
 
@@ -81,7 +82,8 @@ export class Portrait {
 
     const img = el.querySelector(".ddu-portrait__image img");
     const src = portraitImage(actor, this.token, setting("portraitImage"));
-    if ( img.getAttribute("src") !== src ) img.src = src;
+    // Token vidéo (JB2A, §64) : sa vignette fixe, l'image de l'acteur en attendant — jamais la vidéo dans l'<img>.
+    setStill(img, src, actor.img);
     img.alt = this.label ?? this.token?.name ?? actor.name;
 
     if ( this.showSide ) el.dataset.side = sideOf(this.token ?? actor.prototypeToken);
@@ -155,7 +157,7 @@ export class Portrait {
     const el = this.element;
     el.classList.add("ddu-portrait--event");
     const img = el.querySelector(".ddu-portrait__image img");
-    if ( img.getAttribute("src") !== this.img ) img.src = this.img;
+    setStill(img, this.img, null);
     img.alt = this.label ?? "";
     if ( this.showSide ) el.dataset.side = "neutral";   // ni allié ni ennemi : le cadre neutre du thème
     el.dataset.tier = "unhurt";

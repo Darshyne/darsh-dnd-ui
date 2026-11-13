@@ -20,6 +20,7 @@
 import { loc } from "../shared.mjs";
 import { bonusRange, rangeText, diceShown, effectiveMode } from "../core/roll-window.mjs";
 import { rollBreakdown, rollMode } from "../adapter/engine.mjs";
+import { stillSrc } from "../adapter/media.mjs";
 
 const esc = s => foundry.utils.escapeHTML(String(s ?? ""));
 const ASSETS = "modules/darsh-dnd-ui/assets/roll";
@@ -150,7 +151,8 @@ export class RollWindow {
     const status = own || (this.#kindTaken(aid.kind) ? "taken" : "");
     const value = aid.kind === "help" ? "" : aid.kind === "inspiration" ? `+${aid.formula ?? "d6"}` : "+1d4";
     const label = loc(AID_LABELS[aid.kind], { name: aid.helper.name });
-    const art = aid.token?.texture?.src ?? aid.helper.img;
+    // Token vidéo (§64) : image fixe (vignette, sinon le portrait de l'aidant) ; la vignette arrivée, la fenêtre se redessine.
+    const art = stillSrc(aid.token?.texture?.src ?? aid.helper.img, aid.helper.img, () => { if ( this.element ) this.render(); });
     const tip = status ? loc(`Roll.AidState.${status}`) : loc(`Roll.AidHint.${aid.kind}`);
     const advantage = aid.kind === "help" ? `<i class="fa-solid fa-angles-up adv"></i>` : "";
     return `<button type="button" class="ddu-roll__tile ddu-roll__aid ddu-frame--roll-tile" data-aid="${index}" data-status="${status}"
