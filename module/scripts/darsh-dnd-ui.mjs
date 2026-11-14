@@ -119,14 +119,18 @@ Hooks.once("init", () => {
     },
     /**
      * §65 : un clic sur une case de la Barre de `tokenId` (pris en main), comme à la souris (`bar.use`) : `ref` = « Item.<id> » ou
-     * « Item.<id>.Activity.<id> ». N'attend pas la suite (fenêtres, carte) → `{ started }`.
+     * « Item.<id>.Activity.<id> », `targetIds` désignés d'abord. N'attend pas la suite (fenêtres, carte) → `{ started }`.
      */
-    async barUse({ tokenId, ref, slot=null }) {
+    async barUse({ tokenId, ref, slot=null, targetIds=null }) {
       const token = canvas.tokens.get(tokenId);
       if ( !token ) throw new Error(`token ${tokenId} not drawn`);
       if ( !token.controlled || (canvas.tokens.controlled.length !== 1) ) {
         token.control({ releaseOthers: true });
         await new Promise(resolve => setTimeout(resolve, 600));
+      }
+      if ( Array.isArray(targetIds) ) {   // les cibles désignées, comme à la table avant le clic
+        for ( const t of Array.from(game.user.targets) ) t.setTarget(false, { releaseOthers: false });
+        for ( const id of targetIds ) canvas.tokens.get(id)?.setTarget(true, { releaseOthers: false });
       }
       const bar = getBar();
       if ( !bar?.element || bar.element.hidden ) throw new Error("bar hidden");
