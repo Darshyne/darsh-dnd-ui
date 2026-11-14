@@ -27,7 +27,7 @@ import { layoutHost, readLayout, writeLayout } from "../adapter/forms.mjs";
 import { matcherFor, equipActive } from "../adapter/weapon-return.mjs";
 import { viewedCombat, nameFor } from "../adapter/combat.mjs";
 import { combatantOf, currentActor } from "../adapter/party.mjs";
-import { budgetOf, movementOf, multiattackOf, lightOf, carriedLightOf, toggleLight, sneakingOf, toggleSneak, climbOf, climbEntriesOf, issuesOf, nonLethalOf, setNonLethalOf, ammoOf, setAmmoOf, withoutDasAvailable, useWithoutDas, correctionAvailable, openCorrection } from "../adapter/engine.mjs";
+import { budgetOf, movementOf, multiattackOf, lightOf, carriedLightOf, toggleLight, sneakingOf, toggleSneak, climbOf, climbEntriesOf, issuesOf, nonLethalOf, setNonLethalOf, ammoOf, setAmmoOf, withoutDasAvailable, useWithoutDas, correctionAvailable, openCorrection, useFromBar } from "../adapter/engine.mjs";
 import { climbButtonShown, ringTooltip } from "../core/climb.mjs";
 import { WeaponSetsConfig } from "./weapon-sets.mjs";
 import { MODULE_ID, loc, setting } from "../shared.mjs";
@@ -934,9 +934,10 @@ export class Bar {
     // Niveau choisi dans le tiroir : l'activité qui dépense l'emplacement (Marque du chasseur en a trois,
     // dont une seule le consomme), sinon dnd5e ouvrirait son choix d'activité et perdrait le niveau.
     if ( slot && !activity ) activity = activities?.find(a => a.requiresSpellSlot && a.consumption?.spellSlot) ?? null;
-    if ( slot && activity ) return activity.use({ event, spell: { slot } }, { configure: false });
-    if ( activity ) return activity.use({ event });
-    return r.item.use({ event });
+    // §65 : par le moteur — un sort refusé par le seul champ antimagie propose « le faire quand même » (adapter/engine.mjs).
+    if ( slot && activity ) return useFromBar(activity, { event, spell: { slot } }, { configure: false });
+    if ( activity ) return useFromBar(activity, { event });
+    return useFromBar(r.item, { event });
   }
 
   /**
