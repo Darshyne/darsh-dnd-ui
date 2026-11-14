@@ -934,7 +934,7 @@ export class Bar {
     // Niveau choisi dans le tiroir : l'activité qui dépense l'emplacement (Marque du chasseur en a trois,
     // dont une seule le consomme), sinon dnd5e ouvrirait son choix d'activité et perdrait le niveau.
     if ( slot && !activity ) activity = activities?.find(a => a.requiresSpellSlot && a.consumption?.spellSlot) ?? null;
-    // §64 : par le moteur — un sort refusé par le seul champ antimagie propose « le faire quand même » (adapter/engine.mjs).
+    // §65 : par le moteur — un sort refusé par le seul champ antimagie propose « le faire quand même » (adapter/engine.mjs).
     if ( slot && activity ) return useFromBar(activity, { event, spell: { slot } }, { configure: false });
     if ( activity ) return useFromBar(activity, { event });
     return useFromBar(r.item, { event });

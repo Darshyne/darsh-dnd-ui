@@ -118,7 +118,7 @@ Hooks.once("init", () => {
       return { injected: text.length };
     },
     /**
-     * §64 : un clic sur une case de la Barre de `tokenId` (pris en main), comme à la souris (`bar.use`) : `ref` = « Item.<id> » ou
+     * §65 : un clic sur une case de la Barre de `tokenId` (pris en main), comme à la souris (`bar.use`) : `ref` = « Item.<id> » ou
      * « Item.<id>.Activity.<id> ». N'attend pas la suite (fenêtres, carte) → `{ started }`.
      */
     async barUse({ tokenId, ref, slot=null }) {

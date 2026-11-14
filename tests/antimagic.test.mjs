@@ -2,10 +2,10 @@ import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { useFromBar } from "../module/scripts/adapter/engine.mjs";
 
 /**
- * §64 : un sort lancé depuis la barre passe par le moteur (`api.antimagic.use`) — dans un champ antimagie, dnd5e le refuse sans hook,
+ * §65 : un sort lancé depuis la barre passe par le moteur (`api.antimagic.use`) — dans un champ antimagie, dnd5e le refuse sans hook,
  * le moteur propose « le faire quand même » et prévient le MJ. Sans ce moteur (en veille, trop ancien), dnd5e tel quel.
  */
-describe("§64 : barre et champ antimagie", () => {
+describe("§65 : barre et champ antimagie", () => {
   let api;
   const setEngine = (active, extra={}) => {
     api = { active, ...extra };
