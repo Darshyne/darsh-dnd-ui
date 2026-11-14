@@ -126,6 +126,18 @@ export function useWithoutDas(subject, event=null) {
   return game.modules.get(ENGINE_ID).api.vanilla.use(subject, { event });
 }
 
+/**
+ * Utiliser un item ou une activité depuis la barre (mêmes arguments que dnd5e). Moteur ≥ son §436 (`api.antimagic.use`) : dans un champ
+ * antimagie, dnd5e refuse un sort sans aucun hook (`activity.use` s'arrête sur `canUse`) ; le moteur propose alors « le faire quand même »
+ * et prévient le MJ (règle de la suite : tout refus est forçable). Sans ce moteur, dnd5e tel quel.
+ * @param {Item|Activity} subject
+ */
+export function useFromBar(subject, usage={}, dialog={}, message={}) {
+  const use = engineActive() ? game.modules.get(ENGINE_ID).api.antimagic?.use : null;
+  if ( typeof use === "function" ) return use(subject, usage, dialog, message);
+  return subject.use(usage, dialog, message);
+}
+
 /** §61 : la correction du MJ (moteur ≥ 0.280.0, `api.correction.open`, son SPEC §396) — dégâts, effets, concentration au choix. */
 export function correctionAvailable() {
   return game.user.isGM && engineActive() && (typeof game.modules.get(ENGINE_ID).api.correction?.open === "function");
