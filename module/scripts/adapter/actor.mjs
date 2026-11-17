@@ -39,9 +39,39 @@ export function iconEffectsOf(actor) {
     && ((e.showIcon === SHOW.ALWAYS) || ((e.showIcon === SHOW.CONDITIONAL) && e.isTemporary)));
 }
 
+/**
+ * Un chemin à motif (`token_cultist*.png`) : pas une image, une famille d'images. Le serveur le résout par `minimatch` sur le nom
+ * du fichier (dist/files/local.mjs, `getFiles` avec `wildcard`). Le `?` d'une adresse web (`…/alara.Token.webp?1769616851745`,
+ * The Forge, Tokenizer) est un paramètre, pas un motif : il ne compte pas.
+ */
+function isWildcard(src) {
+  if ( !src ) return false;
+  const path = /^https?:\/\//i.test(src) ? src.split("?")[0] : src;
+  return /[*?]/.test(path);
+}
+
+/**
+ * §66 (issue #12) : image du token réellement posé. Un prototype à image au hasard (`randomImg`, chemin à motif) ne garde que le
+ * motif ; l'image tirée n'existe que sur le token posé (`Actor#getTokenDocument`, client/documents/actor.mjs:342-349). Ordre : le
+ * token donné, celui d'un acteur non lié (`Actor#token`, actor.mjs:177), puis — prototype au hasard seulement — un token de
+ * l'acteur sur la scène affichée, le contrôlé d'abord. Jamais un motif : null, et l'appelant prend l'image de l'acteur.
+ */
+function tokenImageOf(actor, token) {
+  const proto = actor?.prototypeToken;
+  const protoSrc = proto?.texture?.src ?? "";
+  let placed = token ?? actor?.token ?? null;
+  // `randomImg` coché sur un chemin sans motif (un PJ du Tokenizer) : l'image du prototype reste bonne, seul le token posé est préféré.
+  if ( !placed && actor && (proto?.randomImg || isWildcard(protoSrc)) ) {
+    placed = canvas.tokens?.controlled.find(t => t.actor === actor)?.document
+      ?? actor.getActiveTokens?.(false, true)?.[0] ?? null;
+  }
+  const src = placed?.texture?.src || protoSrc;
+  return (src && !isWildcard(src)) ? src : null;
+}
+
 /** Image du portrait : celle de l'acteur (art de personnage) ou du token, selon le réglage. */
 export function portraitImage(actor, token, prefer = "actor") {
-  const tokenImg = token?.texture?.src ?? actor?.prototypeToken?.texture?.src;
+  const tokenImg = tokenImageOf(actor, token);
   const actorImg = actor?.img;
   const isDefault = !actorImg || actorImg === CONST.DEFAULT_TOKEN || actorImg.includes("mystery-man");
   if ( prefer === "token" ) return tokenImg || actorImg;
