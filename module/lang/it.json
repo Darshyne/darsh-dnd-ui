@@ -1,0 +1,587 @@
+{
+  "DDU": {
+    "Preview": {
+      "Title": "DAS · Combat UI — anteprima dei ritratti",
+      "Empty": "Controlla uno o più token per vederne i ritratti."
+    },
+    "Budget": {
+      "Action": "Azione",
+      "Bonus": "Azione Bonus",
+      "Reaction": "Reazione",
+      "Attacks": "Attacchi rimanenti: {n}"
+    },
+    "Frieze": {
+      "Round": "Round {round}",
+      "Level": "Liv. {level}",
+      "CR": "GS {cr}",
+      "InitiativeValue": "Iniziativa {value}",
+      "InitiativeText": "Iniziativa {value}",
+      "RollInitiative": "Tira per l'Iniziativa",
+      "RollAll": "Tira per l'Iniziativa di tutti",
+      "RollNPC": "Tira per l'Iniziativa dei PNG",
+      "Reset": "Azzera tutte le Iniziative",
+      "Start": "Inizia il combattimento",
+      "PreviousRound": "Round precedente",
+      "PreviousTurn": "Turno precedente",
+      "NextTurn": "Turno successivo",
+      "NextRound": "Round successivo",
+      "End": "Termina il combattimento",
+      "OpenTracker": "Apri il tracciatore di combattimento",
+      "EndTurn": "Fine turno",
+      "Menu": {
+        "Ping": "Segnala",
+        "Reroll": "Ritira per l'Iniziativa",
+        "ClearInitiative": "Azzera l'Iniziativa",
+        "SetActive": "Rendi attivo",
+        "ToggleHidden": "Nascondi / mostra",
+        "ToggleDefeated": "Sconfitto",
+        "Remove": "Rimuovi dal combattimento"
+      }
+    },
+    "Bar": {
+      "Checks": "Prove di caratteristica, tiri salvezza e abilità",
+      "AC": "CA",
+      "Speed": "Velocità",
+      "Concentration": "Concentrazione: {name}",
+      "EndConcentration": "Interrompi la Concentrazione",
+      "GMHeal": "GM: ripristina tutti i Punti Ferita",
+      "GMKill": "GM: riduci a 0 Punti Ferita",
+      "HP": {
+        "Hint": "Clic destro sui Punti Ferita: danni o guarigione",
+        "Amount": "Quantità",
+        "Placeholder": "-7 / +5",
+        "damage": "Danni",
+        "damageTip": "Sottrai questo numero di Punti Ferita (i Punti Ferita Temporanei si consumano per primi; nessuna resistenza applicata)",
+        "heal": "Guarigione",
+        "healTip": "Ripristina questo numero di Punti Ferita, senza superare il massimo",
+        "temp": "PF temp.",
+        "tempTip": "Ottieni questo numero di Punti Ferita Temporanei (mantenuti solo se superiori a quelli attuali)"
+      },
+      "ConcentrationTag": "Concentrazione",
+      "Ritual": "Rituale",
+      "RitualCast": "Come rituale: nessuno slot incantesimo, 10 minuti in più",
+      "Cantrip": "Trucchetto",
+      "SpellLevel": "Livello {level}",
+      "Uses": "{value}/{max} utilizzi",
+      "UpcastHint": "Clic: scegli il livello dell'incantesimo · Maiusc+clic: finestra di dialogo del sistema",
+      "MainHand": "Mano principale",
+      "OffHand": "Mano secondaria",
+      "WeaponSet": "Set di armi {n}",
+      "RemoveEffect": "clic destro per rimuoverlo",
+      "Separator": "Trascina per allargare un contenitore",
+      "Lock": "Blocca la barra (congela le icone: non si possono spostare, aggiungere né rimuovere)",
+      "Unlock": "Sblocca la barra",
+      "Menu": {
+        "Details": "Dettagli",
+        "Sheet": "Apri la scheda",
+        "Remove": "Rimuovi dalla barra",
+        "Light": "Accendi / spegni",
+        "WithoutDas": "Usa senza DAS",
+        "Correction": "Correzione del GM"
+      },
+      "AddRow": "Aggiungi una riga",
+      "RemoveRow": "Rimuovi una riga",
+      "Collapse": "Nascondi la barra delle azioni",
+      "Expand": "Mostra la barra delle azioni",
+      "EndTurn": "Fine turno",
+      "TurnOf": "Turno di {name}",
+      "Movement": "Movimento: {left} / {allowed}",
+      "Rest": "Riposo",
+      "SneakOn": "Nasconditi (azione Nascondersi, Alt+C): vedi i coni di visione delle creature che riesci a vedere",
+      "SneakOff": "Smetti di nasconderti (Alt+C)",
+      "ShortRest": "Riposo Breve",
+      "LongRest": "Riposo Lungo",
+      "NotOwnedItem": "DAS · Combat UI: aggiungi prima questo oggetto alla scheda del personaggio.",
+      "TooltipHint": "Alt: dettagli · T o clic centrale: fissa",
+      "Enchanted": "Incantato: {names}",
+      "Form": "Forma: {name}",
+      "Target": "Bersaglio",
+      "Duration": "Durata",
+      "Filter": {
+        "action": "Azioni",
+        "bonus": "Azioni Bonus",
+        "reaction": "Reazioni",
+        "cantrip": "Trucchetti",
+        "level": "Slot incantesimo di livello {level}: {value}/{max}",
+        "pact": "Slot della Magia del Patto (livello {level}): {value}/{max}"
+      },
+      "Tab": {
+        "default": "Vista predefinita",
+        "common": "Comuni",
+        "class": "Classe",
+        "items": "Oggetti",
+        "passives": "Passivi",
+        "custom": "Personalizzato"
+      },
+      "Light": {
+        "Lit": "Accesa",
+        "Out": "Spenta",
+        "Left": " — restano {h} h {m}",
+        "Empty": "Vuota — serve dell'olio"
+      },
+      "MovementClimb": "Scalata: {left} / {allowed}; ogni quadretto costa {cost}",
+      "Climb": "Scalare: sulla parete, o sul soffitto se ce n'è uno e ne sei capace",
+      "ClimbMenu": "Scalata: salire, scendere, lasciarsi cadere",
+      "NonLethalOn": "Attacchi non letali: un colpo in mischia che porterebbe una creatura a 0 PF la lascia a 1 PF, Priva di Sensi (clic per disattivare)",
+      "NonLethalOff": "Attacchi letali (clic per gli attacchi non letali: mettere fuori combattimento invece di uccidere)",
+      "TwoHandedOff": "Mano secondaria occupata da {name} (a due mani)",
+      "Ammo": "Munizioni: {name} ({quantity} rimaste) — clic per cambiare, oppure rilascia una munizione sull'arma",
+      "AmmoNone": "Nessuna munizione utilizzabile da quest'arma",
+      "AmmoWrong": "{weapon} non può tirare {ammo}.",
+      "AmmoNoWeapon": "Rilascia {ammo} su un'arma che la utilizza (arco, balestra, fionda…).",
+      "OffHandBlocked": "{name} si impugna a due mani: la mano secondaria resta libera.",
+      "PrevWeapons": "Set di armi precedente",
+      "NextWeapons": "Set di armi successivo",
+      "WeaponConfig": "Configura i set di armi"
+    },
+    "Reason": {
+      "NoUses": "Nessun utilizzo rimasto",
+      "NoQuantity": "Nessun esemplare rimasto",
+      "Unprepared": "Incantesimo non preparato",
+      "NoSlot": "Nessuno slot incantesimo disponibile"
+    },
+    "Keys": {
+      "CustomSlot": "Barra: casella Personalizzato {n}",
+      "CustomSlotHint": "Usa la casella corrispondente della scheda Personalizzato. Una casella vuota lascia il tasto alla barra delle macro.",
+      "PinTooltip": "Barra: fissa il tooltip",
+      "PinTooltipHint": "Fissa il tooltip dettagliato della casella sotto il cursore (fuori dalla Barra, il tasto mantiene il suo ruolo abituale: selezionare un bersaglio).",
+      "SwapWeapons": "Barra: set di armi successivo",
+      "SwapWeaponsHint": "Passa al set di armi successivo (durante una misurazione, il tasto aggiunge un punto di passaggio).",
+      "ToggleBar": "Barra: nascondi / mostra",
+      "ToggleBarHint": "Nasconde la barra delle azioni (resta una piccola linguetta per richiamarla) oppure la mostra di nuovo. Mentre è nascosta, i tasti numerici continuano a usare le caselle Personalizzato.",
+      "BasicHint": "Esegue questa azione di base del motore di combattimento per il personaggio mostrato nella Barra.",
+      "Basic": {
+        "dash": "Azione: Scatto",
+        "disengage": "Azione: Disimpegno",
+        "dodge": "Azione: Schivata",
+        "hide": "Azione: Nascondersi",
+        "search": "Azione: Ricerca",
+        "help": "Azione: Aiuto",
+        "ready": "Azione: Preparare",
+        "escape": "Azione: Liberarsi"
+      },
+      "PrevWeapons": "Barra: set di armi precedente",
+      "PrevWeaponsHint": "Passa al set di armi precedente."
+    },
+    "D20": {
+      "Checks": "Prove di caratteristica",
+      "Saves": "Tiri salvezza",
+      "Skills": "Abilità",
+      "Other": "Altro",
+      "Initiative": "Iniziativa",
+      "Concentration": "Concentrazione",
+      "SpellDC": "CD del tiro salvezza degli incantesimi",
+      "Passive": "Passiva: {value}"
+    },
+    "Party": {
+      "HandRaised": "Mano alzata",
+      "Inspiration": "Ispirazione Eroica",
+      "Hide": "Nascondi il gruppo",
+      "Show": "Mostra il gruppo",
+      "Menu": {
+        "Sheet": "Apri la scheda",
+        "Target": "Seleziona come bersaglio",
+        "RaiseHand": "Alza la mano",
+        "LowerHand": "Abbassa la mano",
+        "Ping": "Segnala",
+        "GiveHeroic": "Concedi Ispirazione Eroica",
+        "RemoveHeroic": "Rimuovi Ispirazione Eroica"
+      },
+      "InspirationGive": "Ispirazione Eroica: clic per concederla",
+      "InspirationRemove": "Ispirazione Eroica: clic per rimuoverla"
+    },
+    "Portrait": {
+      "Ward": "{name}: {value}/{max}",
+      "Tier": {
+        "unhurt": "Illeso",
+        "hurt": "Ferito",
+        "bloodied": "Sanguinante",
+        "critical": "Critico",
+        "down": "A terra",
+        "dead": "Morto"
+      },
+      "HP": "PF {value}/{max}"
+    },
+    "Settings": {
+      "PortraitImage": {
+        "Name": "Immagine dei ritratti",
+        "Hint": "Illustrazione del personaggio (immagine dell'attore) oppure immagine del token. In mancanza di un'illustrazione propria, viene usata l'immagine del token.",
+        "Actor": "Immagine dell'attore",
+        "Token": "Immagine del token"
+      },
+      "scaleFrieze": {
+        "Name": "Dimensione della Striscia (%)",
+        "Hint": "Ingrandisce o riduce la striscia dell'Iniziativa (in alto) su questo dispositivo. Con l'adattamento alla finestra attivo, questa percentuale si applica in aggiunta."
+      },
+      "scaleParty": {
+        "Name": "Dimensione del Gruppo (%)",
+        "Hint": "Ingrandisce o riduce i ritratti del gruppo (di lato) su questo dispositivo. Con l'adattamento alla finestra attivo, questa percentuale si applica in aggiunta."
+      },
+      "scaleBar": {
+        "Name": "Dimensione della Barra (%)",
+        "Hint": "Ingrandisce o riduce la barra delle azioni (in basso) su questo dispositivo. Con l'adattamento alla finestra attivo, questa percentuale si applica in aggiunta."
+      },
+      "ScaleAuto": {
+        "Name": "Adatta la dimensione alla finestra",
+        "Hint": "L'interfaccia si ingrandisce e si riduce insieme alla finestra di Foundry: dimensione normale in una finestra di 1920 × 1080, più piccola al di sotto, più grande al di sopra (dal 60% al 200%)."
+      },
+      "FadeOpacity": {
+        "Name": "Opacità senza il cursore sopra (%)",
+        "Hint": "La Barra, il Gruppo e la Striscia sfumano ciascuno fino a questa opacità quando il mouse non è sopra di essi, e tornano nitidi al passaggio del cursore. La Barra resta opaca durante il turno del tuo personaggio. 100%: mai sfumati. Velocità e ritardo seguono la dissolvenza dell'interfaccia di Foundry (Configura interfaccia)."
+      },
+      "EnemyHealth": {
+        "Name": "Punti Ferita delle creature mostrati ai giocatori",
+        "Hint": "Ciò che un giocatore vede dei PF di una creatura di cui non può vedere la scheda, sui ritratti di DAS (striscia dell'Iniziativa, gruppo, barra): sul ritratto e nel tooltip della striscia dell'Iniziativa. Il GM e i proprietari vedono sempre i PF esatti. Le barre dei PF dei token di Foundry non dipendono da questa impostazione (visualizzazione delle barre nella configurazione del token).",
+        "exact": "Esatti: velo proporzionale ai PF persi, PF in cifre",
+        "tiers": "Per fasce: velo rosso e stato scritto (illeso, ferito, Sanguinante, critico), senza cifre",
+        "none": "Nessuno (solo «A terra» o morto)"
+      },
+      "frieze": {
+        "Name": "Striscia dell'Iniziativa",
+        "Hint": "Mostra l'ordine dei turni nella parte alta dello schermo durante il combattimento."
+      },
+      "friezeRound": {
+        "Name": "Striscia: numero del round",
+        "Hint": "Mostra «Round n» a sinistra della striscia."
+      },
+      "friezeInitiativeText": {
+        "Name": "Iniziativa sopra le teste",
+        "Hint": "All'inizio del combattimento, ogni token mostra brevemente il proprio valore di Iniziativa."
+      },
+      "friezePrepToPlayers": {
+        "Name": "Striscia: mostra la preparazione ai giocatori",
+        "Hint": "I giocatori vedono la striscia non appena il combattimento viene creato (per tirare la propria Iniziativa), non soltanto una volta iniziato."
+      },
+      "friezeEnemyInitiative": {
+        "Name": "Striscia: Iniziativa delle creature visibile",
+        "Hint": "I giocatori vedono il valore di Iniziativa delle creature di cui non sono proprietari."
+      },
+      "friezeAutoSelect": {
+        "Name": "Striscia: seleziona il tuo combattente attivo",
+        "Hint": "A ogni turno di uno dei tuoi combattenti, il suo token viene selezionato e la visuale centrata su di esso. Per i giocatori: il GM ha un'impostazione a parte (preselezione del GM)."
+      },
+      "friezeAutoSelectGM": {
+        "Name": "Striscia: preselezione del GM",
+        "Hint": "Sullo schermo del GM, a ogni turno: seleziona il token di turno e centra la visuale su di esso — mai, solo i PNG (combattenti senza un giocatore proprietario) oppure tutti.",
+        "none": "Nessuno",
+        "npc": "Solo PNG",
+        "all": "Tutti"
+      },
+      "friezeHideDefeated": {
+        "Name": "Striscia: rimuovi gli sconfitti",
+        "Hint": "Le creature sconfitte scompaiono dalla striscia dei giocatori."
+      },
+      "party": {
+        "Name": "Ritratti del gruppo",
+        "Hint": "Mostra i personaggi del gruppo in colonna a lato dello schermo."
+      },
+      "partyPosition": {
+        "Name": "Gruppo: lato",
+        "Hint": "Dove collocare la colonna dei ritratti.",
+        "left": "A sinistra",
+        "right": "A destra",
+        "hidden": "Nascosta"
+      },
+      "partyPlacement": {
+        "Name": "Gruppo: posizionamento a sinistra",
+        "Hint": "Automatico: contro il bordo dello schermo, a meno che non copra i controlli di scena (in tal caso accanto a essi).",
+        "auto": "Automatico",
+        "edge": "Sempre contro il bordo dello schermo",
+        "beside": "Sempre accanto ai controlli di scena"
+      },
+      "partyHideInCombat": {
+        "Name": "Gruppo: nascondi in combattimento",
+        "Hint": "Nasconde la colonna dei ritratti durante il combattimento (basta la striscia)."
+      },
+      "partyMembers": {
+        "Name": "Gruppo: chi ne fa parte",
+        "Hint": "Solo i personaggi assegnati ai giocatori, oppure qualsiasi personaggio di proprietà di un giocatore.",
+        "owned": "Qualsiasi personaggio di proprietà di un giocatore",
+        "assigned": "Solo personaggi assegnati"
+      },
+      "partyConnectedOnly": {
+        "Name": "Gruppo: solo giocatori connessi",
+        "Hint": "Mostra solo i personaggi il cui giocatore è connesso."
+      },
+      "partyCompanions": {
+        "Name": "Gruppo: compagni ed evocazioni",
+        "Hint": "Mostra, in piccoli ritratti sotto ogni personaggio, le sue evocazioni e le altre creature presenti nella scena di proprietà del suo giocatore."
+      },
+      "partyHealthExact": {
+        "Name": "Gruppo: Punti Ferita esatti tra giocatori",
+        "Hint": "Ogni giocatore vede i PF esatti di tutti i membri del gruppo, non solo i propri."
+      },
+      "bar": {
+        "Name": "Barra delle azioni",
+        "Hint": "Mostra la barra delle azioni in stile BG3 nella parte bassa dello schermo per il personaggio controllato."
+      },
+      "barHideHotbar": {
+        "Name": "Barra: comprimi la barra delle macro",
+        "Hint": "Nasconde la barra delle macro di Foundry quando è visibile la barra delle azioni."
+      },
+      "barGMHotbar": {
+        "Name": "Barra: il GM mantiene la barra delle macro",
+        "Hint": "Sullo schermo del GM, la barra delle macro di Foundry resta visibile e la barra delle azioni si colloca sopra di essa. I giocatori seguono la propria impostazione."
+      },
+      "barFullTooltips": {
+        "Name": "Barra: tooltip dettagliati",
+        "Hint": "Mostra sempre la descrizione completa passando il cursore su una casella (altrimenti: tieni premuto Alt)."
+      },
+      "barLockPlayers": {
+        "Name": "Barra: blocca per i giocatori",
+        "Hint": "I giocatori non possono più spostare, aggiungere né rimuovere caselle."
+      },
+      "barRememberTab": {
+        "Name": "Barra: ricorda la scheda scelta",
+        "Hint": "Su questo computer, la barra delle azioni riapre per ogni personaggio l'ultima scheda scelta invece di tornare alla vista predefinita. I filtri vengono comunque azzerati."
+      },
+      "softPath": {
+        "Name": "Mappa: stile del percorso",
+        "Hint": "Le caselle del percorso di movimento: colore pieno (dnd5e), tasselli dai bordi sfumati, oppure piccoli punti larghi un terzo di quadretto. Stessi colori (verde, giallo, rosso in base alla velocità).",
+        "flat": "Colore pieno",
+        "soft": "Tasselli sfumati",
+        "dots": "Piccoli punti"
+      },
+      "rulerOutOfCombat": {
+        "Name": "Mappa: percorso fuori dal combattimento",
+        "Hint": "Mostra anche fuori dal combattimento il percorso e il righello di un token che si muove. Disattivato: compaiono solo in combattimento. Lo strumento Righello di misurazione non è interessato."
+      },
+      "smoothMovement": {
+        "Name": "Mappa: movimento fluido",
+        "Hint": "I token accelerano alla partenza e rallentano all'arrivo, lungo tutto il percorso, invece di scorrere a velocità costante. Vale per tutti i client."
+      },
+      "cameraFollow": {
+        "Name": "Mappa: la visuale segue il mio token",
+        "Hint": "Quando uno dei tuoi token si muove, la visuale si ricentra dolcemente su di esso. Per il GM: il token che controlla e muove personalmente."
+      },
+      "weaponSets": {
+        "Name": "Set di armi",
+        "Hint": "Quanti set di armi questo computer fa scorrere (frecce accanto ai set, tasti set successivo / precedente). Ogni set ha una mano principale (a sinistra) e una mano secondaria (a destra)."
+      },
+      "rollWindow": {
+        "Name": "Finestra di tiro in stile BG3",
+        "Hint": "Quando il GM richiede un tiro, questo si apre in una finestra in stile Baldur's Gate 3 (CD, d20 cliccabile, bonus sotto forma di tessere, aiuti). Deselezionato: la finestra di tiro di dnd5e."
+      }
+    },
+    "Theme": {
+      "Title": "Colori dell'interfaccia",
+      "Menu": {
+        "Name": "Colori dell'interfaccia",
+        "Label": "Modifica i colori",
+        "Hint": "Scegli i colori della Barra, del Gruppo e della Striscia: temi inclusi, i tuoi, oppure quello del tavolo. Salva, esporta e importa temi."
+      },
+      "Hint": "Le modifiche sono visibili subito; chiudi senza applicare per tornare indietro.",
+      "FollowTable": "Tema del tavolo (scelto dal GM)",
+      "Builtin": "Inclusi",
+      "Mine": "I miei temi",
+      "Table": "Temi del tavolo",
+      "Advanced": "Avanzate (tutti i colori)",
+      "Opacity": "Opacità",
+      "ResetColor": "Torna al colore del tema",
+      "Apply": "Applica",
+      "SaveAs": "Salva con nome…",
+      "Save": "Salva",
+      "Delete": "Elimina",
+      "Export": "Esporta",
+      "Import": "Importa",
+      "Reset": "Ripristina",
+      "SetTable": "Rendilo il tema del tavolo",
+      "CopyOf": "{name} (copia)",
+      "Applied": "Tema applicato: {name}",
+      "Saved": "Tema salvato: {name}",
+      "DeleteConfirm": "Eliminare il tema «{name}»?",
+      "Imported": "Tema importato: {name}",
+      "ImportInvalid": "Questo file non è un tema di DAS · Combat UI.",
+      "ImportRejected": "Alcuni colori sono stati ignorati (sconosciuti o non validi): {keys}",
+      "TableSet": "Tema del tavolo: {name}",
+      "Token": {
+        "bg": "Sfondo",
+        "panel-top": "Pannello (alto)",
+        "panel-bottom": "Pannello (basso)",
+        "grid": "Sfondo della barra",
+        "gold": "Cornici e riflessi",
+        "gold-dim": "Cornici (attenuate)",
+        "well": "Caselle e incavi",
+        "shade": "Ombre",
+        "glint": "Veli chiari",
+        "chip": "Bollini degli effetti",
+        "toggle": "Pulsante del Gruppo",
+        "text": "Testo",
+        "text-strong": "Numeri sulle icone",
+        "icon": "Icone piccole",
+        "reason": "Testo di avviso",
+        "magic-text": "Testo magico",
+        "action": "Azione",
+        "bonus": "Azione Bonus",
+        "reaction": "Reazione",
+        "slot": "Slot incantesimo",
+        "pact": "Slot del patto",
+        "cantrip": "Trucchetti",
+        "movement": "Anello del movimento",
+        "hurt": "Velo delle ferite",
+        "heal": "Lampo di guarigione",
+        "temp": "Punti Ferita Temporanei",
+        "flash-damage": "Lampo dei danni",
+        "hostile-bg": "Sfondo dei ritratti ostili",
+        "ward-edge": "Protezione (bordo)",
+        "ward-hi": "Protezione (chiaro)",
+        "ward-lo": "Protezione (scuro)",
+        "ward-glow": "Protezione (bagliore)",
+        "side-friendly": "Amichevole",
+        "side-neutral": "Neutrale",
+        "side-hostile": "Ostile",
+        "side-secret": "Segreto",
+        "active": "Turno in corso",
+        "hand": "Mano del giocatore",
+        "awaiting": "Risposta attesa (clessidra)",
+        "button": "Pulsanti",
+        "button-hover": "Pulsanti (al passaggio del cursore)",
+        "button-danger": "Pulsanti (pericolo)",
+        "separator": "Separatori",
+        "separator-dark": "Separatori (scuro)",
+        "tab-hi": "Schede (chiaro)",
+        "tab-lo": "Schede (scuro)",
+        "tab-default-hi": "Scheda principale (chiaro)",
+        "tab-default-lo": "Scheda principale (scuro)",
+        "end-hi": "Fine turno (chiaro)",
+        "end-lo": "Fine turno (scuro)",
+        "rest-hi": "Riposo (chiaro)",
+        "rest-lo": "Riposo (scuro)",
+        "d20-hi": "Pulsante d20 (chiaro)",
+        "d20-lo": "Pulsante d20 (scuro)",
+        "concentration": "Concentrazione",
+        "magic": "Magia",
+        "flame": "Fiamma",
+        "lit-edge": "Fonte di luce accesa (bordo)",
+        "lit-glow": "Fonte di luce accesa (bagliore)",
+        "light-bright": "Luce Intensa",
+        "light-dim": "Luce Fioca",
+        "light-dark": "Oscurità",
+        "gm-heal": "GM: guarisci",
+        "gm-kill": "GM: uccidi",
+        "text-on-image": "Testo sui ritratti",
+        "roll-veil": "Velo di sfondo",
+        "roll-panel-hi": "Medaglione (centro)",
+        "roll-panel-lo": "Medaglione (bordo)",
+        "roll-die": "d20 (facce)",
+        "roll-die-face": "d20 (faccia frontale)",
+        "roll-die-edge": "d20 (spigoli)",
+        "roll-die-text": "d20 (numero)",
+        "roll-tile-hi": "Tessera (alto)",
+        "roll-tile-lo": "Tessera (basso)",
+        "roll-success": "Successo, Vantaggio",
+        "roll-failure": "Fallimento, Svantaggio"
+      },
+      "Group": {
+        "frames": "Cornici e sfondi",
+        "text": "Testo",
+        "economy": "Economia delle azioni",
+        "health": "Salute",
+        "sides": "Schieramenti e turno",
+        "buttons": "Pulsanti, schede, separatori",
+        "states": "Stati ed effetti",
+        "roll": "Finestra di tiro"
+      },
+      "Preset": {
+        "bg3": "BG3",
+        "gothic": "Nebbia gotica",
+        "parchment": "Pergamena",
+        "parchment-dark": "Pergamena d'ombra"
+      }
+    },
+    "SettingsWindow": {
+      "Title": "DAS · Combat UI — Impostazioni",
+      "Menu": {
+        "Name": "Impostazioni di Combat UI",
+        "Label": "Apri le impostazioni",
+        "Hint": "Tutte le impostazioni dell'interfaccia, ordinate in schede: quelle del tavolo (GM) e quelle della tua postazione. Anche i colori dell'interfaccia si modificano da qui."
+      },
+      "Tab": {
+        "appearance": "Aspetto",
+        "bar": "Barra delle azioni",
+        "frieze": "Striscia dell'Iniziativa",
+        "party": "Gruppo",
+        "board": "Mappa"
+      },
+      "Tool": {
+        "theme": {
+          "Name": "Colori dell'interfaccia",
+          "Hint": "Scegli i colori della Barra, del Gruppo e della Striscia: temi inclusi, i tuoi, oppure quello del tavolo.",
+          "Button": "Modifica i colori"
+        }
+      }
+    },
+    "Climb": {
+      "OnWall": "In scalata, a {height} {units} dal suolo",
+      "OnCeiling": "Sul soffitto, a {height} {units} dal suolo"
+    },
+    "WeaponSets": {
+      "Title": "Set di armi: {name}",
+      "Count": "Set di armi su questo computer",
+      "Set": "Set",
+      "Main": "Mano principale",
+      "Off": "Mano secondaria",
+      "Held": "In mano",
+      "Hold": "Impugna",
+      "Clear": "Svuota",
+      "Hint": "Lo spazio a sinistra è la mano principale, quello a destra la mano secondaria. Il set in mano è equipaggiato, gli altri no. Un'arma a due mani occupa entrambe le mani.",
+      "Locked": "La Barra è bloccata: gli spazi non si possono modificare.",
+      "Pool": "Trascina un'arma su uno spazio; rilascia qui uno spazio per svuotarlo.",
+      "None": "Nessuna arma, scudo o fonte di luce."
+    },
+    "Roll": {
+      "DC": "Classe Difficoltà",
+      "Click": "Clicca sui dadi per tirarli",
+      "Waiting": "In attesa dell'aiuto…",
+      "Rolling": "Tiro in corso…",
+      "Advantage": "Vantaggio",
+      "Disadvantage": "Svantaggio",
+      "Total": "Bonus totale",
+      "Cancel": "Annulla",
+      "Success": "Successo",
+      "Failure": "Fallimento",
+      "CheckOf": "Prova di {ability}",
+      "Check": "Prova di caratteristica",
+      "Save": "Tiro salvezza",
+      "Proficiency": "Competenza: {name}",
+      "GMModifier": "Modificatore del GM",
+      "Aid": {
+        "Guidance": "Guida da {name}",
+        "Inspiration": "Ispirazione da {name}",
+        "Help": "Aiuto da {name}"
+      },
+      "AidHint": {
+        "guidance": "Chiedi a questo personaggio di lanciare Guida su di te: +1d4 a questa prova.",
+        "inspiration": "Chiedi l'Ispirazione Bardica: il suo dado viene aggiunto se la prova fallisce.",
+        "help": "Chiedi Aiuto: la prova ha Vantaggio."
+      },
+      "AidState": {
+        "pending": "Richiesta inviata…",
+        "granted": "Concesso",
+        "refused": "Rifiutato",
+        "taken": "Un aiuto di questo tipo è già stato richiesto per questo tiro"
+      },
+      "Source": {
+        "gm": "richiesto dal GM",
+        "help": "Aiuto",
+        "system": "condizione, talento o incantesimo",
+        "forced": "forzato"
+      },
+      "Force": {
+        "advantage": "Forza il Vantaggio",
+        "disadvantage": "Forza lo Svantaggio"
+      },
+      "ForceHint": {
+        "advantage": "Tira con Vantaggio, qualunque cosa dicano il GM e la scheda. Clicca di nuovo per annullare.",
+        "disadvantage": "Tira con Svantaggio, qualunque cosa dicano il GM e la scheda. Clicca di nuovo per annullare."
+      },
+      "Inspired": "Ispirazione da {name}",
+      "Reserve": "in caso di fallimento",
+      "ReserveHint": "Già ricevuta: dopo un fallimento, ti viene proposto di aggiungere questo dado.",
+      "Close": "Chiudi"
+    },
+    "Awaiting": {
+      "Someone": "In attesa di una risposta"
+    }
+  }
+}
