@@ -21,7 +21,9 @@ export function valueBetween(above, below) {
   if ( a === null && b === null ) return null;
   if ( a === null ) return Math.floor(b) + 1;
   if ( b === null ) return Math.ceil(a) - 1;
-  if ( a <= b ) return a; // pas de place : on s'aligne sur le précédent, reorder repousse la suite
+  // Pas de place : un cran sous le précédent, reorder repousse la suite. Jamais la même valeur que lui : le cœur
+  // départagerait par id, et le déplacé repasserait devant quand son id trie avant.
+  if ( a <= b ) return round1(a - STEP);
   const mid = Math.floor((a + b) / 2);
   if ( mid > b && mid < a ) return mid;       // un entier tient entre les deux
   const half = round1((a + b) / 2);
