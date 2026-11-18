@@ -16,7 +16,10 @@ export function registerRollWindow() {
   let queue = Promise.resolve();
   route(GROUP_ROLL_PROMPT_HOOK, "BG3 roll window", prompt => {
     if ( prompt.result || !game.settings.get(MODULE_ID, "rollWindow") ) return;
-    prompt.result = queue = queue.then(() => (prompt.signal?.aborted ? null : new RollWindow(prompt).run()));
+    prompt.result = queue.then(() => (prompt.signal?.aborted ? null : new RollWindow(prompt).run()));
+    // Une fenêtre qui échoue ne retient pas les suivantes : l'échec reste celui de sa demande (le moteur le journalise), la file
+    // repart. Sans cela, toutes les demandes d'après étaient rejetées d'emblée, sans fenêtre ni jet, jusqu'au rechargement.
+    queue = prompt.result.catch(() => {});
   });
   // Un effet posé, changé ou retiré sur le personnage d'une fenêtre ouverte : ses tuiles et son mode se relisent (au tour suivant de la
   // boucle : l'acteur a alors préparé ses nouvelles données).
