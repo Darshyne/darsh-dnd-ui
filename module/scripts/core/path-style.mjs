@@ -19,3 +19,15 @@ export function pathStyleOf(value) {
   if ( (value === false) || (value === "false") ) return "flat";
   return PATH_STYLES.includes(value) ? value : "soft";
 }
+
+/**
+ * La règle d'un token se montre-t-elle ? En combat, ou hors combat si le réglage le demande. Un module de recherche de chemin
+ * (Wayfinder) ne dessine rien lui-même : sa route n'a que cette règle pour se voir, alors elle se montre aussi hors combat le
+ * temps qu'un déplacement est planifié (le glisser).
+ * @param {{base: boolean, always: boolean, inCombat: boolean, pathfinder: boolean, planned: boolean}} facts
+ * @returns {boolean}
+ */
+export function rulerShown({ base, always, inCombat, pathfinder, planned }) {
+  if ( !base ) return false;
+  return always || inCombat || (pathfinder && planned);
+}
