@@ -116,7 +116,7 @@ export class Party {
     }
 
     this.element.replaceChildren();
-    if ( !entries.length ) return;
+    if ( !entries.length ) { this.#placedShape = null; return; }
     // Bouton en tête de colonne : replier le Groupe (seul le bouton reste) ou le déplier. Réglage client.
     const collapsed = !!setting("partyCollapsed");
     this.element.classList.toggle("ddu-party--collapsed", collapsed);
@@ -124,13 +124,38 @@ export class Party {
     const icon = collapsed ? "fa-users" : (left ? "fa-chevron-left" : "fa-chevron-right");
     this.element.insertAdjacentHTML("beforeend", `<button type="button" class="ddu-party__toggle" data-tooltip="${
       esc(loc(collapsed ? "Party.Show" : "Party.Hide"))}"><i class="fa-solid ${icon}"></i></button>`);
-    if ( collapsed ) return this.#place();
-    const list = document.createElement("ol");
-    list.className = "ddu-party__list";
-    for ( const entry of entries ) list.append(this.#member(entry, combat, current));
-    this.element.append(list);
-    this.markAwaited();
-    this.#place();    // après le dessin : la place dépend de la hauteur de la colonne
+    // La place dépend de la hauteur de la colonne : de qui y est, repliée ou non, et du côté. Rien de cela n'a changé (un PV, un
+    // effet, un token sélectionné) : la colonne reste où elle est, sans mesure.
+    const shape = `${collapsed}|${left}|${entries.map(e => e.key).join(",")}`;
+    if ( !collapsed ) {
+      const list = document.createElement("ol");
+      list.className = "ddu-party__list";
+      for ( const entry of entries ) list.append(this.#member(entry, combat, current));
+      this.element.append(list);
+      this.markAwaited();
+    }
+    if ( shape !== this.#placedShape ) {
+      this.#placedShape = shape;
+      this.#placeSoon();
+    }
+  }
+
+  /** Ce pour quoi la colonne a été placée la dernière fois (voir `render`). */
+  #placedShape = null;
+
+  /** Une mesure demandée, pas encore faite. */
+  #placing = null;
+
+  /**
+   * Placer la colonne à l'image suivante, une seule fois. `#place` mesure la colonne, les outils de scène et la liste des joueurs
+   * (`getBoundingClientRect`) : faite ici même, juste après avoir redessiné, la mesure obligeait le navigateur à refaire toute la
+   * mise en page de l'interface à chaque dessin du Groupe.
+   */
+  #placeSoon() {
+    this.#placing ??= requestAnimationFrame(() => {
+      this.#placing = null;
+      if ( !this.element.hidden ) this.#place();
+    });
   }
 
   /** Issue #35 : le sablier sur le portrait de qui la table attend (moteur §381), sans redessiner la colonne. */
