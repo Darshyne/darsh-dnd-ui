@@ -180,7 +180,6 @@ export class Bar {
       this.portrait = null;
       this.filter = null;
       this.pending = false;
-      this.d20.close();
       // Calculé une fois par acteur montré : un objet ramassé en forme animale ne doit pas changer de clé.
       this.host = actor ? layoutHost(actor) : null;
       // §62 (issue #9) : l'onglet retenu pour ce personnage sur ce client (le filtre, lui, repart à zéro).
@@ -192,6 +191,9 @@ export class Bar {
     this.actor = actor;
     this.element.hidden = !actor;
     this.#closePopup();
+    // Le panneau du d20 est un enfant de la Barre : le redessin l'enlève de la page. Fermé pour de bon, sinon il se croyait encore
+    // ouvert et le clic suivant sur le d20 « fermait » un panneau déjà parti (il fallait cliquer deux fois).
+    this.d20.close();
     if ( hpDraft !== null ) queueMicrotask(() => this.#reopenHPPopup(hpDraft));
     if ( !actor ) {
       this.element.replaceChildren();
@@ -208,7 +210,6 @@ export class Bar {
     // Tour d'un personnage que l'on joue : la Barre ne s'estompe pas (demande de l'utilisateur, 2026-10-01).
     this.element.classList.toggle("ddu-bar--turn", ctx.myTurn && this.canEdit);
     if ( collapsed ) {
-      this.d20.close();
       this.#views = new Map();
       this.element.replaceChildren(this.#collapseToggle());
       return;
