@@ -191,7 +191,9 @@ export class Portrait {
   /** Rafraîchit les portraits d'un acteur (ou de tous). Appelé par les hooks (runtime/portraits). */
   static refreshFor(actor, options) {
     for ( const p of live ) {
-      if ( !p.element.isConnected ) { live.delete(p); continue; }
+      // Hors de la page (Groupe ou Barre repliés) : sauté, pas oublié — sa zone le garde et le reposera tel quel, et il doit
+      // alors suivre de nouveau les PV. Seul destroy() le retire du suivi.
+      if ( !p.element.isConnected ) continue;
       if ( !actor || p.subject === actor || p.subject?.id === actor.id ) p.refresh(options);
     }
   }
