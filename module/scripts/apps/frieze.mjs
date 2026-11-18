@@ -101,8 +101,33 @@ export class Frieze {
     this.#updateCaption();
     this.markAwaited();
 
-    // Garder le combattant actif visible quand la frise déborde.
-    track.querySelector(".ddu-frieze__slot--active")?.scrollIntoView({ block: "nearest", inline: "center" });
+    this.#keepActiveVisible(track);
+  }
+
+  /** L'observateur qui dit si la case active déborde de la piste (voir `#keepActiveVisible`). */
+  #activeWatch = null;
+
+  /**
+   * Garder le combattant actif visible quand la frise déborde — sans mise en page forcée. `scrollIntoView` appelé ici, juste après
+   * avoir remplacé les cases, obligeait le navigateur à refaire toute la mise en page de l'interface à chaque dessin de la Frise
+   * (mesuré en jeu : 316 ms sur 376 passés dans `render` pendant un combat de trois créatures). Un `IntersectionObserver` répond
+   * après la mise en page que le navigateur fait de toute façon : la piste n'est déplacée que si la case active n'y est pas en
+   * entier.
+   */
+  #keepActiveVisible(track) {
+    this.#activeWatch?.disconnect();
+    this.#activeWatch = null;
+    const active = track.querySelector(".ddu-frieze__slot--active");
+    if ( !active ) return;
+    if ( typeof IntersectionObserver !== "function" ) return active.scrollIntoView({ block: "nearest", inline: "center" });
+    this.#activeWatch = new IntersectionObserver((entries, watch) => {
+      watch.disconnect();
+      if ( this.#activeWatch === watch ) this.#activeWatch = null;
+      const seen = entries.at(-1);
+      if ( !seen?.target.isConnected || (seen.intersectionRatio >= 1) ) return;
+      seen.target.scrollIntoView({ block: "nearest", inline: "center" });
+    }, { root: track, threshold: 1 });
+    this.#activeWatch.observe(active);
   }
 
   /** Issue #35 : le sablier sur la case de qui la table attend (moteur §381), sans redessiner la Frise. */
