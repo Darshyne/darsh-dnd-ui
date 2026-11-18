@@ -361,12 +361,25 @@ export function weaponsOf(actor) {
   }));
 }
 
+/** Bascules de jeu d'armes en cours, par acteur : chacune attend la précédente. */
+const equipping = new WeakMap();
+
 /**
  * Passer d'un jeu d'armes à l'autre : équipe les objets du jeu choisi, déséquipe ceux des autres jeux
  * (seulement eux : le reste de l'équipement n'est pas touché). Une seule mise à jour groupée.
  * §52 : N jeux ; `released` — des références sorties du jeu actif (retirées, remplacées) : déséquipées aussi.
+ * L'une après l'autre pour un même acteur : les objets ne changent ici qu'au retour du serveur, et une bascule calculée avant ce
+ * retour comparait à l'état d'avant — elle n'envoyait rien, et la première restait seule (jeu 1 affiché, jeu 2 en main).
  */
-export async function equipWeaponSet(actor, sets, active, { released=[] }={}) {
+export function equipWeaponSet(actor, sets, active, options={}) {
+  const run = () => equipNow(actor, sets, active, options);
+  // Un échec de la précédente ne retient pas la suivante ; chaque appelant ne voit que le sien.
+  const step = (equipping.get(actor) ?? Promise.resolve()).then(run, run);
+  equipping.set(actor, step);
+  return step;
+}
+
+async function equipNow(actor, sets, active, { released=[] }={}) {
   const idOf = r => r.split(".")[1];
   const want = new Set((sets[active] ?? []).filter(Boolean).map(idOf));
   const other = new Set([...sets.flatMap((set, s) => ((s === active) ? [] : set)), ...released].filter(Boolean).map(idOf));
