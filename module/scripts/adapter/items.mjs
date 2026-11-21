@@ -11,7 +11,7 @@
  * - surcharge : usageConfig.spell.slot = clé d'emplacement (documents/activity/mixin.mjs:487-495).
  * Actions de base du moteur : items portant flags["dnd5e-combat"].basicAction (SPEC §4.1).
  */
-import { reasonsFor, upcastOptions } from "../core/cells.mjs";
+import { reasonsFor, upcastOptions, castActivity } from "../core/cells.mjs";
 import { cellStateOf, movableZoneOf, carriedLightOf } from "./engine.mjs";
 
 const TIMED = ["action", "bonus", "reaction"];
@@ -250,6 +250,19 @@ export function classResources(actor) {
  */
 export function enchantmentsOf(item) {
   return (item?.effects ?? []).filter(e => e.isAppliedEnchantment && !e.disabled && !e.isSuppressed).map(e => e.name);
+}
+
+/**
+ * L'activité de ce sort que la Barre lance avec l'emplacement choisi (core/cells.mjs `castActivity`), ou null. Lu comme dnd5e :
+ * `requiresSpellSlot && consumption.spellSlot` pour l'emplacement, `activation.type` pour le temps d'incantation.
+ * @param {Item} item
+ * @returns {object|null}
+ */
+export function castActivityOf(item) {
+  const acts = item?.system?.activities?.contents ?? [];
+  const slot = a => !!(a.requiresSpellSlot && a.consumption?.spellSlot);
+  const id = castActivity(acts.map(a => ({ id: a.id, slot: slot(a), timed: !!a.activation?.type })));
+  return id ? (acts.find(a => a.id === id) ?? null) : null;
 }
 
 /**

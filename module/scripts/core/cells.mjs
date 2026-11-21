@@ -36,6 +36,21 @@ export function upcastOptions(slots, level) {
 }
 
 /**
+ * L'activité qui LANCE un sort à emplacements, quand le niveau est déjà choisi et qu'il faut la désigner sans la question de
+ * dnd5e. Celle qui dépense l'emplacement et a un temps d'incantation ; à défaut, la première qui le dépense. Une suite du sort
+ * (des dégâts de plus à chaque attaque qui touche) n'a pas de temps d'incantation : si la donnée lui laisse « dépense un
+ * emplacement » (la valeur par défaut de dnd5e), elle n'est pas prise pour l'incantation (issue #11). Même critère que le moteur
+ * (son SPEC §42.1).
+ * @param {{id: string, slot: boolean, timed: boolean}[]} activities  Dans l'ordre de l'objet. `slot` : elle dépense l'emplacement ;
+ *   `timed` : elle a un temps d'incantation (action, action Bonus, réaction, minute…).
+ * @returns {string|null}  Son identifiant, ou null : aucune ne dépense d'emplacement.
+ */
+export function castActivity(activities=[]) {
+  const slotted = activities.filter(a => a.slot);
+  return (slotted.find(a => a.timed) ?? slotted[0])?.id ?? null;
+}
+
+/**
  * Raisons propres à la case pour lesquelles elle est grisée (clés de traduction DDU.Reason.*). Celles du tour (pas
  * son tour, action dépensée, Neutralisé…) viennent du moteur, déjà traduites.
  * @param {object} c

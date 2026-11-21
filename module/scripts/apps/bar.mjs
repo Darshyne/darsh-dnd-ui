@@ -19,7 +19,7 @@ import { roman, matchesFilter } from "../core/cells.mjs";
 import { rememberedTab, rememberTab } from "../core/bar-tab.mjs";
 import {
   refOf, resolveRef, validRefs, inactiveRefs, autoEntries, tabRefs, classLabel, slotsOf, hasCantrips, classResources,
-  cellView, weaponsOf, equipWeaponSet, enchantmentsOf, tabOf, offhandMode, isTwoHanded
+  cellView, castActivityOf, weaponsOf, equipWeaponSet, enchantmentsOf, tabOf, offhandMode, isTwoHanded
 } from "../adapter/items.mjs";
 import { iconEffectsOf, adjustHP } from "../adapter/actor.mjs";
 import { planOf } from "../core/hp-adjust.mjs";
@@ -945,8 +945,9 @@ export class Bar {
     if ( !r.activity && carriedLightOf(r.item) && !activities?.some(a => a.type === "utility") ) return toggleLight(r.item);
     let activity = r.activity ?? (activities?.size === 1 ? activities.contents[0] : null);
     // Niveau choisi dans le tiroir : l'activité qui dépense l'emplacement (Marque du chasseur en a trois,
-    // dont une seule le consomme), sinon dnd5e ouvrirait son choix d'activité et perdrait le niveau.
-    if ( slot && !activity ) activity = activities?.find(a => a.requiresSpellSlot && a.consumption?.spellSlot) ?? null;
+    // dont une seule le consomme), sinon dnd5e ouvrirait son choix d'activité et perdrait le niveau. Issue #11 : celle qui a un
+    // temps d'incantation d'abord — une suite sans temps d'incantation laissée à « dépense un emplacement » partait à sa place.
+    if ( slot && !activity ) activity = castActivityOf(r.item);
     // §65 : par le moteur — un sort refusé par le seul champ antimagie propose « le faire quand même » (adapter/engine.mjs).
     if ( slot && activity ) return useFromBar(activity, { event, spell: { slot } }, { configure: false });
     // Issue #31 (moteur) : le choix du tiroir des potions part avec l'utilisation — le moteur ne repose pas la question.
