@@ -118,6 +118,10 @@
       "PrevWeapons": "Conjunto de armas anterior",
       "NextWeapons": "Próximo conjunto de armas",
       "WeaponConfig": "Configurar conjuntos de armas",
+      "Potion": {
+        "Bonus": "Ação Bônus — rolar {formula}",
+        "Action": "Ação — {max} Pontos de Vida (cura máxima)"
+      },
       "Ammo": "Munição: {name} (restante: {quantity}) — clique para trocar ou solte munição sobre a arma",
       "AmmoNone": "Nenhuma munição compatível com esta arma",
       "AmmoWrong": "{weapon} não pode disparar {ammo}.",
