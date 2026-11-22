@@ -26,7 +26,9 @@ export function registerKeys(getBar) {
 
   CUSTOM_KEYS.forEach((key, i) => {
     game.keybindings.register(MODULE_ID, `customSlot${i + 1}`, {
-      name: game.i18n.format("DDU.Keys.CustomSlot", { n: i + 1 }),
+      // Une clé par case, sans variable : au hook init les traductions ne sont pas chargées (le cœur les charge juste après), un
+      // nom mis en forme ici restait la clé brute et « Configurer les contrôles » affichait douze fois le texte avec « {n} ».
+      name: `DDU.Keys.CustomSlot${i + 1}`,
       hint: "DDU.Keys.CustomSlotHint",
       editable: [{ key: KEY_CODES[key] }],
       precedence: PRIORITY,
