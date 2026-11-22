@@ -8,7 +8,7 @@
  * document n'est écrit, le moteur de combat (qui lit `_source`) n'en voit rien.
  */
 import { setting } from "../shared.mjs";
-import { pathStyleOf, DOT_SIZE } from "../core/path-style.mjs";
+import { pathStyleOf, rulerShown, DOT_SIZE } from "../core/path-style.mjs";
 import { segmentPlan } from "../core/motion.mjs";
 import { settled, smoothDamp2D, viewAhead } from "../core/camera.mjs";
 
@@ -98,7 +98,9 @@ export function installRuler() {
      * @override — client/canvas/placeables/tokens/base-ruler.mjs:79
      */
     get isVisible() {
-      return super.isVisible && (setting("rulerOutOfCombat") || inCombat());
+      return rulerShown({ base: super.isVisible, always: !!setting("rulerOutOfCombat"), inCombat: inCombat(),
+        pathfinder: game.modules.get("wayfinder")?.active === true,
+        planned: Object.keys(this.token?._plannedMovement ?? {}).length > 0 });
     }
 
     /** @override — client/canvas/placeables/tokens/ruler.mjs:767 */
