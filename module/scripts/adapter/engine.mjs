@@ -304,3 +304,18 @@ export function awaitingOf() {
   const list = read("awaiting");
   return Array.isArray(list) ? list : [];
 }
+
+/**
+ * §70 (engine §553, `api.ui.spellWeapons`): the hook the engine calls on every client when a spell weapon (Flame Blade, Produce Flame)
+ * appears or goes: `({ actor, item, activity, effect, active })`.
+ */
+export const SPELL_WEAPON_HOOK = `${ENGINE_ID}.spellWeapon`;
+
+/**
+ * §70: the actor's active spell weapons, as the engine judges them — `[{ uuid, item, itemId, activityId, effect, name, img, level }]`.
+ * Empty with an older engine or one in standby.
+ */
+export function spellWeaponsOf(actor) {
+  const list = actor ? read("spellWeapons", actor) : null;
+  return Array.isArray(list) ? list : [];
+}

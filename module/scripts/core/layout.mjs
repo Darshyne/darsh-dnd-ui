@@ -41,7 +41,7 @@ export function emptyLayout() {
     },
     known: [],
     tabKnown: Object.fromEntries(TABS.map(t => [tabContainer(t), []])),
-    weapons: { sets: [[null, null], [null, null]], active: 0, lost: [] }
+    weapons: { sets: [[null, null], [null, null]], active: 0, lost: [], summoned: [] }
   };
 }
 
@@ -57,7 +57,10 @@ function normalizeWeapons(raw) {
     sets: Array.from({ length: count }, (_, s) => [0, 1].map(h => raw?.sets?.[s]?.[h] ?? null)),
     lost: (Array.isArray(raw?.lost) ? raw.lost : [])
       .filter(l => l && (typeof l.ref === "string") && Number.isInteger(l.set) && (l.set >= 0) && (l.set < count) && [0, 1].includes(l.hand))
-      .map(l => ({ ...l }))
+      .map(l => ({ ...l })),
+    summoned: (Array.isArray(raw?.summoned) ? raw.summoned : [])
+      .filter(e => e && (typeof e.ref === "string") && isWeaponSlot(e.set, e.hand) && (e.set < count))
+      .map(e => ({ ref: e.ref, set: e.set, hand: e.hand, previous: (typeof e.previous === "string") ? e.previous : null }))
   };
 }
 
@@ -285,6 +288,54 @@ export function restoreLost(layout, valid, matchOf=null) {
   out.weapons.lost = lost.filter(l => !found.has(l));
   return { layout: out, changed: true, restored };
 }
+
+/**
+ * §70 (engine §553): a spell weapon (Flame Blade, Produce Flame: the attack of a spell, `Item.<id>.Activity.<id>`) appears « in your free
+ * hand » — in the active weapon set. Which hand: the main hand if it is empty; else the off-hand if it is empty and the main hand
+ * does not hold a two-handed weapon; else, with no free hand, the off-hand's object is set aside (behind a two-handed weapon, the
+ * two-handed weapon is). What it replaced is noted (`weapons.summoned`) and comes back when the spell ends (`releaseSpellWeapon`).
+ * A ref already in a weapon set (put there by the player) is left where it is, and not noted.
+ * @param {(ref: string) => boolean} twoHanded
+ * @returns {{layout: object, changed: boolean, slot: {set: number, hand: number, previous: string|null}|null}}
+ */
+export function holdSpellWeapon(layout, ref, twoHanded=() => false) {
+  if ( !ref || layout.weapons.sets.some(set => set.includes(ref)) ) return { layout, changed: false, slot: null };
+  const set = layout.weapons.active;
+  const [main, off] = layout.weapons.sets[set] ?? [null, null];
+  const twoHandedMain = !!main && twoHanded(main);
+  const hand = !main ? 0 : (!off && !twoHandedMain) ? 1 : twoHandedMain ? 0 : 1;
+  const previous = hand === 0 ? main : off;
+  const out = withWeaponSets(layout, set + 1);
+  out.weapons.sets[set][hand] = ref;
+  out.weapons.summoned = [...(out.weapons.summoned ?? []).filter(e => e.ref !== ref), { ref, set, hand, previous: previous ?? null }];
+  return { layout: out, changed: true, slot: { set, hand, previous: previous ?? null } };
+}
+
+/**
+ * §70: the spell weapon goes (the spell ended) — it leaves every weapon slot, and what it had replaced comes back to its slot if that
+ * slot is free and the object is still on the sheet (`valid`) and in no other slot. Only a spell weapon placed by `holdSpellWeapon`
+ * (noted in `weapons.summoned`) is taken back: one the player put in a set stays.
+ * @param {Set<string>} valid
+ * @returns {{layout: object, changed: boolean, restored: string[]}}
+ */
+export function releaseSpellWeapon(layout, ref, valid) {
+  const entries = (layout.weapons.summoned ?? []).filter(e => e.ref === ref);
+  if ( !entries.length ) return { layout, changed: false, restored: [] };
+  const out = clone(layout);
+  out.weapons.sets.forEach(set => { for ( let h = 0; h < 2; h++ ) if ( set[h] === ref ) set[h] = null; });
+  const restored = [];
+  for ( const e of entries ) {
+    const back = e.previous;
+    if ( !back || !valid.has(back) || out.weapons.sets.some(set => set.includes(back)) || out.weapons.sets[e.set]?.[e.hand] ) continue;
+    out.weapons.sets[e.set][e.hand] = back;
+    restored.push(back);
+  }
+  out.weapons.summoned = out.weapons.summoned.filter(e => e.ref !== ref);
+  return { layout: out, changed: true, restored };
+}
+
+/** §70: the spell weapons placed by `holdSpellWeapon` and not yet taken back (refs). */
+export const summonedRefs = layout => (layout.weapons.summoned ?? []).map(e => e.ref);
 
 /** Les armes du jeu en main (références). */
 export const activeWeaponRefs = layout => (layout.weapons.sets[layout.weapons.active] ?? []).filter(Boolean);

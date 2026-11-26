@@ -25,6 +25,7 @@ import { iconEffectsOf, adjustHP } from "../adapter/actor.mjs";
 import { planOf } from "../core/hp-adjust.mjs";
 import { layoutHost, readLayout, writeLayout } from "../adapter/forms.mjs";
 import { matcherFor, equipActive } from "../adapter/weapon-return.mjs";
+import { isSpellWeaponRef } from "../adapter/spell-weapons.mjs";
 import { viewedCombat, nameFor } from "../adapter/combat.mjs";
 import { combatantOf, currentActor } from "../adapter/party.mjs";
 import { budgetOf, movementOf, multiattackOf, lightOf, carriedLightOf, toggleLight, sneakingOf, toggleSneak, climbOf, climbEntriesOf, issuesOf, nonLethalOf, setNonLethalOf, ammoOf, setAmmoOf, withoutDasAvailable, useWithoutDas, correctionAvailable, openCorrection, useFromBar } from "../adapter/engine.mjs";
@@ -867,7 +868,10 @@ export class Bar {
       case "useWeapon": {
         const { sets, active } = this.layout.weapons;
         const ref = sets[active][Number(target.dataset.weaponHand)];
-        const item = resolveRef(this.actor, ref)?.item;
+        const resolved = resolveRef(this.actor, ref);
+        // §70: a spell weapon (Flame Blade) is the spell's attack activity — it is used as such (the engine plays it at the cast level).
+        if ( resolved?.activity ) return resolved.activity.use({ event });
+        const item = resolved?.item;
         // 0.20.3 : la main secondaire — l'attaque de l'arme Légère tenue dans l'autre main (mode « offhand » de dnd5e : sans le
         // modificateur positif aux dégâts ; le moteur la fait payer de l'action Bonus). Une arme qui n'a pas ce mode part normalement.
         const offhand = (Number(target.dataset.weaponHand) === 1) ? offhandMode(item) : null;
@@ -1203,7 +1207,8 @@ export class Bar {
    */
   #placeWeapon(set, hand, ref) {
     const item = resolveRef(this.actor, ref)?.item;
-    const itemRef = item ? `Item.${item.id}` : ref;
+    // §70: the attack of an active spell weapon (Flame Blade) keeps its activity ref; anything else goes in as its item.
+    const itemRef = isSpellWeaponRef(this.actor, ref) ? ref : item ? `Item.${item.id}` : ref;
     const { layout, hand: used } = placeWeapon(this.layout, set, hand, itemRef, this.#twoHanded);
     if ( used === null ) {
       const main = resolveRef(this.actor, this.layout.weapons.sets[set]?.[0])?.item;

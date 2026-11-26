@@ -5,6 +5,8 @@ import { Bar } from "../apps/bar.mjs";
 import { route } from "./router.mjs";
 import { setting, log } from "../shared.mjs";
 import { recordDeparture, returnWeapons } from "../adapter/weapon-return.mjs";
+import { syncSpellWeapons } from "../adapter/spell-weapons.mjs";
+import { SPELL_WEAPON_HOOK } from "../adapter/engine.mjs";
 
 /** @type {Bar|null} */
 let bar = null;
@@ -83,6 +85,13 @@ export function registerBar() {
     if ( !game.users.activeGM?.isSelf || (item.parent?.documentName !== "Actor") ) return;
     const back = await returnWeapons(item.parent);
     for ( const r of back ) log.info?.(`${item.parent.name}: ${item.name} back in weapon set ${r.set + 1}`);
+  });
+  // §70 (engine §553): a spell weapon (Flame Blade) goes into a free hand of the weapon set in hand while the spell lasts, then
+  // leaves it. Active GM (adapter/spell-weapons.mjs).
+  route(SPELL_WEAPON_HOOK, "bar", async ({ actor, active }={}) => {
+    if ( !game.users.activeGM?.isSelf || (actor?.documentName !== "Actor") ) return;
+    const { held, released } = await syncSpellWeapons(actor);
+    if ( held.length || released.length ) log.info?.(`${actor.name}: spell weapon ${active ? "in hand" : "gone"} (${[...held, ...released].join(", ")})`);
   });
   for ( const hook of ["createActiveEffect", "updateActiveEffect", "deleteActiveEffect"] ) {
     route(hook, "bar", effect => {
