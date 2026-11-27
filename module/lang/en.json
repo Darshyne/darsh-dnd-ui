@@ -501,7 +501,10 @@
         "bg3": "BG3",
         "gothic": "Gothic Mist",
         "parchment": "Parchment",
-        "parchment-dark": "Shadow Parchment"
+        "parchment-dark": "Shadow Parchment",
+        "dnd5e-dark": "dnd5e dark",
+        "dnd5e-light": "dnd5e light",
+        "dnd5e-auto": "dnd5e (follows Foundry's theme)"
       }
     },
     "SettingsWindow": {

@@ -6,9 +6,10 @@
  * thème en vigueur. Le MJ peut en faire le thème de la table (copié dans la bibliothèque de la table s'il est personnel).
  */
 import { MODULE_ID, loc } from "../shared.mjs";
-import { GROUPS, PRESETS, PRESET_IDS, TOKENS, exportTheme, fullColors, importTheme, joinColor, splitColor }
+import { GROUPS, PRESETS, PRESET_IDS, TOKENS, exportTheme, fullColors, importTheme, joinColor, splitColor, systemTheme }
   from "../core/themes.mjs";
-import { applyTheme, chooseTheme, chooseWorldTheme, currentTheme, deleteCustomTheme, paintColors, saveCustomTheme, themeState }
+import { applyTheme, chooseTheme, chooseWorldTheme, currentTheme, deleteCustomTheme, interfaceScheme, paintColors, paintTheme,
+  saveCustomTheme, themeState }
   from "../adapter/theme.mjs";
 
 const { ApplicationV2 } = foundry.applications.api;
@@ -31,6 +32,9 @@ export class ThemeEditor extends ApplicationV2 {
   #themeOf(id) {
     const state = themeState();
     if ( !id ) return { name: loc("Theme.FollowTable"), colors: this.#themeOf(state.worldChoice).colors };
+    // A dnd5e system theme: its plain colours (fallbacks of the system variables) to edit, its variables and material to show.
+    const system = systemTheme(id, interfaceScheme());
+    if ( system ) return { name: loc(`Theme.Preset.${id}`), colors: { ...system.colors }, css: system.css, material: system.material };
     if ( PRESETS[id] ) return { name: loc(`Theme.Preset.${id}`), colors: { ...PRESETS[id] } };
     const [, scope, key] = String(id).match(/^custom:(world:)?(.+)$/) ?? [];
     const lib = scope ? state.worldLibrary : state.library;
@@ -127,8 +131,10 @@ export class ThemeEditor extends ApplicationV2 {
   /** Repartir d'un thème du sélecteur (rien n'est enregistré). */
   #pick(id) {
     this.#source = id;
-    this.#colors = fullColors(this.#themeOf(id).colors);
-    paintColors(this.#colors);
+    const theme = this.#themeOf(id);
+    this.#colors = fullColors(theme.colors);
+    if ( theme.css ) paintTheme(theme);
+    else paintColors(this.#colors);
     this.render();
   }
 

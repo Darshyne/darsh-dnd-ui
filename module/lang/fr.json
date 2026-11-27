@@ -501,7 +501,10 @@
         "bg3": "BG3",
         "gothic": "Brume gothique",
         "parchment": "Parchemin",
-        "parchment-dark": "Parchemin d'ombre"
+        "parchment-dark": "Parchemin d'ombre",
+        "dnd5e-dark": "dnd5e sombre",
+        "dnd5e-light": "dnd5e clair",
+        "dnd5e-auto": "dnd5e (suit le thème de Foundry)"
       }
     },
     "SettingsWindow": {

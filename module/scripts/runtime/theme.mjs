@@ -1,9 +1,10 @@
 /**
- * Thèmes de couleurs (SPEC §45) : réglages, bouton « Couleurs de l'interface » dans les réglages du module (ouvert à tous :
- * chacun choisit son thème ; le MJ choisit en plus celui de la table), application au chargement et à chaque changement.
+ * Colour themes (SPEC §45): settings, the « Interface colours » button in the module settings (open to all: everyone picks
+ * their theme; the GM also picks the table's), applied on load, on each change, and when Foundry's light / dark scheme changes.
  */
 import { MODULE_ID } from "../shared.mjs";
 import { applyTheme } from "../adapter/theme.mjs";
+import { route } from "./router.mjs";
 import { ThemeEditor } from "../apps/theme-editor.mjs";
 
 export function registerTheme() {
@@ -18,7 +19,11 @@ export function registerTheme() {
     name: "DDU.Theme.Menu.Name", label: "DDU.Theme.Menu.Label", hint: "DDU.Theme.Menu.Hint",
     icon: "fa-solid fa-palette", type: ThemeEditor, restricted: false
   });
+  // The « dnd5e auto » theme follows Foundry's light / dark interface setting: repaint once Foundry has moved its classes.
+  route("clientSettingChanged", "theme: follow the interface scheme", key => {
+    if ( key === "core.uiConfig" ) requestAnimationFrame(() => applyTheme());
+  });
 }
 
-/** Au `ready` : le thème en vigueur. */
+/** On `ready`: the theme in force. */
 export const startTheme = () => applyTheme();

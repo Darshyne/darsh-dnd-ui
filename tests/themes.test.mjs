@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import { GROUPS, PRESETS, PRESET_IDS, TOKENS, TOKEN_KEYS, activeTheme, cleanColors, diffColors, exportTheme, fullColors,
+import { AUTO_THEME, GROUPS, MATERIALS, PRESETS, PRESET_IDS, SYSTEM_THEMES, SYSTEM_VARIABLES, TOKENS, TOKEN_KEYS, activeTheme, cleanColors, diffColors, exportTheme, fullColors,
   importTheme, isColor, joinColor, parseColor, splitColor } from "../module/scripts/core/themes.mjs";
 
 const moduleDir = join(import.meta.dirname, "..", "module");
@@ -16,7 +16,7 @@ for ( const [, body] of css.matchAll(/:root\s*\{([^}]*)\}/g) ) {
 }
 /** Variables qui ne sont pas des couleurs (tailles, polices, fondu, posées par le code). */
 const NOT_COLORS = new Set(["scale", "fade-opacity", "frame-width", "radius-card", "font-title", "cell", "portrait-round",
-  "portrait-party-w", "portrait-party-h", "portrait-frieze-w", "portrait-frieze-h", "panel"]);
+  "portrait-party-w", "portrait-party-h", "portrait-frieze-w", "portrait-frieze-h", "panel", "material"]);
 
 describe("le CSS : toutes les couleurs passent par un thème", () => {
   it("aucune couleur écrite en dur hors des déclarations --ddu-*", () => {
@@ -148,5 +148,38 @@ describe("thème en vigueur", () => {
   it("un choix disparu retombe sur la table, puis sur BG3", () => {
     expect(activeTheme({ choice: "custom:zz", worldChoice: "gothic", library }).id).toBe("gothic");
     expect(activeTheme({ choice: "custom:zz", worldChoice: "custom:zz" })).toEqual({ id: "bg3", colors: {} });
+  });
+});
+
+describe("dnd5e system themes", () => {
+  it("dark and light name only known keys; each CSS value is a dnd5e variable with its plain colour as fallback", () => {
+    for ( const [id, theme] of Object.entries(SYSTEM_THEMES) ) {
+      expect(Object.keys(theme.css).sort(), id).toEqual(Object.keys(theme.colors).sort());
+      expect(cleanColors(theme.colors).rejected, id).toEqual([]);
+      expect(MATERIALS[theme.material], id).toBeTruthy();
+      for ( const [key, value] of Object.entries(theme.css) ) {
+        if ( isColor(value) ) continue;   // a plain colour, where dnd5e has none for that meaning
+        const [, name, fallback] = value.match(/var\((--dnd5e-[a-z0-9-]+), ([^)]+)\)/) ?? [];
+        expect(name, `${id} ${key}`).toBeTruthy();
+        expect(SYSTEM_VARIABLES).toContain(name);
+        const [r, g, b] = parseColor(fallback);
+        const [R, G, B] = parseColor(theme.colors[key]);
+        expect([R, G, B], `${id} ${key}`).toEqual([r, g, b]);
+      }
+    }
+  });
+  const dnd5eCss = "F:/Foundry V14/Data/systems/dnd5e/dnd5e.css";
+  it.skipIf(!existsSync(dnd5eCss))("every variable named exists on :root in the installed dnd5e", () => {
+    const sheet = readFileSync(dnd5eCss, "utf8");
+    const root = sheet.slice(sheet.indexOf(":root {"), sheet.indexOf("@scope"));
+    for ( const name of SYSTEM_VARIABLES ) expect(root, name).toContain(`${name}:`);
+  });
+  it("« auto » follows Foundry's interface scheme; the others ignore it", () => {
+    expect(activeTheme({ choice: AUTO_THEME, scheme: "light" }).css).toEqual(SYSTEM_THEMES["dnd5e-light"].css);
+    expect(activeTheme({ choice: AUTO_THEME, scheme: "dark" }).material).toBe("denim");
+    expect(activeTheme({ worldChoice: AUTO_THEME, scheme: "light" }).material).toBe("paper");
+    expect(activeTheme({ choice: "dnd5e-dark", scheme: "light" }).material).toBe("denim");
+    expect(activeTheme({ choice: "parchment" }).css).toBeUndefined();
+    expect(PRESETS[AUTO_THEME]).toEqual(PRESETS["dnd5e-dark"]);
   });
 });

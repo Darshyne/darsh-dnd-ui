@@ -501,7 +501,10 @@
         "bg3": "BG3",
         "gothic": "Névoa Gótica",
         "parchment": "Pergaminho",
-        "parchment-dark": "Pergaminho Sombrio"
+        "parchment-dark": "Pergaminho Sombrio",
+        "dnd5e-dark": "dnd5e escuro",
+        "dnd5e-light": "dnd5e claro",
+        "dnd5e-auto": "dnd5e (segue o tema do Foundry)"
       }
     },
     "SettingsWindow": {
