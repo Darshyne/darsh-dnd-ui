@@ -657,11 +657,7 @@ body.ddu-hide-hotbar #hotbar { display: none; }
 .ddu-bar__tabs, .ddu-bar__rows, .ddu-bar__end, .ddu-bar__popup, .ddu-d20 {
   pointer-events: auto;
 }
-/*
- * `--ddu-material`: the dnd5e system themes' texture (Foundry's denim, dnd5e's gray paper, by route, nothing copied), set by
- * adapter/theme.mjs only for those themes; unset elsewhere (`none`). Laid on the grid, the pop-ups and the d20 panel.
- */
-.ddu-bar__grid { background: var(--ddu-material, none), var(--ddu-grid); }
+.ddu-bar__grid { background: var(--ddu-grid); }
 .ddu-bar[hidden] { display: none; }
 .ddu-bar button { line-height: 1; }
 
@@ -930,7 +926,11 @@ body.ddu-hide-hotbar #hotbar { display: none; }
   padding: 4px;
   border: 1px solid var(--ddu-gold-dim);
   border-radius: 6px;
-  background: color-mix(in srgb, var(--ddu-well) 45%, transparent);
+  /*
+   * `--ddu-material`: the dnd5e system themes' texture (Foundry's denim, dnd5e's gray paper, by route, nothing copied), set by
+   * adapter/theme.mjs only for those themes; unset elsewhere (`none`). Laid on this grid, the pop-ups and the d20 panel.
+   */
+  background: var(--ddu-material, none), color-mix(in srgb, var(--ddu-well) 45%, transparent);
   max-width: 100%;
   overflow-x: auto;
 }
