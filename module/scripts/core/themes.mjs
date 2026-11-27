@@ -248,7 +248,7 @@ const SYSTEM_DEFS = {
       "light-bright": ["--dnd5e-color-note-warn", "#9b6903"], "light-dim": ["--dnd5e-color-tan", "#7a7971"],
       "light-dark": ["--dnd5e-color-note-info", "#5c87b9"],
       "gm-heal": ["--dnd5e-color-application-healing", "#3c7f58"], "gm-kill": ["--dnd5e-color-application-damage", "#9c5b47"],
-      "roll-veil": ["--dnd5e-color-dark", "#191813", 0.8],
+      "roll-veil": ["--dnd5e-color-parchment", "#f1ebe8", 0.88],   // a paper veil: the window's titles are dark text
       "roll-panel-hi": ["--dnd5e-color-card", "#f8f4f1"], "roll-panel-lo": ["--dnd5e-color-faint", "#c9c7b8"],
       "roll-die": ["--dnd5e-color-tan", "#7a7971"], "roll-die-face": ["--dnd5e-color-groove", "#eeede0"],
       "roll-die-edge": ["--dnd5e-color-dark", "#191813"], "roll-die-text": ["--dnd5e-color-dark", "#191813"],
