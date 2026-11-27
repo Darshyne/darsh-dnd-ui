@@ -22,7 +22,7 @@ import {
   cellView, castActivityOf, weaponsOf, equipWeaponSet, enchantmentsOf, tabOf, offhandMode, isTwoHanded
 } from "../adapter/items.mjs";
 import { iconEffectsOf, adjustHP } from "../adapter/actor.mjs";
-import { planOf } from "../core/hp-adjust.mjs";
+import { hpMenuAnchor, planOf } from "../core/hp-adjust.mjs";
 import { layoutHost, readLayout, writeLayout } from "../adapter/forms.mjs";
 import { matcherFor, equipActive } from "../adapter/weapon-return.mjs";
 import { isSpellWeaponRef } from "../adapter/spell-weapons.mjs";
@@ -351,7 +351,7 @@ export class Bar {
   }
 
   /**
-   * §58 (issue #8) : tiroir des PV, ouvert par un clic droit sur les PV du portrait. Champ (« 7 », « -7 », « +5 ») et trois
+   * §58 (issue #8) : tiroir des PV, ouvert par un clic droit sur le portrait. Champ (« 7 », « -7 », « +5 ») et trois
    * boutons : Dégâts, Soin, PV temporaires. Entrée applique (le signe décide, dégâts sans signe), Échap ferme. Le propriétaire de
    * l'acteur seulement (le MJ pour tous, le joueur pour son personnage) ; la règle passe par dnd5e (adapter/actor `adjustHP`).
    */
@@ -963,11 +963,11 @@ export class Bar {
   }
 
   /**
-   * Clic droit sur un effet actif : le retirer. Sur les PV du portrait : le tiroir des PV (§58). Cases et armes ont leur
+   * Clic droit sur un effet actif : le retirer. Sur le portrait (tout entier depuis 2026-11-27) : le tiroir des PV (§58). Cases et armes ont leur
    * menu (#contextMenu).
    */
   #onRightClick(event) {
-    const hp = event.target.closest(".ddu-bar__portrait .ddu-portrait__hp");
+    const hp = hpMenuAnchor(event.target);
     if ( hp ) {
       event.preventDefault();
       event.stopPropagation();

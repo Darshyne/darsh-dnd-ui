@@ -127,7 +127,7 @@
       "AmmoWrong": "{weapon} não pode disparar {ammo}.",
       "AmmoNoWeapon": "Solte {ammo} sobre uma arma que use essa munição (arco, besta, funda…).",
       "HP": {
-        "Hint": "Clique com o botão direito nos Pontos de Vida: causar dano ou curar",
+        "Hint": "Clique com o botão direito no retrato: causar dano ou curar",
         "Amount": "Quantidade",
         "Placeholder": "-7 / +5",
         "damage": "Dano",

@@ -47,7 +47,7 @@
       "GMHeal": "GM: restore all Hit Points",
       "GMKill": "GM: reduce to 0 Hit Points",
       "HP": {
-        "Hint": "Right-click the Hit Points: damage or heal",
+        "Hint": "Right-click the portrait: damage or heal",
         "Amount": "Amount",
         "Placeholder": "-7 / +5",
         "damage": "Damage",

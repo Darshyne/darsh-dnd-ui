@@ -47,7 +47,7 @@
       "GMHeal": "MJ : soigner complètement (PV au maximum)",
       "GMKill": "MJ : tuer (0 PV)",
       "HP": {
-        "Hint": "Clic droit sur les PV : dégâts ou soin",
+        "Hint": "Clic droit sur le portrait : dégâts ou soin",
         "Amount": "Montant",
         "Placeholder": "-7 / +5",
         "damage": "Dégâts",

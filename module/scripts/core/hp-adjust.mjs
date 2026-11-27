@@ -24,3 +24,15 @@ export function planOf(text, kind=null) {
   const chosen = ["damage", "heal", "temp"].includes(kind) ? kind : (amount.sign > 0 ? "heal" : "damage");
   return { kind: chosen, value: amount.value };
 }
+
+/**
+ * Where a right-click on the Bar opens the HP drawer (user request, 2026-11-27): anywhere on the portrait, not only on its
+ * HP numbers. Returns the element the drawer is anchored to (the HP numbers when shown, so the drawer sits where it always
+ * did; otherwise the portrait itself), or null when the click is outside the portrait.
+ */
+export function hpMenuAnchor(target) {
+  const portrait = target?.closest?.(".ddu-bar__portrait");
+  if ( !portrait ) return null;
+  const hp = portrait.querySelector(".ddu-portrait__hp");
+  return (hp && !hp.hidden) ? hp : portrait;
+}

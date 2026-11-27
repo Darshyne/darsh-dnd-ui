@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { parseAmount, planOf } from "../module/scripts/core/hp-adjust.mjs";
+import { hpMenuAnchor, parseAmount, planOf } from "../module/scripts/core/hp-adjust.mjs";
 
 describe("parseAmount", () => {
   it("lit un nombre, signé ou non", () => {
@@ -25,5 +25,26 @@ describe("planOf", () => {
   });
   it("une saisie invalide ne donne rien", () => {
     expect(planOf("x", "heal")).toBeNull();
+  });
+});
+
+describe("hpMenuAnchor", () => {
+  const portraitWith = hp => ({ querySelector: s => (s === ".ddu-portrait__hp" ? hp : null) });
+  const inside = portrait => ({ closest: s => (s === ".ddu-bar__portrait" ? portrait : null) });
+
+  it("anywhere on the portrait opens the drawer on the HP numbers", () => {
+    const hp = { hidden: false };
+    expect(hpMenuAnchor(inside(portraitWith(hp)))).toBe(hp);
+  });
+  it("falls back to the portrait when the HP numbers are hidden or absent", () => {
+    const portrait = portraitWith({ hidden: true });
+    expect(hpMenuAnchor(inside(portrait))).toBe(portrait);
+    const bare = portraitWith(null);
+    expect(hpMenuAnchor(inside(bare))).toBe(bare);
+  });
+  it("outside the portrait: nothing", () => {
+    expect(hpMenuAnchor(inside(null))).toBeNull();
+    expect(hpMenuAnchor(null)).toBeNull();
+    expect(hpMenuAnchor({})).toBeNull();
   });
 });
