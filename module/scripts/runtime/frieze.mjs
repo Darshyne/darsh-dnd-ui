@@ -44,7 +44,7 @@ export function registerFrieze() {
   const redraw = () => frieze?.scheduleRender();
   for ( const hook of [
     "createCombat", "updateCombat", "deleteCombat", "combatStart", "combatTurnChange",
-    "createCombatant", "updateCombatant", "deleteCombatant", "canvasReady"
+    "createCombatant", "updateCombatant", "deleteCombatant", "canvasReady", "dnd5e-combat.factionsChanged"
   ] ) route(hook, "frieze", redraw);
 
   // Nom, image, disposition d'un token ; effets (pastille d'état) : redessin léger.

@@ -143,6 +143,13 @@ export class Frieze {
     const li = document.createElement("li");
     li.className = "ddu-frieze__slot";
     li.dataset.combatantId = combatant.id;
+    const factions = game.modules.get("dnd5e-combat")?.api?.factions;
+    const faction = combatant.token && factions?.of(combatant.token);
+    const color = faction && factions.list().find(entry => entry.id === faction)?.color;
+    if (/^#[0-9a-f]{6}$/i.test(color ?? "")) {
+      li.dataset.faction = faction;
+      li.style.setProperty("--ddu-faction-color", color);
+    }
     // Issue #35 : le sablier se pose par le token (ou l'acteur) du combattant.
     if ( combatant.tokenId ) li.dataset.tokenId = combatant.tokenId;
     if ( combatant.actorId ) li.dataset.actorId = combatant.actorId;
