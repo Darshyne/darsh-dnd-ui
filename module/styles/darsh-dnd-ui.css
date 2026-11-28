@@ -1458,3 +1458,7 @@ body.ddu-hide-hotbar #hotbar { display: none; }
 .ddu-bar__potion button { font-size: calc(14px * var(--ddu-scale)); white-space: nowrap; }
 .ddu-bar__potion button:disabled { opacity: 0.4; cursor: not-allowed; }
 .ddu-bar__potion .ddu-pip { width: calc(12px * var(--ddu-scale)); height: calc(12px * var(--ddu-scale)); flex: none; }
+
+.ddu-frieze__slot[data-faction] .ddu-portrait[data-side] {
+  border-color: var(--ddu-faction-color);
+}
